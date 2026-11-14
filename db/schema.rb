@@ -10,9 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_220000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "ad_sources", force: :cascade do |t|
+    t.string "name", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_ad_sources_on_name", unique: true
+  end
 
   create_table "appointments", force: :cascade do |t|
     t.bigint "client_id", null: false
@@ -94,6 +102,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_220000) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "ad_source_id"
+    t.integer "discount_mode", default: 0, null: false
+    t.index ["ad_source_id"], name: "index_clients_on_ad_source_id"
     t.index ["company_name"], name: "index_clients_on_company_name"
     t.index ["created_by_id"], name: "index_clients_on_created_by_id"
     t.index ["last_name", "first_name"], name: "index_clients_on_last_name_and_first_name"
@@ -127,6 +138,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_220000) do
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "loyalty_tiers", force: :cascade do |t|
+    t.decimal "threshold", precision: 12, scale: 2, null: false
+    t.decimal "labor_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "parts_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["threshold"], name: "index_loyalty_tiers_on_threshold", unique: true
   end
 
   create_table "notes", force: :cascade do |t|
@@ -463,6 +483,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_220000) do
   add_foreign_key "cash_operations", "expense_categories", on_delete: :nullify
   add_foreign_key "cash_operations", "suppliers", on_delete: :nullify
   add_foreign_key "cash_operations", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "clients", "ad_sources", on_delete: :nullify
   add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "employees", "users", on_delete: :nullify
   add_foreign_key "notes", "users", column: "author_id", on_delete: :nullify

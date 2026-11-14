@@ -5,6 +5,7 @@ class ClientsController < ApplicationController
 
   def index
     scope = Client.search(params[:q])
+    scope = scope.where(ad_source_id: params[:ad_source_id]) if params[:ad_source_id].present?
     scope = params[:status] == "inactive" ? scope.inactive : scope.active
     @pagy, @clients = pagy(scope.ordered.includes(:vehicles), limit: 25)
   end
@@ -55,7 +56,7 @@ class ClientsController < ApplicationController
     def client_params
       params.expect(client: [
         :kind, :last_name, :first_name, :middle_name, :company_name, :inn, :phone, :phone2,
-        :email, :address, :discount_percent, :deactivated_on
+        :email, :address, :discount_percent, :discount_mode, :ad_source_id, :deactivated_on
       ])
     end
 end

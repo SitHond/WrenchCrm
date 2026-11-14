@@ -21,7 +21,7 @@
       <%= detail_row Client.human_attribute_name(:email), (mail_to(@client.email) if @client.email.present?) %>
       <%= detail_row Client.human_attribute_name(:address), @client.address %>
       <%= detail_row Client.human_attribute_name(:inn), @client.inn %>
-      <%= detail_row Client.human_attribute_name(:discount_percent), ("#{number(@client.discount_percent)}%" if @client.discount_percent.positive?) %>
+      <%= detail_row Client.human_attribute_name(:ad_source), @client.ad_source&.name %>
     </dl>
   </section>
 
@@ -45,6 +45,19 @@
     <%= link_to t("vehicles.new"), new_vehicle_path(client_id: @client.id), class: "btn" if can?(:manage_clients) %>
   </section>
 </div>
+
+<% spent = @client.total_spent %>
+<section class="card loyalty">
+  <h2><%= t("clients.sections.discount") %>: <%= enum_label(Client, :discount_mode, @client.discount_mode) %></h2>
+  <div class="stats">
+    <div class="stat"><span class="stat-value"><%= money(spent) %></span><span class="stat-label"><%= t("clients.total_spent") %></span></div>
+    <div class="stat"><span class="stat-value"><%= number(@client.labor_discount) %>%</span><span class="stat-label"><%= t("clients.labor_discount") %></span></div>
+    <div class="stat"><span class="stat-value"><%= number(@client.parts_discount) %>%</span><span class="stat-label"><%= t("clients.parts_discount") %></span></div>
+  </div>
+  <% if @client.discount_accumulative? && (next_tier = LoyaltyTier.next_after(spent)) %>
+    <p class="muted"><%= t("clients.next_tier", amount: money(next_tier.threshold - spent), labor: number(next_tier.labor_percent), parts: number(next_tier.parts_percent)) %></p>
+  <% end %>
+</section>
 
 <section class="card">
   <h2><%= t("nav.work_orders") %></h2>

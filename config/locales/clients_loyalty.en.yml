@@ -1,0 +1,48 @@
+en:
+  clients:
+    all_sources: "All sources"
+    total_spent: "paid in total"
+    labor_discount: "labor discount"
+    parts_discount: "parts discount"
+    next_tier: "%{amount} more to the next step: %{labor}% off labor and %{parts}% off parts."
+    discount_hint: "Fixed applies the given percent to everything. Accumulative grows with total payments, using the steps in settings."
+    sections:
+      discount: "Discount"
+  shop_settings:
+    loyalty_tiers: "Accumulative discounts"
+    loyalty_hint: "Apply to clients with an accumulative discount. All work order payments and sales count."
+    tier_line: "from %{amount}: %{labor}% off labor, %{parts}% off parts"
+    tier_labor: "off labor"
+    tier_parts: "off parts"
+    ad_source_placeholder: "Google Maps"
+  reports:
+    tabs:
+      sources: "Sources"
+    new_clients: "New clients"
+    closed_orders_short: "Orders handed over"
+    paid: "Paid"
+    no_source: "Not set"
+    sources_note: "New clients are those added in the period. Paid is work order payments in the period."
+  activerecord:
+    models:
+      ad_source:
+        one: "Lead source"
+        other: "Lead sources"
+      loyalty_tier: "Discount step"
+    attributes:
+      client:
+        ad_source: "Lead source"
+        ad_source_id: "Lead source"
+        discount_mode: "Discount"
+        discount_percent: "Discount, %"
+      ad_source:
+        name: "Name"
+      loyalty_tier:
+        threshold: "Payments from"
+        labor_percent: "Labor discount, %"
+        parts_percent: "Parts discount, %"
+    enums:
+      client:
+        discount_mode:
+          fixed: "Fixed"
+          accumulative: "Accumulative"

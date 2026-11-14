@@ -31,9 +31,20 @@
     </div>
     <div class="field"><%= form.label :address %><%= form.text_field :address %></div>
     <div class="row">
-      <div class="field small"><%= form.label :discount_percent %><%= form.number_field :discount_percent, min: 0, max: 100, step: 0.5 %></div>
+      <div class="field"><%= form.label :ad_source_id %><%= form.collection_select :ad_source_id, AdSource.active.ordered, :id, :name, include_blank: "—" %></div>
       <div class="field"><%= form.label :deactivated_on %><%= form.date_field :deactivated_on %></div>
     </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t("clients.sections.discount") %></legend>
+    <div class="row">
+      <% Client.discount_modes.each_key do |mode| %>
+        <div class="field checkbox"><%= form.radio_button :discount_mode, mode %><%= form.label "discount_mode_#{mode}", enum_label(Client, :discount_mode, mode) %></div>
+      <% end %>
+      <div class="field small"><%= form.label :discount_percent %><%= form.number_field :discount_percent, min: 0, max: 100, step: 0.5 %></div>
+    </div>
+    <p class="hint"><%= t("clients.discount_hint") %></p>
   </fieldset>
 
   <% if client.new_record? && params[:with_vehicle] %>

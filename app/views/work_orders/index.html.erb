@@ -6,6 +6,9 @@
   <%= form.search_field :q, value: params[:q], placeholder: t("work_orders.search_placeholder"), aria: { label: t("search") } %>
   <%= form.select :status, [ [ t("work_orders.filter.unfinished"), "" ], *enum_options(WorkOrder, :status), [ t("work_orders.filter.all"), "all" ] ],
         selected: params[:status], aria: { label: WorkOrder.human_attribute_name(:status) } %>
+  <% if AdSource.exists? %>
+    <%= form.collection_select :ad_source_id, AdSource.ordered, :id, :name, { include_blank: t("clients.all_sources"), selected: params[:ad_source_id] }, aria: { label: Client.human_attribute_name(:ad_source) } %>
+  <% end %>
   <%= form.submit t("search"), class: "btn", name: nil %>
 <% end %>
 

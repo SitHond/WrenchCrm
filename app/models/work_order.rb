@@ -122,8 +122,8 @@ class WorkOrder < ApplicationRecord
     def inherit_client_defaults
       self.client ||= vehicle&.client
       if client && labor_discount_percent.to_d.zero? && parts_discount_percent.to_d.zero?
-        self.labor_discount_percent = client.discount_percent
-        self.parts_discount_percent = client.discount_percent
+        self.labor_discount_percent = client.labor_discount
+        self.parts_discount_percent = client.parts_discount
       end
       self.mileage ||= vehicle&.mileage
     end

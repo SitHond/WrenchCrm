@@ -1,0 +1,32 @@
+<%= page_header t("nav.reports") %>
+<%= render "tabs" %>
+<%= render "shared/period_filter", url: sources_reports_path %>
+
+<% rows = @report.rows %>
+<% if rows.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= AdSource.model_name.human %></th>
+          <th class="num"><%= t("reports.new_clients") %></th>
+          <th class="num"><%= t("reports.closed_orders_short") %></th>
+          <th class="num"><%= t("reports.paid") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.each do |row| %>
+          <tr>
+            <td><%= row.name || t("reports.no_source") %></td>
+            <td class="num"><%= row.new_clients %></td>
+            <td class="num"><%= row.orders %></td>
+            <td class="num"><%= money(row.revenue) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <p class="hint"><%= t("reports.sources_note") %></p>
+<% else %>
+  <p class="empty"><%= t("reports.no_data") %></p>
+<% end %>

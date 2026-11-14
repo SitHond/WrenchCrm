@@ -4,6 +4,8 @@ class ShopSettingsController < ApplicationController
   def edit
     @setting = ShopSetting.current
     @complexity_levels = ComplexityLevel.ordered
+    @ad_sources = AdSource.ordered
+    @loyalty_tiers = LoyaltyTier.ordered
   end
 
   def update
@@ -12,6 +14,8 @@ class ShopSettingsController < ApplicationController
       redirect_to edit_shop_settings_path, notice: t("flash.updated", model: t("shop_settings.title"))
     else
       @complexity_levels = ComplexityLevel.ordered
+      @ad_sources = AdSource.ordered
+      @loyalty_tiers = LoyaltyTier.ordered
       render :edit, status: :unprocessable_entity
     end
   end

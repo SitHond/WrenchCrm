@@ -65,3 +65,45 @@
     <%= form.submit t("add"), class: "btn" %>
   <% end %>
 </section>
+
+<section class="card" id="loyalty">
+  <h2><%= t("shop_settings.loyalty_tiers") %></h2>
+  <p class="hint"><%= t("shop_settings.loyalty_hint") %></p>
+  <% if @loyalty_tiers.any? %>
+    <ul class="list">
+      <% @loyalty_tiers.each do |tier| %>
+        <li>
+          <%= t("shop_settings.tier_line", amount: money(tier.threshold), labor: number(tier.labor_percent), parts: number(tier.parts_percent)) %>
+          <%= button_to t("delete"), loyalty_tier_path(tier), method: :delete, class: "link-button danger" %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= form_with model: LoyaltyTier.new, class: "inline-form" do |form| %>
+    <%= form.number_field :threshold, min: 1, step: 1, required: true, class: "price", placeholder: LoyaltyTier.human_attribute_name(:threshold), aria: { label: LoyaltyTier.human_attribute_name(:threshold) } %>
+    <%= form.number_field :labor_percent, min: 0, max: 100, step: 0.5, class: "qty", placeholder: "%", aria: { label: LoyaltyTier.human_attribute_name(:labor_percent) } %>
+    <span class="muted"><%= t("shop_settings.tier_labor") %></span>
+    <%= form.number_field :parts_percent, min: 0, max: 100, step: 0.5, class: "qty", placeholder: "%", aria: { label: LoyaltyTier.human_attribute_name(:parts_percent) } %>
+    <span class="muted"><%= t("shop_settings.tier_parts") %></span>
+    <%= form.submit t("add"), class: "btn" %>
+  <% end %>
+</section>
+
+<section class="card" id="ad-sources">
+  <h2><%= AdSource.model_name.human(count: 2) %></h2>
+  <% if @ad_sources.any? %>
+    <ul class="list">
+      <% @ad_sources.each do |source| %>
+        <li class="<%= "inactive" unless source.active? %>">
+          <%= source.name %>
+          <span class="spacer"></span>
+          <%= button_to source.active? ? t("finance.hide") : t("finance.show"), ad_source_path(source), method: :patch, class: "link-button" %>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= form_with model: AdSource.new, class: "inline-form" do |form| %>
+    <%= form.text_field :name, required: true, placeholder: t("shop_settings.ad_source_placeholder"), aria: { label: AdSource.human_attribute_name(:name) } %>
+    <%= form.submit t("add"), class: "btn" %>
+  <% end %>
+</section>

@@ -5,6 +5,7 @@ class WorkOrdersController < ApplicationController
 
   def index
     scope = WorkOrder.search(params[:q]).includes(:client, :vehicle, :mechanic, :labor_lines, :part_lines)
+    scope = scope.joins(:client).where(clients: { ad_source_id: params[:ad_source_id] }) if params[:ad_source_id].present?
     scope = case params[:status]
     when "all" then scope
     when *WorkOrder.statuses.keys then scope.where(status: params[:status])

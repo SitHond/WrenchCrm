@@ -60,11 +60,14 @@ Rails.application.routes.draw do
       get :labor
       get :parts
       get :stock
+      get :sources
     end
   end
 
   resource :shop_settings, only: %i[ edit update ]
   resources :complexity_levels, only: %i[ create destroy ]
+  resources :ad_sources, only: %i[ create update ]
+  resources :loyalty_tiers, only: %i[ create destroy ]
 
   namespace :admin do
     resources :users, except: :show

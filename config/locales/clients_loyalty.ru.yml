@@ -1,0 +1,50 @@
+ru:
+  clients:
+    all_sources: "Все источники"
+    total_spent: "оплачено всего"
+    labor_discount: "скидка на работы"
+    parts_discount: "скидка на запчасти"
+    next_tier: "До следующей ступени осталось %{amount}: скидка станет %{labor}% на работы и %{parts}% на запчасти."
+    discount_hint: "Фиксированная — указанный процент на всё. Накопительная — растёт с суммой оплат по ступеням из настроек."
+    sections:
+      discount: "Скидка"
+  shop_settings:
+    loyalty_tiers: "Накопительные скидки"
+    loyalty_hint: "Действуют для клиентов с накопительной скидкой. Учитываются все оплаты заказ-нарядов и продажи."
+    tier_line: "от %{amount}: %{labor}% на работы, %{parts}% на запчасти"
+    tier_labor: "на работы"
+    tier_parts: "на запчасти"
+    ad_source_placeholder: "Авито"
+  reports:
+    tabs:
+      sources: "Источники"
+    new_clients: "Новых клиентов"
+    closed_orders_short: "Выдано нарядов"
+    paid: "Оплачено"
+    no_source: "Не указан"
+    sources_note: "Новые клиенты — добавленные за период. Оплачено — оплаты заказ-нарядов за период."
+  activerecord:
+    models:
+      ad_source:
+        one: "Рекламный источник"
+        few: "Рекламные источники"
+        many: "Рекламные источники"
+        other: "Рекламные источники"
+      loyalty_tier: "Ступень скидки"
+    attributes:
+      client:
+        ad_source: "Откуда узнал"
+        ad_source_id: "Откуда узнал"
+        discount_mode: "Скидка"
+        discount_percent: "Скидка, %"
+      ad_source:
+        name: "Название"
+      loyalty_tier:
+        threshold: "Сумма оплат от, ₽"
+        labor_percent: "Скидка на работы, %"
+        parts_percent: "Скидка на запчасти, %"
+    enums:
+      client:
+        discount_mode:
+          fixed: "Фиксированная"
+          accumulative: "Накопительная"

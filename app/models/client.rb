@@ -2,8 +2,10 @@ class Client < ApplicationRecord
   include Searchable
 
   enum :kind, { individual: 0, company: 1 }
+  enum :discount_mode, { fixed: 0, accumulative: 1 }, prefix: :discount
 
   belongs_to :created_by, class_name: "User", optional: true
+  belongs_to :ad_source, optional: true
   has_many :vehicles, -> { order(:make, :model) }, dependent: :restrict_with_error
   has_many :work_orders, -> { order(created_at: :desc) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
@@ -44,6 +46,24 @@ class Client < ApplicationRecord
 
   def display_name
     company? ? company_name : [ last_name, first_name, middle_name ].compact_blank.join(" ")
+  end
+
+  # Money actually received from the client: work order payments and counter sales.
+  def total_spent
+    Payment.joins(:work_order).where(work_orders: { client_id: id }).sum(:amount) +
+      CashOperation.where(source_type: "Sale", source_id: sales.select(:id)).sum(:amount)
+  end
+
+  def loyalty_tier
+    LoyaltyTier.for_amount(total_spent) if discount_accumulative?
+  end
+
+  def labor_discount
+    discount_accumulative? ? loyalty_tier&.labor_percent.to_d : discount_percent
+  end
+
+  def parts_discount
+    discount_accumulative? ? loyalty_tier&.parts_percent.to_d : discount_percent
   end
 
   def active?

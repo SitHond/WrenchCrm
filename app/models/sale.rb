@@ -16,7 +16,7 @@ class Sale < ApplicationRecord
 
   before_validation { self.sold_at ||= Time.current }
   before_validation { self.cash_account ||= CashAccount.default_for(payment_method) }
-  before_validation(on: :create) { self.discount_percent = client.discount_percent if client && discount_percent.to_d.zero? }
+  before_validation(on: :create) { self.discount_percent = client.parts_discount if client && discount_percent.to_d.zero? }
   before_create { self.created_by ||= Current.user }
   after_create { lines.each { |line| line.part&.adjust_stock!(-line.quantity, kind: :sale, source: self) } }
   before_destroy(prepend: true) { lines.each { |line| line.part&.adjust_stock!(line.quantity, kind: :sale, source: self) } }
