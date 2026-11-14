@@ -1,0 +1,38 @@
+<%= page_header t("nav.users") do %>
+  <%= link_to t("admin.users.new"), new_admin_user_path, class: "btn btn-primary" %>
+<% end %>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th><%= User.human_attribute_name(:name) %></th>
+        <th><%= User.human_attribute_name(:email_address) %></th>
+        <th><%= t("admin.users.permissions") %></th>
+        <th><%= User.human_attribute_name(:last_login_at) %></th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr class="<%= "inactive" unless user.active? %>">
+          <td>
+            <%= user.name %>
+            <% if user.person %><span class="muted">(<%= link_to user.person.short_name, user.person %>)</span><% end %>
+          </td>
+          <td><%= user.email_address %></td>
+          <td>
+            <% if user.admin? %>
+              <span class="badge badge-member"><%= User.human_attribute_name(:admin) %></span>
+            <% else %>
+              <%= User::PERMISSIONS.select { |p| user.public_send(p) }.map { |p| User.human_attribute_name(p) }.join(", ").presence || "—" %>
+            <% end %>
+            <% unless user.active? %><span class="badge"><%= t("status.inactive") %></span><% end %>
+          </td>
+          <td><%= user.last_login_at ? l(user.last_login_at, format: :short) : "—" %></td>
+          <td class="actions-cell"><%= link_to t("edit"), edit_admin_user_path(user) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

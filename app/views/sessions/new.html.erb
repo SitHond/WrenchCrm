@@ -1,0 +1,12 @@
+<h1><%= t("sessions.title") %></h1>
+<%= form_with url: session_path, class: "form" do |form| %>
+  <div class="field">
+    <%= form.label :email_address, User.human_attribute_name(:email_address) %>
+    <%= form.email_field :email_address, required: true, autofocus: true, autocomplete: "username", value: params[:email_address] %>
+  </div>
+  <div class="field">
+    <%= form.label :password, User.human_attribute_name(:password) %>
+    <%= form.password_field :password, required: true, autocomplete: "current-password", maxlength: 72 %>
+  </div>
+  <%= form.submit t("sessions.submit"), class: "btn btn-primary btn-block" %>
+<% end %>

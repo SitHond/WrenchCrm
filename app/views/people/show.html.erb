@@ -1,0 +1,71 @@
+<%= page_header @person.full_name do %>
+  <%= link_to t("edit"), edit_person_path(@person), class: "btn" if can?(:edit_records) %>
+  <%= button_to t("delete"), @person, method: :delete, class: "btn btn-danger",
+        form: { data: { turbo_confirm: t("confirm") } } if can?(:delete_records) %>
+<% end %>
+
+<p class="subtitle">
+  <%= classification_badge(@person) %>
+  <% unless @person.active? %><span class="badge"><%= t("status.inactive") %></span><% end %>
+  <% if @person.family %>
+    · <%= enum_label(Person, :family_role, @person.family_role) %>, <%= link_to @person.family.name, @person.family %>
+  <% end %>
+</p>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("people.sections.personal") %></h2>
+    <dl class="details">
+      <%= detail_row Person.human_attribute_name(:gender), enum_label(Person, :gender, @person.gender) unless @person.gender_unknown? %>
+      <%= detail_row Person.human_attribute_name(:birthday), birthday_text(@person) %>
+      <%= detail_row Person.human_attribute_name(:membership_date), @person.membership_date && l(@person.membership_date) %>
+      <%= detail_row Person.human_attribute_name(:friend_date), @person.friend_date && l(@person.friend_date) %>
+      <%= detail_row Person.human_attribute_name(:deceased_on), @person.deceased_on && l(@person.deceased_on) %>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><%= t("people.sections.contacts") %></h2>
+    <dl class="details">
+      <%= detail_row Person.human_attribute_name(:email), (mail_to(@person.email) if @person.email.present?) %>
+      <%= detail_row Person.human_attribute_name(:work_email), (mail_to(@person.work_email) if @person.work_email.present?) %>
+      <%= detail_row Person.human_attribute_name(:cell_phone), @person.cell_phone %>
+      <%= detail_row Person.human_attribute_name(:home_phone), @person.home_phone.presence || @person.family&.home_phone %>
+      <%= detail_row Person.human_attribute_name(:work_phone), @person.work_phone %>
+      <%= detail_row Person.human_attribute_name(:address), safe_join(@person.effective_address_lines, tag.br) if @person.effective_address_lines.any? %>
+      <%= detail_row Person.human_attribute_name(:telegram), @person.telegram %>
+      <%= detail_row Person.human_attribute_name(:facebook), @person.facebook %>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><%= t("nav.groups") %></h2>
+    <% if @memberships.any? %>
+      <ul class="list">
+        <% @memberships.each do |membership| %>
+          <li>
+            <%= link_to membership.group.name, membership.group %>
+            <span class="muted"><%= membership.group_role.name %></span>
+            <% if can?(:manage_groups) %>
+              <%= button_to "×", group_group_membership_path(membership.group, membership), method: :delete,
+                    class: "link-button danger", title: t("group_memberships.remove"), form: { data: { turbo_confirm: t("confirm") } } %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("people.no_groups") %></p>
+    <% end %>
+    <% if can?(:manage_groups) && @available_groups.any? %>
+      <%= form_with url: group_group_memberships_path(@available_groups.first), method: :post, class: "inline-form",
+            data: { controller: "group-picker" } do |form| %>
+        <%= hidden_field_tag "group_membership[person_id]", @person.id %>
+        <%= select_tag :group_id, options_from_collection_for_select(@available_groups, :id, :name),
+              data: { action: "group-picker#change" }, aria: { label: Group.model_name.human } %>
+        <%= form.submit t("group_memberships.add_to_group"), class: "btn" %>
+      <% end %>
+    <% end %>
+  </section>
+
+  <%= render "notes/section", notable: @person, notes: @notes %>
+</div>

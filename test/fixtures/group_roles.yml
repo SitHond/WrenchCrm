@@ -1,0 +1,10 @@
+youth_leader:
+  group: youth
+  name: Лидер
+  position: 0
+
+youth_member:
+  group: youth
+  name: Участник
+  position: 1
+  default: true

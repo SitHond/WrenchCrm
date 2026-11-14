@@ -1,0 +1,33 @@
+<%= form_with model: [ :admin, user ], class: "form narrow" do |form| %>
+  <%= render "shared/errors", record: user %>
+  <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+  <div class="field"><%= form.label :email_address %><%= form.email_field :email_address, required: true %></div>
+  <div class="field"><%= form.label :person_id %><%= form.collection_select :person_id, Person.active.ordered, :id, ->(p) { "#{p.last_name} #{p.first_name}" }, include_blank: "—" %></div>
+  <div class="field"><%= form.label :locale %><%= form.select :locale, User::LOCALES.map { |l| [ t("locales.#{l}"), l ] } %></div>
+
+  <fieldset>
+    <legend><%= user.persisted? ? t("admin.users.reset_password") : User.human_attribute_name(:password) %></legend>
+    <div class="field"><%= form.label :password %><%= form.password_field :password, autocomplete: "new-password", required: user.new_record? %></div>
+    <div class="field"><%= form.label :password_confirmation %><%= form.password_field :password_confirmation, autocomplete: "new-password" %></div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t("admin.users.permissions") %></legend>
+    <% self_edit = user == current_user %>
+    <div class="field checkbox"><%= form.check_box :active, disabled: self_edit %><%= form.label :active %></div>
+    <div class="field checkbox"><%= form.check_box :admin, disabled: self_edit %><%= form.label :admin %></div>
+    <% User::PERMISSIONS.each do |permission| %>
+      <div class="field checkbox"><%= form.check_box permission %><%= form.label permission %></div>
+    <% end %>
+    <p class="hint"><%= t("admin.users.admin_hint") %></p>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), admin_users_path, class: "btn" %>
+  </div>
+<% end %>
+
+<% if user.persisted? && user != current_user %>
+  <%= button_to t("delete"), admin_user_path(user), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
+<% end %>

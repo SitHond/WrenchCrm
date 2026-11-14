@@ -1,0 +1,29 @@
+<%= form_with model: family, class: "form" do |form| %>
+  <%= render "shared/errors", record: family %>
+
+  <fieldset>
+    <legend><%= t("families.sections.main") %></legend>
+    <div class="row">
+      <div class="field wide"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+      <div class="field"><%= form.label :wedding_date %><%= form.date_field :wedding_date %></div>
+    </div>
+    <div class="row">
+      <div class="field"><%= form.label :home_phone %><%= form.telephone_field :home_phone %></div>
+      <div class="field"><%= form.label :email %><%= form.email_field :email %></div>
+    </div>
+    <div class="row">
+      <div class="field checkbox"><%= form.check_box :send_newsletter %><%= form.label :send_newsletter %></div>
+      <div class="field"><%= form.label :deactivated_on %><%= form.date_field :deactivated_on %></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t("people.sections.address") %></legend>
+    <%= render "shared/address_fields", form: form %>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), family.persisted? ? family : families_path, class: "btn" %>
+  </div>
+<% end %>

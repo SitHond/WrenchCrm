@@ -1,0 +1,35 @@
+<%= page_header t("nav.groups") do %>
+  <%= link_to t("groups.new"), new_group_path, class: "btn btn-primary" if can?(:manage_groups) %>
+<% end %>
+
+<%= form_with url: groups_path, method: :get, class: "filters" do |form| %>
+  <%= form.select :group_type, enum_options(Group, :group_type), { include_blank: t("groups.all_types"), selected: params[:group_type] } %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<% if @groups.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Group.human_attribute_name(:name) %></th>
+          <th><%= Group.human_attribute_name(:group_type) %></th>
+          <th><%= Group.human_attribute_name(:members_count) %></th>
+          <th><%= Group.human_attribute_name(:active) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @groups.each do |group| %>
+          <tr>
+            <td><%= link_to group.name, group %></td>
+            <td><%= enum_label(Group, :group_type, group.group_type) %></td>
+            <td><%= group.members_count %></td>
+            <td><%= t(group.active? ? "yes" : "no") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="empty"><%= t("groups.empty") %></p>
+<% end %>

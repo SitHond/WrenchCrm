@@ -1,0 +1,9 @@
+<nav class="pagination" aria-label="<%= t("pagination.label") %>">
+  <% if pagy.prev %>
+    <%= link_to t("pagination.prev"), url_for(request.query_parameters.merge(page: pagy.prev)) %>
+  <% end %>
+  <span><%= t("pagination.page_of", page: pagy.page, pages: pagy.pages) %></span>
+  <% if pagy.next %>
+    <%= link_to t("pagination.next"), url_for(request.query_parameters.merge(page: pagy.next)) %>
+  <% end %>
+</nav>

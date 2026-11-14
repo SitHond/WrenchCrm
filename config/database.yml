@@ -1,0 +1,22 @@
+# Locally and in compose.dev.yaml the connection comes from DB_* variables.
+# In production set DATABASE_URL (compose.yaml does this).
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  max_connections: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  host: <%= ENV.fetch("DB_HOST", "localhost") %>
+  port: <%= ENV.fetch("DB_PORT", 5432) %>
+  username: <%= ENV.fetch("DB_USER", "church_crm") %>
+  password: <%= ENV.fetch("DB_PASSWORD", "church_crm") %>
+
+development:
+  <<: *default
+  database: church_crm_development
+
+test:
+  <<: *default
+  database: church_crm_test
+
+production:
+  <<: *default
+  database: church_crm_production

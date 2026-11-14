@@ -1,0 +1,40 @@
+# Development: docker compose -f compose.dev.yaml up  (or podman compose ...)
+# Code is mounted from the host; edits reload without rebuilding.
+services:
+  db:
+    image: docker.io/library/postgres:17-alpine
+    environment:
+      POSTGRES_USER: church_crm
+      POSTGRES_PASSWORD: church_crm
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U church_crm"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_USER: church_crm
+      DB_PASSWORD: church_crm
+    volumes:
+      - .:/app:Z
+      - bundle:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    tty: true
+    stdin_open: true
+
+volumes:
+  pgdata_dev:
+  bundle:

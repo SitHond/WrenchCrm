@@ -1,0 +1,16 @@
+sergey:
+  first_name: Сергей
+  last_name: Иванов
+  family: ivanovs
+  family_role: 1
+  classification: 1
+  gender: 1
+  birth_day: 12
+  birth_month: 3
+  birth_year: 1980
+  email: sergey@example.com
+
+guest:
+  first_name: Дмитрий
+  last_name: Соколов
+  classification: 3

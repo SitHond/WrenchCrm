@@ -1,0 +1,6 @@
+<div class="locale-switcher">
+  <% User::LOCALES.each do |locale| %>
+    <%= button_to locale.upcase, locale_path(locale: locale), method: :patch,
+          class: [ "link-button", ("current" if I18n.locale.to_s == locale) ], disabled: I18n.locale.to_s == locale %>
+  <% end %>
+</div>

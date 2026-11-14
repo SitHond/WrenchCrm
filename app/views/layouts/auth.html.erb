@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= t("sessions.title") %> · <%= t("app.name") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+  <body class="auth">
+    <main class="auth-card">
+      <div class="brand"><span class="brand-mark">✚</span> <%= t("app.name") %></div>
+      <%= render "shared/flash" %>
+      <%= yield %>
+      <%= render "shared/locale_switcher" %>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,36 @@
+# Production-like run: docker compose up -d  (or podman compose up -d)
+# Copy .env.example to .env first.
+services:
+  db:
+    image: docker.io/library/postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: church_crm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: church_crm_production
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U church_crm -d church_crm_production"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      RAILS_ENV: production
+      DATABASE_URL: postgres://church_crm:${POSTGRES_PASSWORD}@db:5432/church_crm_production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?set SECRET_KEY_BASE in .env}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme123}
+      RAILS_LOG_TO_STDOUT: "1"
+    ports:
+      - "${APP_PORT:-3000}:8080"
+
+volumes:
+  pgdata:

@@ -1,0 +1,60 @@
+<%= page_header t("nav.dashboard") do %>
+  <% if can?(:add_records) %>
+    <%= link_to t("people.new"), new_person_path, class: "btn btn-primary" %>
+    <%= link_to t("families.new"), new_family_path, class: "btn" %>
+  <% end %>
+<% end %>
+
+<div class="stats">
+  <%= link_to people_path, class: "stat" do %>
+    <span class="stat-value"><%= @people_count %></span><span class="stat-label"><%= t("dashboard.people") %></span>
+  <% end %>
+  <%= link_to people_path(classification: "member"), class: "stat" do %>
+    <span class="stat-value"><%= @members_count %></span><span class="stat-label"><%= t("dashboard.members") %></span>
+  <% end %>
+  <%= link_to families_path, class: "stat" do %>
+    <span class="stat-value"><%= @families_count %></span><span class="stat-label"><%= t("dashboard.families") %></span>
+  <% end %>
+  <%= link_to groups_path, class: "stat" do %>
+    <span class="stat-value"><%= @groups_count %></span><span class="stat-label"><%= t("dashboard.groups") %></span>
+  <% end %>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("dashboard.birthdays", month: t("date.standalone_month_names", default: t("date.month_names"))[Date.current.month]) %></h2>
+    <% if @birthdays.any? %>
+      <ul class="list">
+        <% @birthdays.each do |person| %>
+          <li><%= link_to person.short_name, person %> <span class="muted"><%= birthday_text(person) %></span></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("dashboard.no_birthdays") %></p>
+    <% end %>
+  </section>
+
+  <section class="card">
+    <h2><%= t("dashboard.recent") %></h2>
+    <% if @recent_people.any? %>
+      <ul class="list">
+        <% @recent_people.each do |person| %>
+          <li><%= link_to person.short_name, person %> <span class="muted"><%= l(person.created_at.to_date) %></span></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("people.empty") %></p>
+    <% end %>
+  </section>
+
+  <section class="card">
+    <h2><%= t("dashboard.by_classification") %></h2>
+    <ul class="list">
+      <% Person.classifications.each_key do |key| %>
+        <% count = @classification_counts[key].to_i %>
+        <% next if count.zero? %>
+        <li><%= link_to enum_label(Person, :classification, key), people_path(classification: key) %> <span class="muted"><%= count %></span></li>
+      <% end %>
+    </ul>
+  </section>
+</div>

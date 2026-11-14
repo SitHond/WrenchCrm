@@ -1,0 +1,10 @@
+<%= page_header t("notes.edit") %>
+<%= form_with model: @note, class: "form" do |form| %>
+  <%= render "shared/errors", record: @note %>
+  <div class="field"><%= form.label :body %><%= form.text_area :body, rows: 6, required: true %></div>
+  <div class="field checkbox"><%= form.check_box :private %><%= form.label :private %></div>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), @note.notable, class: "btn" %>
+  </div>
+<% end %>

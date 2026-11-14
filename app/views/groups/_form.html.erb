@@ -1,0 +1,16 @@
+<%= form_with model: group, class: "form" do |form| %>
+  <%= render "shared/errors", record: group %>
+  <div class="row">
+    <div class="field wide"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+    <div class="field"><%= form.label :group_type %><%= form.select :group_type, enum_options(Group, :group_type) %></div>
+  </div>
+  <div class="field"><%= form.label :description %><%= form.text_area :description, rows: 4 %></div>
+  <div class="row">
+    <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
+    <div class="field checkbox"><%= form.check_box :include_in_email_export %><%= form.label :include_in_email_export %></div>
+  </div>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), group.persisted? ? group : groups_path, class: "btn" %>
+  </div>
+<% end %>
