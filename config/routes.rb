@@ -44,6 +44,7 @@ Rails.application.routes.draw do
   resources :suppliers
   resources :purchase_receipts do
     post :post, on: :member
+    post :from_reorder, on: :collection
     resources :purchase_receipt_lines, only: %i[ create update destroy ]
   end
   resources :sales, only: %i[ index show new create destroy ]
@@ -61,6 +62,7 @@ Rails.application.routes.draw do
       get :parts
       get :stock
       get :sources
+      get :reorder
     end
   end
 
@@ -68,6 +70,8 @@ Rails.application.routes.draw do
   resources :complexity_levels, only: %i[ create destroy ]
   resources :ad_sources, only: %i[ create update ]
   resources :loyalty_tiers, only: %i[ create destroy ]
+  resources :markup_rules, only: %i[ create destroy ]
+  resources :catalog_categories, only: %i[ create destroy ]
 
   namespace :admin do
     resources :users, except: :show

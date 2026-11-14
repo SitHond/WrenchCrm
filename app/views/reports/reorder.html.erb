@@ -1,0 +1,47 @@
+<%= page_header t("nav.reports") %>
+<%= render "tabs" %>
+
+<% if @rows.any? %>
+  <%= form_with url: from_reorder_purchase_receipts_path, class: "form wide-form" do |form| %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th></th>
+            <th><%= Part.model_name.human %></th>
+            <th class="num"><%= Part.human_attribute_name(:quantity) %></th>
+            <th class="num"><%= Part.human_attribute_name(:min_quantity) %></th>
+            <th><%= t("reports.last_supplier") %></th>
+            <th class="num"><%= t("reports.to_order") %></th>
+            <th class="num"><%= PurchaseReceiptLine.human_attribute_name(:cost) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @rows.each_with_index do |row, index| %>
+            <tr>
+              <td>
+                <%= hidden_field_tag "items[#{index}][part_id]", row.part.id %>
+                <%= check_box_tag "items[#{index}][selected]", "1", true, aria: { label: row.part.name } %>
+              </td>
+              <td><%= link_to row.part.label, row.part %></td>
+              <td class="num danger"><%= quantity_with_unit(row.part.quantity, row.part.unit) %></td>
+              <td class="num"><%= number(row.part.min_quantity) %></td>
+              <td><%= row.last_supplier&.name %></td>
+              <td class="num"><%= number_field_tag "items[#{index}][quantity]", row.suggested, min: 0.001, step: 0.001, class: "qty", aria: { label: t("reports.to_order") } %></td>
+              <td class="num"><%= number_field_tag "items[#{index}][cost]", row.last_cost.to_d.round(2), min: 0, step: 0.01, class: "price", aria: { label: PurchaseReceiptLine.human_attribute_name(:cost) } %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+    <% if can?(:manage_catalog) %>
+      <div class="inline-form">
+        <%= select_tag :supplier_id, options_from_collection_for_select(Supplier.active.ordered, :id, :name, @rows.filter_map(&:last_supplier).first&.id), aria: { label: Supplier.model_name.human } %>
+        <%= submit_tag t("reports.create_receipt"), class: "btn btn-primary" %>
+      </div>
+      <p class="hint"><%= t("reports.reorder_hint") %></p>
+    <% end %>
+  <% end %>
+<% else %>
+  <p class="empty"><%= t("reports.reorder_empty") %></p>
+<% end %>

@@ -1,6 +1,7 @@
 <%= form_with model: service, class: "form narrow" do |form| %>
   <%= render "shared/errors", record: service %>
   <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+  <div class="field"><%= form.label :category_id %><%= form.collection_select :category_id, CatalogCategory.service.ordered, :id, :name, include_blank: "—" %></div>
   <div class="row">
     <div class="field"><%= form.label :code %><%= form.text_field :code %></div>
     <div class="field"><%= form.label :norm_hours %><%= form.number_field :norm_hours, step: 0.1, min: 0 %></div>

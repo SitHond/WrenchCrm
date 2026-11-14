@@ -1,5 +1,6 @@
 <%= page_header t("nav.parts") do %>
   <% if can?(:manage_catalog) %>
+    <%= link_to t("reports.reorder_title"), reorder_reports_path, class: "btn" if can?(:view_reports) %>
     <%= link_to t("purchase_receipts.new"), new_purchase_receipt_path, class: "btn" %>
     <%= link_to t("parts.new"), new_part_path, class: "btn btn-primary" %>
   <% end %>
@@ -8,6 +9,9 @@
 <%= form_with url: parts_path, method: :get, class: "filters" do |form| %>
   <%= form.search_field :q, value: params[:q], placeholder: t("parts.search_placeholder"), aria: { label: t("search") } %>
   <%= form.select :status, [ [ t("status.active"), "" ], [ t("parts.filter.low"), "low" ], [ t("filter.all"), "all" ] ], selected: params[:status] %>
+  <% if CatalogCategory.part.exists? %>
+    <%= form.collection_select :category_id, CatalogCategory.part.ordered, :id, :name, { include_blank: t("parts.all_categories"), selected: params[:category_id] }, aria: { label: Part.human_attribute_name(:category_id) } %>
+  <% end %>
   <%= form.submit t("search"), class: "btn", name: nil %>
 <% end %>
 
@@ -30,7 +34,7 @@
         <% @parts.each do |part| %>
           <tr class="<%= "inactive" unless part.active? %>">
             <td class="mono"><%= part.sku %></td>
-            <td><%= link_to part.name, part %></td>
+            <td><%= link_to part.name, part %><% if part.category %> <span class="muted small"><%= part.category.name %></span><% end %></td>
             <td><%= part.brand %></td>
             <td><%= part.location %></td>
             <td class="num <%= "danger" if part.low_stock? %>"><%= quantity_with_unit(part.quantity, part.unit) %></td>

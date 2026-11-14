@@ -19,6 +19,10 @@ class ReportsController < ApplicationController
     @report = Report::Sources.new(period_range)
   end
 
+  def reorder
+    @rows = Report::Reorder.new.rows
+  end
+
   def stock
     @parts = Part.active.ordered.where("quantity <> 0")
     @total_cost = @parts.sum(&:stock_value)

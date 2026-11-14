@@ -107,3 +107,46 @@
     <%= form.submit t("add"), class: "btn" %>
   <% end %>
 </section>
+
+<section class="card" id="markup">
+  <h2><%= t("shop_settings.markup_rules") %></h2>
+  <p class="hint"><%= t("shop_settings.markup_hint") %></p>
+  <% rules = MarkupRule.ordered %>
+  <% if rules.any? %>
+    <ul class="list">
+      <% rules.each do |rule| %>
+        <li><%= t("shop_settings.markup_line", cost: money(rule.cost_from), percent: number(rule.percent)) %>
+          <%= button_to t("delete"), markup_rule_path(rule), method: :delete, class: "link-button danger" %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= form_with model: MarkupRule.new, class: "inline-form" do |form| %>
+    <span class="muted"><%= t("shop_settings.markup_from") %></span>
+    <%= form.number_field :cost_from, min: 0, step: 1, required: true, class: "price", aria: { label: MarkupRule.human_attribute_name(:cost_from) } %>
+    <span class="muted">+</span>
+    <%= form.number_field :percent, min: 0, step: 1, required: true, class: "qty", aria: { label: MarkupRule.human_attribute_name(:percent) } %>%
+    <%= form.submit t("add"), class: "btn" %>
+  <% end %>
+</section>
+
+<section class="card" id="categories">
+  <h2><%= CatalogCategory.model_name.human(count: 2) %></h2>
+  <div class="grid-2">
+    <% CatalogCategory.kinds.each_key do |kind| %>
+      <div>
+        <h3><%= enum_label(CatalogCategory, :kind, kind) %></h3>
+        <ul class="list">
+          <% CatalogCategory.where(kind: kind).ordered.each do |category| %>
+            <li><%= category.name %>
+              <%= button_to t("delete"), catalog_category_path(category), method: :delete, class: "link-button danger", form: { data: { turbo_confirm: t("confirm") } } %></li>
+          <% end %>
+        </ul>
+        <%= form_with model: CatalogCategory.new(kind: kind), class: "inline-form" do |form| %>
+          <%= form.hidden_field :kind %>
+          <%= form.text_field :name, required: true, placeholder: t("shop_settings.category_placeholder.#{kind}"), aria: { label: CatalogCategory.human_attribute_name(:name) } %>
+          <%= form.submit t("add"), class: "btn" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</section>

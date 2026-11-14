@@ -5,6 +5,9 @@
 <%= form_with url: services_path, method: :get, class: "filters" do |form| %>
   <%= form.search_field :q, value: params[:q], placeholder: t("services.search_placeholder"), aria: { label: t("search") } %>
   <%= form.select :status, [ [ t("status.active"), "" ], [ t("filter.all"), "all" ] ], selected: params[:status] %>
+  <% if CatalogCategory.service.exists? %>
+    <%= form.collection_select :category_id, CatalogCategory.service.ordered, :id, :name, { include_blank: t("parts.all_categories"), selected: params[:category_id] }, aria: { label: Service.human_attribute_name(:category_id) } %>
+  <% end %>
   <%= form.submit t("search"), class: "btn", name: nil %>
 <% end %>
 
@@ -24,7 +27,7 @@
         <% @services.each do |service| %>
           <tr class="<%= "inactive" unless service.active? %>">
             <td class="mono"><%= service.code %></td>
-            <td><%= service.name %></td>
+            <td><%= service.name %><% if service.category %> <span class="muted small"><%= service.category.name %></span><% end %></td>
             <td class="num"><%= number(service.norm_hours) %></td>
             <td class="num"><%= money(service.price) %></td>
             <% if can?(:manage_catalog) %><td class="actions-cell"><%= link_to t("edit"), edit_service_path(service) %></td><% end %>

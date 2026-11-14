@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_224000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -86,6 +86,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
     t.index ["supplier_id"], name: "index_cash_operations_on_supplier_id"
   end
 
+  create_table "catalog_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "kind", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["kind", "name"], name: "index_catalog_categories_on_kind_and_name", unique: true
+  end
+
   create_table "clients", force: :cascade do |t|
     t.integer "kind", default: 0, null: false
     t.string "last_name"
@@ -149,6 +157,14 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
     t.index ["threshold"], name: "index_loyalty_tiers_on_threshold", unique: true
   end
 
+  create_table "markup_rules", force: :cascade do |t|
+    t.decimal "cost_from", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "percent", precision: 6, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cost_from"], name: "index_markup_rules_on_cost_from", unique: true
+  end
+
   create_table "notes", force: :cascade do |t|
     t.string "notable_type", null: false
     t.bigint "notable_id", null: false
@@ -185,6 +201,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
     t.datetime "updated_at", null: false
     t.string "location"
     t.string "oem"
+    t.boolean "auto_price", default: false, null: false
+    t.bigint "category_id"
+    t.index ["category_id"], name: "index_parts_on_category_id"
     t.index ["name"], name: "index_parts_on_name"
     t.index ["oem"], name: "index_parts_on_oem"
     t.index ["sku"], name: "index_parts_on_sku"
@@ -304,6 +323,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "category_id"
+    t.index ["category_id"], name: "index_services_on_category_id"
     t.index ["name"], name: "index_services_on_name"
   end
 
@@ -489,6 +510,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
   add_foreign_key "notes", "users", column: "author_id", on_delete: :nullify
   add_foreign_key "part_analogs", "parts", column: "analog_id", on_delete: :cascade
   add_foreign_key "part_analogs", "parts", on_delete: :cascade
+  add_foreign_key "parts", "catalog_categories", column: "category_id", on_delete: :nullify
   add_foreign_key "payments", "cash_accounts"
   add_foreign_key "payments", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "payments", "work_orders"
@@ -508,6 +530,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_221000) do
   add_foreign_key "sales", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "service_prices", "complexity_levels", on_delete: :cascade
   add_foreign_key "service_prices", "services", on_delete: :cascade
+  add_foreign_key "services", "catalog_categories", column: "category_id", on_delete: :nullify
   add_foreign_key "sessions", "users"
   add_foreign_key "stock_movements", "parts", on_delete: :cascade
   add_foreign_key "stock_movements", "users", column: "created_by_id", on_delete: :nullify

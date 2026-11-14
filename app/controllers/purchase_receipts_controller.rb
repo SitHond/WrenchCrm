@@ -26,6 +26,22 @@ class PurchaseReceiptsController < ApplicationController
     end
   end
 
+  # Draft receipt for one supplier from the parts picked in the reorder report.
+  def from_reorder
+    supplier = Supplier.find(params[:supplier_id])
+    items = params.fetch(:items, {}).values.select { |item| item[:selected] == "1" }
+    if items.empty?
+      return redirect_to reorder_reports_path, alert: t("reports.reorder_nothing_selected")
+    end
+
+    receipt = PurchaseReceipt.transaction do
+      supplier.purchase_receipts.create!.tap do |draft|
+        items.each { |item| draft.lines.create!(part_id: item[:part_id], quantity: item[:quantity], cost: item[:cost]) }
+      end
+    end
+    redirect_to receipt, notice: t("reports.reorder_receipt_created")
+  end
+
   def edit
   end
 

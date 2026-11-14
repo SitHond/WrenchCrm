@@ -3,7 +3,8 @@ class ServicesController < ApplicationController
   require_permission :manage_catalog, except: :index
 
   def index
-    scope = Service.search(params[:q])
+    scope = Service.search(params[:q]).includes(:category)
+    scope = scope.where(category_id: params[:category_id]) if params[:category_id].present?
     scope = scope.active unless params[:status] == "all"
     @pagy, @services = pagy(scope.ordered, limit: 50)
   end
@@ -43,6 +44,6 @@ class ServicesController < ApplicationController
     end
 
     def service_params
-      params.expect(service: [ :name, :code, :norm_hours, :price, :active, prices_attributes: [ [ :id, :complexity_level_id, :price, :_destroy ] ] ])
+      params.expect(service: [ :name, :code, :norm_hours, :price, :active, :category_id, prices_attributes: [ [ :id, :complexity_level_id, :price, :_destroy ] ] ])
     end
 end

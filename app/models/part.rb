@@ -3,6 +3,7 @@ class Part < ApplicationRecord
 
   UNITS = %w[pcs l kg m set].freeze
 
+  belongs_to :category, class_name: "CatalogCategory", optional: true
   has_many :work_order_parts, dependent: :nullify
   has_many :stock_movements, dependent: :delete_all
   has_many :purchase_receipt_lines, dependent: :restrict_with_error
@@ -11,6 +12,7 @@ class Part < ApplicationRecord
 
   validates :name, presence: true
 
+  before_save :apply_markup, if: -> { auto_price? && (will_save_change_to_cost? || will_save_change_to_auto_price?) }
   after_create { stock_movements.create!(quantity: quantity, kind: :manual) if quantity.nonzero? }
   validates :unit, inclusion: { in: UNITS }
   validates :cost, :price, :min_quantity, numericality: { greater_than_or_equal_to: 0 }
@@ -46,12 +48,17 @@ class Part < ApplicationRecord
   def receive!(quantity, unit_cost, source:)
     on_hand = [ self.quantity, 0 ].max
     new_cost = on_hand + quantity > 0 ? ((on_hand * cost) + (quantity * unit_cost)) / (on_hand + quantity) : unit_cost
-    update_column(:cost, new_cost.round(2))
+    self.cost = new_cost.round(2)
+    save!(validate: false)
     adjust_stock!(quantity, kind: :receipt, source: source)
   end
 
   def set_quantity!(counted, comment: nil)
     adjust_stock!(counted.to_d - quantity, kind: :inventory, comment: comment)
+  end
+
+  def apply_markup
+    self.price = MarkupRule.price_for(cost) || price
   end
 
   def stock_value

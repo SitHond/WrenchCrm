@@ -1,0 +1,49 @@
+ru:
+  parts:
+    all_categories: "Все категории"
+    auto_price_hint: "Цена продажи пересчитывается по наценке при каждом приходе."
+    suggested_price: "По наценке сейчас: %{price}."
+    no_markup_rules_html: "Чтобы цена считалась сама, задайте наценки в разделе %{link}."
+  shop_settings:
+    markup_rules: "Наценка на запчасти"
+    markup_hint: "Цена продажи = закупка + процент. Действует правило с наибольшим порогом, не превышающим закупочную цену. Цена округляется вверх до 10 ₽. Применяется к запчастям с флажком «Цена по наценке»."
+    markup_line: "закупка от %{cost}: +%{percent}%"
+    markup_from: "Закупка от"
+    category_placeholder:
+      part: "Фильтры"
+      service: "Тормозная система"
+  reports:
+    tabs:
+      reorder: "Требуется заказать"
+    reorder_title: "Требуется заказать"
+    last_supplier: "Последний поставщик"
+    to_order: "Заказать"
+    create_receipt: "Создать приход"
+    reorder_hint: "Отмеченные позиции попадут в черновик приходной накладной на выбранного поставщика. Количество предложено с запасом до двух минимумов."
+    reorder_empty: "Всего хватает: нет позиций ниже минимального остатка."
+    reorder_nothing_selected: "Отметьте хотя бы одну позицию."
+    reorder_receipt_created: "Черновик прихода создан. Проверьте количество и цены, затем проведите."
+  activerecord:
+    models:
+      catalog_category:
+        one: "Категория"
+        few: "Категории"
+        many: "Категории"
+        other: "Категории"
+      markup_rule: "Правило наценки"
+    attributes:
+      part:
+        category_id: "Категория"
+        auto_price: "Цена по наценке"
+      service:
+        category_id: "Категория"
+      catalog_category:
+        name: "Название"
+      markup_rule:
+        cost_from: "Закупка от"
+        percent: "Наценка, %"
+    enums:
+      catalog_category:
+        kind:
+          part: "Запчасти"
+          service: "Работы"

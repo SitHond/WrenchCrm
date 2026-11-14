@@ -1,6 +1,9 @@
 <%= form_with model: part, class: "form narrow" do |form| %>
   <%= render "shared/errors", record: part %>
-  <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+  <div class="row">
+    <div class="field wide"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+    <div class="field"><%= form.label :category_id %><%= form.collection_select :category_id, CatalogCategory.part.ordered, :id, :name, include_blank: "—" %></div>
+  </div>
   <div class="row">
     <div class="field"><%= form.label :sku %><%= form.text_field :sku %></div>
     <div class="field"><%= form.label :oem %><%= form.text_field :oem, class: "mono" %></div>
@@ -11,6 +14,15 @@
     <div class="field"><%= form.label :cost %><%= form.number_field :cost, step: 0.01, min: 0 %></div>
     <div class="field"><%= form.label :price %><%= form.number_field :price, step: 0.01, min: 0, required: true %></div>
   </div>
+  <div class="field checkbox"><%= form.check_box :auto_price %><%= form.label :auto_price %></div>
+  <p class="hint">
+    <% if MarkupRule.exists? %>
+      <%= t("parts.auto_price_hint") %>
+      <% if (suggested = MarkupRule.price_for(part.cost)) %><%= t("parts.suggested_price", price: money(suggested)) %><% end %>
+    <% else %>
+      <%= t("parts.no_markup_rules_html", link: link_to(t("shop_settings.title"), edit_shop_settings_path(anchor: "markup"))) %>
+    <% end %>
+  </p>
   <div class="row">
     <% if part.new_record? %>
       <div class="field"><%= form.label :quantity %><%= form.number_field :quantity, step: 0.001 %></div>

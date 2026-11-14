@@ -1,0 +1,47 @@
+en:
+  parts:
+    all_categories: "All categories"
+    auto_price_hint: "The sale price is recalculated from the markup on every receipt."
+    suggested_price: "Markup price now: %{price}."
+    no_markup_rules_html: "Set markups under %{link} to price parts automatically."
+  shop_settings:
+    markup_rules: "Parts markup"
+    markup_hint: "Sale price = cost + percent. The rule with the highest threshold not above the cost applies. Prices round up to 10. Applies to parts with markup pricing on."
+    markup_line: "cost from %{cost}: +%{percent}%"
+    markup_from: "Cost from"
+    category_placeholder:
+      part: "Filters"
+      service: "Brakes"
+  reports:
+    tabs:
+      reorder: "Reorder"
+    reorder_title: "Reorder"
+    last_supplier: "Last supplier"
+    to_order: "Order"
+    create_receipt: "Create receipt"
+    reorder_hint: "Checked items go into a draft receipt for the chosen supplier. Quantities restock to twice the minimum."
+    reorder_empty: "Nothing is below its minimum stock."
+    reorder_nothing_selected: "Check at least one item."
+    reorder_receipt_created: "Draft receipt created. Check quantities and prices, then post it."
+  activerecord:
+    models:
+      catalog_category:
+        one: "Category"
+        other: "Categories"
+      markup_rule: "Markup rule"
+    attributes:
+      part:
+        category_id: "Category"
+        auto_price: "Price by markup"
+      service:
+        category_id: "Category"
+      catalog_category:
+        name: "Name"
+      markup_rule:
+        cost_from: "Cost from"
+        percent: "Markup, %"
+    enums:
+      catalog_category:
+        kind:
+          part: "Parts"
+          service: "Services"

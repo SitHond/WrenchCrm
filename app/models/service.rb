@@ -1,6 +1,7 @@
 class Service < ApplicationRecord
   include Searchable
 
+  belongs_to :category, class_name: "CatalogCategory", optional: true
   has_many :work_order_labors, dependent: :nullify
   has_many :prices, class_name: "ServicePrice", dependent: :destroy
 

@@ -3,7 +3,8 @@ class PartsController < ApplicationController
   require_permission :manage_catalog, except: %i[ index show ]
 
   def index
-    scope = Part.search(params[:q])
+    scope = Part.search(params[:q]).includes(:category)
+    scope = scope.where(category_id: params[:category_id]) if params[:category_id].present?
     scope = case params[:status]
     when "low" then scope.low_stock
     when "all" then scope
@@ -92,6 +93,6 @@ class PartsController < ApplicationController
     end
 
     def part_params
-      params.expect(part: [ :name, :sku, :oem, :brand, :location, :unit, :cost, :price, :quantity, :min_quantity, :active ])
+      params.expect(part: [ :name, :sku, :oem, :brand, :location, :unit, :cost, :price, :quantity, :min_quantity, :active, :auto_price, :category_id ])
     end
 end
