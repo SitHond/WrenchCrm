@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= content_for(:title) %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= stylesheet_link_tag :app %>
+  </head>
+  <body class="print-page">
+    <div class="print-toolbar no-print">
+      <button type="button" class="btn btn-primary" onclick="window.print()"><%= t("work_orders.print") %></button>
+      <%= link_to t("back"), :back, class: "btn" %>
+    </div>
+    <%= yield %>
+  </body>
+</html>

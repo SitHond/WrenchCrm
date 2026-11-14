@@ -1,0 +1,17 @@
+<%= form_with model: service, class: "form narrow" do |form| %>
+  <%= render "shared/errors", record: service %>
+  <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+  <div class="row">
+    <div class="field"><%= form.label :code %><%= form.text_field :code %></div>
+    <div class="field"><%= form.label :norm_hours %><%= form.number_field :norm_hours, step: 0.1, min: 0 %></div>
+    <div class="field"><%= form.label :price %><%= form.number_field :price, step: 0.01, min: 0, required: true %></div>
+  </div>
+  <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), services_path, class: "btn" %>
+  </div>
+<% end %>
+<% if service.persisted? %>
+  <%= button_to t("delete"), service, method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
+<% end %>

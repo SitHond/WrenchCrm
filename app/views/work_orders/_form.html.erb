@@ -1,0 +1,36 @@
+<%= form_with model: work_order, class: "form" do |form| %>
+  <%= render "shared/errors", record: work_order %>
+
+  <fieldset>
+    <legend><%= t("work_orders.sections.vehicle") %></legend>
+    <% if work_order.new_record? %>
+      <div class="field">
+        <%= form.label :vehicle_id %>
+        <%= form.grouped_collection_select :vehicle_id, Client.active.ordered.includes(:vehicles).select { |c| c.vehicles.any? },
+              :vehicles, :display_name, :id, :label, { include_blank: true }, required: true %>
+      </div>
+      <p class="hint"><%= t("work_orders.new_client_hint_html", link: link_to(t("clients.new"), new_client_path(with_vehicle: 1))) %></p>
+    <% else %>
+      <p><%= link_to work_order.vehicle.label, work_order.vehicle %> · <%= link_to work_order.client.display_name, work_order.client %></p>
+    <% end %>
+    <div class="row">
+      <div class="field"><%= form.label :mileage %><%= form.number_field :mileage, min: 0 %></div>
+      <div class="field"><%= form.label :mechanic_id %><%= form.collection_select :mechanic_id, Employee.active.ordered, :id, :name, include_blank: true %></div>
+      <div class="field"><%= form.label :promised_at %><%= form.datetime_field :promised_at %></div>
+      <div class="field small"><%= form.label :discount_percent %><%= form.number_field :discount_percent, min: 0, max: 100, step: 0.5 %></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <div class="field"><%= form.label :complaint %><%= form.text_area :complaint, rows: 3 %></div>
+    <div class="field"><%= form.label :diagnosis %><%= form.text_area :diagnosis, rows: 3 %></div>
+    <div class="field"><%= form.label :recommendations %><%= form.text_area :recommendations, rows: 3 %></div>
+  </fieldset>
+
+  <% if work_order.new_record? %><p class="hint"><%= t("work_orders.discount_hint") %></p><% end %>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), work_order.persisted? ? work_order : work_orders_path, class: "btn" %>
+  </div>
+<% end %>

@@ -1,0 +1,5 @@
+diag:
+  work_order: open_order
+  name: Диагностика
+  quantity: 1
+  price: 1500

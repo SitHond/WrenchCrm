@@ -1,60 +1,50 @@
 <%= page_header t("nav.dashboard") do %>
-  <% if can?(:add_records) %>
-    <%= link_to t("people.new"), new_person_path, class: "btn btn-primary" %>
-    <%= link_to t("families.new"), new_family_path, class: "btn" %>
-  <% end %>
+  <%= link_to t("work_orders.new"), new_work_order_path, class: "btn btn-primary" if can?(:manage_orders) %>
+  <%= link_to t("clients.new"), new_client_path(with_vehicle: 1), class: "btn" if can?(:manage_clients) %>
 <% end %>
 
 <div class="stats">
-  <%= link_to people_path, class: "stat" do %>
-    <span class="stat-value"><%= @people_count %></span><span class="stat-label"><%= t("dashboard.people") %></span>
+  <% WorkOrder::OPEN_STATUSES.each do |status| %>
+    <%= link_to work_orders_path(status: status), class: "stat" do %>
+      <span class="stat-value"><%= @status_counts[status].to_i %></span>
+      <span class="stat-label"><%= enum_label(WorkOrder, :status, status) %></span>
+    <% end %>
   <% end %>
-  <%= link_to people_path(classification: "member"), class: "stat" do %>
-    <span class="stat-value"><%= @members_count %></span><span class="stat-label"><%= t("dashboard.members") %></span>
-  <% end %>
-  <%= link_to families_path, class: "stat" do %>
-    <span class="stat-value"><%= @families_count %></span><span class="stat-label"><%= t("dashboard.families") %></span>
-  <% end %>
-  <%= link_to groups_path, class: "stat" do %>
-    <span class="stat-value"><%= @groups_count %></span><span class="stat-label"><%= t("dashboard.groups") %></span>
-  <% end %>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <span class="stat-value"><%= money(@revenue_today) %></span><span class="stat-label"><%= t("dashboard.revenue_today") %></span>
+  </div>
+  <div class="stat">
+    <span class="stat-value"><%= money(@revenue_month) %></span><span class="stat-label"><%= t("dashboard.revenue_month") %></span>
+  </div>
+  <div class="stat">
+    <span class="stat-value"><%= @orders_month %></span><span class="stat-label"><%= t("dashboard.orders_month") %></span>
+  </div>
 </div>
 
 <div class="grid-2">
   <section class="card">
-    <h2><%= t("dashboard.birthdays", month: t("date.standalone_month_names", default: t("date.month_names"))[Date.current.month]) %></h2>
-    <% if @birthdays.any? %>
-      <ul class="list">
-        <% @birthdays.each do |person| %>
-          <li><%= link_to person.short_name, person %> <span class="muted"><%= birthday_text(person) %></span></li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p class="muted"><%= t("dashboard.no_birthdays") %></p>
-    <% end %>
+    <h2><%= t("dashboard.ready") %></h2>
+    <%= render "work_orders/compact_list", work_orders: @ready_orders, empty: t("dashboard.no_ready") %>
   </section>
 
   <section class="card">
-    <h2><%= t("dashboard.recent") %></h2>
-    <% if @recent_people.any? %>
-      <ul class="list">
-        <% @recent_people.each do |person| %>
-          <li><%= link_to person.short_name, person %> <span class="muted"><%= l(person.created_at.to_date) %></span></li>
-        <% end %>
-      </ul>
-    <% else %>
-      <p class="muted"><%= t("people.empty") %></p>
-    <% end %>
+    <h2><%= t("dashboard.due") %></h2>
+    <%= render "work_orders/compact_list", work_orders: @due_orders, empty: t("dashboard.no_due") %>
   </section>
 
   <section class="card">
-    <h2><%= t("dashboard.by_classification") %></h2>
-    <ul class="list">
-      <% Person.classifications.each_key do |key| %>
-        <% count = @classification_counts[key].to_i %>
-        <% next if count.zero? %>
-        <li><%= link_to enum_label(Person, :classification, key), people_path(classification: key) %> <span class="muted"><%= count %></span></li>
-      <% end %>
-    </ul>
+    <h2><%= t("dashboard.low_stock") %></h2>
+    <% if @low_stock.any? %>
+      <ul class="list">
+        <% @low_stock.each do |part| %>
+          <li><%= part.name %> <span class="muted"><%= quantity_with_unit(part.quantity, part.unit) %></span></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("dashboard.stock_ok") %></p>
+    <% end %>
   </section>
 </div>

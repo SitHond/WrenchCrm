@@ -1,0 +1,48 @@
+<%= form_with model: client, class: "form", data: { controller: "client-kind" } do |form| %>
+  <%= render "shared/errors", record: client %>
+
+  <fieldset>
+    <legend><%= t("clients.sections.main") %></legend>
+    <div class="row">
+      <% Client.kinds.each_key do |kind| %>
+        <div class="field checkbox">
+          <%= form.radio_button :kind, kind, data: { action: "client-kind#toggle" } %>
+          <%= form.label "kind_#{kind}", enum_label(Client, :kind, kind) %>
+        </div>
+      <% end %>
+    </div>
+    <div class="row" data-client-kind-target="individual">
+      <div class="field"><%= form.label :last_name %><%= form.text_field :last_name %></div>
+      <div class="field"><%= form.label :first_name %><%= form.text_field :first_name %></div>
+      <div class="field"><%= form.label :middle_name %><%= form.text_field :middle_name %></div>
+    </div>
+    <div class="row" data-client-kind-target="company">
+      <div class="field wide"><%= form.label :company_name %><%= form.text_field :company_name %></div>
+      <div class="field"><%= form.label :inn %><%= form.text_field :inn, inputmode: "numeric", maxlength: 12 %></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t("clients.sections.contacts") %></legend>
+    <div class="row">
+      <div class="field"><%= form.label :phone %><%= form.telephone_field :phone, required: true %></div>
+      <div class="field"><%= form.label :phone2 %><%= form.telephone_field :phone2 %></div>
+      <div class="field"><%= form.label :email %><%= form.email_field :email %></div>
+    </div>
+    <div class="field"><%= form.label :address %><%= form.text_field :address %></div>
+    <div class="row">
+      <div class="field small"><%= form.label :discount_percent %><%= form.number_field :discount_percent, min: 0, max: 100, step: 0.5 %></div>
+      <div class="field"><%= form.label :deactivated_on %><%= form.date_field :deactivated_on %></div>
+    </div>
+  </fieldset>
+
+  <% if client.new_record? && params[:with_vehicle] %>
+    <p class="hint"><%= t("clients.vehicle_next_hint") %></p>
+    <%= hidden_field_tag :with_vehicle, 1 %>
+  <% end %>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), client.persisted? ? client : clients_path, class: "btn" %>
+  </div>
+<% end %>

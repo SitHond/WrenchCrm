@@ -1,0 +1,36 @@
+<%= page_header t("nav.vehicles") %>
+
+<%= form_with url: vehicles_path, method: :get, class: "filters" do |form| %>
+  <%= form.search_field :q, value: params[:q], placeholder: t("vehicles.search_placeholder"), aria: { label: t("search") } %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<% if @vehicles.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Vehicle.model_name.human %></th>
+          <th><%= Vehicle.human_attribute_name(:plate_number) %></th>
+          <th><%= Vehicle.human_attribute_name(:vin) %></th>
+          <th><%= Vehicle.human_attribute_name(:mileage) %></th>
+          <th><%= Client.model_name.human %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @vehicles.each do |vehicle| %>
+          <tr>
+            <td><%= link_to vehicle.title, vehicle %></td>
+            <td><% if vehicle.plate_number %><span class="plate"><%= vehicle.plate_number %></span><% end %></td>
+            <td class="mono"><%= vehicle.vin %></td>
+            <td><%= t("vehicles.km", count: number_with_delimiter(vehicle.mileage)) if vehicle.mileage %></td>
+            <td><%= link_to vehicle.client.display_name, vehicle.client %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= pagination(@pagy) %>
+<% else %>
+  <p class="empty"><%= t("vehicles.empty") %></p>
+<% end %>

@@ -1,10 +1,10 @@
 public_note:
-  notable: guest (Person)
+  notable: petrov (Client)
   body: Публичная заметка
-  author: editor
+  author: advisor
 
 private_note:
-  notable: guest (Person)
+  notable: petrov (Client)
   body: Секретная заметка
   private: true
   author: admin

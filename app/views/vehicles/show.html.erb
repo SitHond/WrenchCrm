@@ -1,0 +1,49 @@
+<%= page_header @vehicle.title do %>
+  <%= link_to t("work_orders.new"), new_work_order_path(vehicle_id: @vehicle.id), class: "btn btn-primary" if can?(:manage_orders) %>
+  <%= link_to t("edit"), edit_vehicle_path(@vehicle), class: "btn" if can?(:manage_clients) %>
+  <%= button_to t("delete"), @vehicle, method: :delete, class: "btn btn-danger",
+        form: { data: { turbo_confirm: t("confirm") } } if can?(:delete_records) %>
+<% end %>
+
+<p class="subtitle">
+  <% if @vehicle.plate_number %><span class="plate"><%= @vehicle.plate_number %></span> · <% end %>
+  <%= link_to @vehicle.client.display_name, @vehicle.client %>, <%= @vehicle.client.phone %>
+</p>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("vehicles.sections.details") %></h2>
+    <dl class="details">
+      <%= detail_row Vehicle.human_attribute_name(:vin), tag.span(@vehicle.vin, class: "mono") if @vehicle.vin %>
+      <%= detail_row Vehicle.human_attribute_name(:year), @vehicle.year %>
+      <%= detail_row Vehicle.human_attribute_name(:color), @vehicle.color %>
+      <%= detail_row Vehicle.human_attribute_name(:engine), @vehicle.engine %>
+      <%= detail_row Vehicle.human_attribute_name(:mileage), (t("vehicles.km", count: number_with_delimiter(@vehicle.mileage)) if @vehicle.mileage) %>
+    </dl>
+  </section>
+
+  <%= render "notes/section", notable: @vehicle, notes: @notes %>
+</div>
+
+<section class="card">
+  <h2><%= t("vehicles.history") %></h2>
+  <% if @work_orders.any? %>
+    <% @work_orders.each do |order| %>
+      <div class="history-item">
+        <div class="history-head">
+          <%= link_to "№ #{order.number}", order %>
+          <span class="muted"><%= l(order.created_at.to_date) %></span>
+          <% if order.mileage %><span class="muted"><%= t("vehicles.km", count: number_with_delimiter(order.mileage)) %></span><% end %>
+          <%= status_badge(order) %>
+          <span class="spacer"></span>
+          <strong><%= money(order.total) %></strong>
+        </div>
+        <% if order.labor_lines.any? || order.part_lines.any? %>
+          <p class="muted small"><%= (order.labor_lines.map(&:name) + order.part_lines.map(&:name)).join(", ") %></p>
+        <% end %>
+      </div>
+    <% end %>
+  <% else %>
+    <p class="muted"><%= t("vehicles.no_history") %></p>
+  <% end %>
+</section>

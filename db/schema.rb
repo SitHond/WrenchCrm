@@ -10,64 +10,41 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_14_200400) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_000500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "families", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "address1"
-    t.string "address2"
-    t.string "city"
-    t.string "state"
-    t.string "zip"
-    t.string "country"
-    t.string "home_phone"
+  create_table "clients", force: :cascade do |t|
+    t.integer "kind", default: 0, null: false
+    t.string "last_name"
+    t.string "first_name"
+    t.string "middle_name"
+    t.string "company_name"
+    t.string "inn"
+    t.string "phone", null: false
+    t.string "phone2"
     t.string "email"
-    t.date "wedding_date"
-    t.boolean "send_newsletter", default: false, null: false
+    t.string "address"
+    t.decimal "discount_percent", precision: 5, scale: 2, default: "0.0", null: false
     t.date "deactivated_on"
     t.bigint "created_by_id"
-    t.bigint "updated_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["created_by_id"], name: "index_families_on_created_by_id"
-    t.index ["name"], name: "index_families_on_name"
-    t.index ["updated_by_id"], name: "index_families_on_updated_by_id"
+    t.index ["company_name"], name: "index_clients_on_company_name"
+    t.index ["created_by_id"], name: "index_clients_on_created_by_id"
+    t.index ["last_name", "first_name"], name: "index_clients_on_last_name_and_first_name"
+    t.index ["phone"], name: "index_clients_on_phone"
   end
 
-  create_table "group_memberships", force: :cascade do |t|
-    t.bigint "group_id", null: false
-    t.bigint "person_id", null: false
-    t.bigint "group_role_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["group_id", "person_id"], name: "index_group_memberships_on_group_id_and_person_id", unique: true
-    t.index ["group_id"], name: "index_group_memberships_on_group_id"
-    t.index ["group_role_id"], name: "index_group_memberships_on_group_role_id"
-    t.index ["person_id"], name: "index_group_memberships_on_person_id"
-  end
-
-  create_table "group_roles", force: :cascade do |t|
-    t.bigint "group_id", null: false
+  create_table "employees", force: :cascade do |t|
     t.string "name", null: false
     t.integer "position", default: 0, null: false
-    t.boolean "default", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["group_id", "name"], name: "index_group_roles_on_group_id_and_name", unique: true
-    t.index ["group_id"], name: "index_group_roles_on_group_id"
-  end
-
-  create_table "groups", force: :cascade do |t|
-    t.string "name", null: false
-    t.text "description"
-    t.integer "group_type", default: 0, null: false
+    t.string "phone"
     t.boolean "active", default: true, null: false
-    t.boolean "include_in_email_export", default: true, null: false
+    t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_groups_on_name", unique: true
+    t.index ["user_id"], name: "index_employees_on_user_id", unique: true
   end
 
   create_table "notes", force: :cascade do |t|
@@ -82,46 +59,44 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_200400) do
     t.index ["notable_type", "notable_id"], name: "index_notes_on_notable"
   end
 
-  create_table "people", force: :cascade do |t|
-    t.bigint "family_id"
-    t.string "title"
-    t.string "first_name", null: false
-    t.string "middle_name"
-    t.string "last_name", null: false
-    t.string "suffix"
-    t.integer "gender", default: 0, null: false
-    t.integer "family_role", default: 0, null: false
-    t.integer "classification", default: 0, null: false
-    t.integer "birth_day"
-    t.integer "birth_month"
-    t.integer "birth_year"
-    t.date "membership_date"
-    t.date "friend_date"
-    t.date "deceased_on"
-    t.string "email"
-    t.string "work_email"
-    t.string "cell_phone"
-    t.string "home_phone"
-    t.string "work_phone"
-    t.string "address1"
-    t.string "address2"
-    t.string "city"
-    t.string "state"
-    t.string "zip"
-    t.string "country"
-    t.string "facebook"
-    t.string "telegram"
-    t.date "deactivated_on"
-    t.bigint "created_by_id"
-    t.bigint "updated_by_id"
+  create_table "parts", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "sku"
+    t.string "brand"
+    t.string "unit", default: "pcs", null: false
+    t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "quantity", precision: 12, scale: 3, default: "0.0", null: false
+    t.decimal "min_quantity", precision: 12, scale: 3, default: "0.0", null: false
+    t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["classification"], name: "index_people_on_classification"
-    t.index ["created_by_id"], name: "index_people_on_created_by_id"
-    t.index ["email"], name: "index_people_on_email"
-    t.index ["family_id"], name: "index_people_on_family_id"
-    t.index ["last_name", "first_name"], name: "index_people_on_last_name_and_first_name"
-    t.index ["updated_by_id"], name: "index_people_on_updated_by_id"
+    t.index ["name"], name: "index_parts_on_name"
+    t.index ["sku"], name: "index_parts_on_sku"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.bigint "work_order_id", null: false
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.integer "payment_method", default: 0, null: false
+    t.datetime "paid_at", null: false
+    t.string "comment"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_payments_on_created_by_id"
+    t.index ["work_order_id"], name: "index_payments_on_work_order_id"
+  end
+
+  create_table "services", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "code"
+    t.decimal "norm_hours", precision: 6, scale: 2
+    t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_services_on_name"
   end
 
   create_table "sessions", force: :cascade do |t|
@@ -138,32 +113,100 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_14_200400) do
     t.string "password_digest", null: false
     t.string "name", null: false
     t.string "locale", default: "ru", null: false
-    t.boolean "admin", default: false, null: false
-    t.boolean "add_records", default: false, null: false
-    t.boolean "edit_records", default: false, null: false
-    t.boolean "delete_records", default: false, null: false
-    t.boolean "manage_groups", default: false, null: false
-    t.boolean "notes", default: false, null: false
     t.boolean "active", default: true, null: false
+    t.boolean "admin", default: false, null: false
+    t.boolean "manage_clients", default: false, null: false
+    t.boolean "manage_orders", default: false, null: false
+    t.boolean "manage_catalog", default: false, null: false
+    t.boolean "manage_payments", default: false, null: false
+    t.boolean "delete_records", default: false, null: false
     t.datetime "last_login_at"
     t.integer "login_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "person_id"
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
-    t.index ["person_id"], name: "index_users_on_person_id", unique: true
   end
 
-  add_foreign_key "families", "users", column: "created_by_id"
-  add_foreign_key "families", "users", column: "updated_by_id"
-  add_foreign_key "group_memberships", "group_roles"
-  add_foreign_key "group_memberships", "groups", on_delete: :cascade
-  add_foreign_key "group_memberships", "people", on_delete: :cascade
-  add_foreign_key "group_roles", "groups", on_delete: :cascade
+  create_table "vehicles", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.string "make", null: false
+    t.string "model", null: false
+    t.integer "year"
+    t.string "vin"
+    t.string "plate_number"
+    t.string "color"
+    t.string "engine"
+    t.integer "mileage"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_vehicles_on_client_id"
+    t.index ["plate_number"], name: "index_vehicles_on_plate_number"
+    t.index ["vin"], name: "index_vehicles_on_vin", unique: true, where: "((vin IS NOT NULL) AND ((vin)::text <> ''::text))"
+  end
+
+  create_table "work_order_labors", force: :cascade do |t|
+    t.bigint "work_order_id", null: false
+    t.bigint "service_id"
+    t.bigint "employee_id"
+    t.string "name", null: false
+    t.decimal "quantity", precision: 8, scale: 2, default: "1.0", null: false
+    t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_work_order_labors_on_employee_id"
+    t.index ["service_id"], name: "index_work_order_labors_on_service_id"
+    t.index ["work_order_id"], name: "index_work_order_labors_on_work_order_id"
+  end
+
+  create_table "work_order_parts", force: :cascade do |t|
+    t.bigint "work_order_id", null: false
+    t.bigint "part_id"
+    t.string "name", null: false
+    t.decimal "quantity", precision: 12, scale: 3, default: "1.0", null: false
+    t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["part_id"], name: "index_work_order_parts_on_part_id"
+    t.index ["work_order_id"], name: "index_work_order_parts_on_work_order_id"
+  end
+
+  create_table "work_orders", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "vehicle_id", null: false
+    t.bigint "mechanic_id"
+    t.bigint "created_by_id"
+    t.integer "status", default: 0, null: false
+    t.integer "mileage"
+    t.text "complaint"
+    t.text "diagnosis"
+    t.text "recommendations"
+    t.decimal "discount_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.datetime "promised_at"
+    t.datetime "completed_at"
+    t.datetime "closed_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id"], name: "index_work_orders_on_client_id"
+    t.index ["created_by_id"], name: "index_work_orders_on_created_by_id"
+    t.index ["mechanic_id"], name: "index_work_orders_on_mechanic_id"
+    t.index ["status"], name: "index_work_orders_on_status"
+    t.index ["vehicle_id"], name: "index_work_orders_on_vehicle_id"
+  end
+
+  add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "employees", "users", on_delete: :nullify
   add_foreign_key "notes", "users", column: "author_id", on_delete: :nullify
-  add_foreign_key "people", "families", on_delete: :nullify
-  add_foreign_key "people", "users", column: "created_by_id"
-  add_foreign_key "people", "users", column: "updated_by_id"
+  add_foreign_key "payments", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "payments", "work_orders"
   add_foreign_key "sessions", "users"
-  add_foreign_key "users", "people", on_delete: :nullify
+  add_foreign_key "vehicles", "clients"
+  add_foreign_key "work_order_labors", "employees", on_delete: :nullify
+  add_foreign_key "work_order_labors", "services", on_delete: :nullify
+  add_foreign_key "work_order_labors", "work_orders", on_delete: :cascade
+  add_foreign_key "work_order_parts", "parts", on_delete: :nullify
+  add_foreign_key "work_order_parts", "work_orders", on_delete: :cascade
+  add_foreign_key "work_orders", "clients"
+  add_foreign_key "work_orders", "employees", column: "mechanic_id", on_delete: :nullify
+  add_foreign_key "work_orders", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "work_orders", "vehicles"
 end

@@ -4,14 +4,14 @@ services:
   db:
     image: docker.io/library/postgres:17-alpine
     environment:
-      POSTGRES_USER: church_crm
-      POSTGRES_PASSWORD: church_crm
+      POSTGRES_USER: wrench_crm
+      POSTGRES_PASSWORD: wrench_crm
     volumes:
       - pgdata_dev:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U church_crm"]
+      test: ["CMD-SHELL", "pg_isready -U wrench_crm"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -25,8 +25,8 @@ services:
         condition: service_healthy
     environment:
       DB_HOST: db
-      DB_USER: church_crm
-      DB_PASSWORD: church_crm
+      DB_USER: wrench_crm
+      DB_PASSWORD: wrench_crm
     volumes:
       - .:/app:Z
       - bundle:/usr/local/bundle

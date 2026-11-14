@@ -1,0 +1,39 @@
+<%= page_header t("nav.services") do %>
+  <%= link_to t("services.new"), new_service_path, class: "btn btn-primary" if can?(:manage_catalog) %>
+<% end %>
+
+<%= form_with url: services_path, method: :get, class: "filters" do |form| %>
+  <%= form.search_field :q, value: params[:q], placeholder: t("services.search_placeholder"), aria: { label: t("search") } %>
+  <%= form.select :status, [ [ t("status.active"), "" ], [ t("filter.all"), "all" ] ], selected: params[:status] %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<% if @services.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Service.human_attribute_name(:code) %></th>
+          <th><%= Service.human_attribute_name(:name) %></th>
+          <th class="num"><%= Service.human_attribute_name(:norm_hours) %></th>
+          <th class="num"><%= Service.human_attribute_name(:price) %></th>
+          <% if can?(:manage_catalog) %><th></th><% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @services.each do |service| %>
+          <tr class="<%= "inactive" unless service.active? %>">
+            <td class="mono"><%= service.code %></td>
+            <td><%= service.name %></td>
+            <td class="num"><%= number(service.norm_hours) %></td>
+            <td class="num"><%= money(service.price) %></td>
+            <% if can?(:manage_catalog) %><td class="actions-cell"><%= link_to t("edit"), edit_service_path(service) %></td><% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= pagination(@pagy) %>
+<% else %>
+  <p class="empty"><%= t("services.empty") %></p>
+<% end %>

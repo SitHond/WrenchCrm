@@ -1,0 +1,30 @@
+<%= form_with model: part, class: "form narrow" do |form| %>
+  <%= render "shared/errors", record: part %>
+  <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+  <div class="row">
+    <div class="field"><%= form.label :sku %><%= form.text_field :sku %></div>
+    <div class="field"><%= form.label :brand %><%= form.text_field :brand %></div>
+    <div class="field small"><%= form.label :unit %><%= form.select :unit, Part::UNITS.map { |u| [ t("parts.units.#{u}"), u ] } %></div>
+  </div>
+  <div class="row">
+    <div class="field"><%= form.label :cost %><%= form.number_field :cost, step: 0.01, min: 0 %></div>
+    <div class="field"><%= form.label :price %><%= form.number_field :price, step: 0.01, min: 0, required: true %></div>
+  </div>
+  <div class="row">
+    <% if part.new_record? %>
+      <div class="field"><%= form.label :quantity %><%= form.number_field :quantity, step: 0.001 %></div>
+    <% else %>
+      <div class="field"><%= form.label :quantity %><input type="text" value="<%= quantity_with_unit(part.quantity, part.unit) %>" disabled></div>
+    <% end %>
+    <div class="field"><%= form.label :min_quantity %><%= form.number_field :min_quantity, step: 0.001, min: 0 %></div>
+  </div>
+  <% if part.persisted? %><p class="hint"><%= t("parts.quantity_hint") %></p><% end %>
+  <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), parts_path, class: "btn" %>
+  </div>
+<% end %>
+<% if part.persisted? %>
+  <%= button_to t("delete"), part, method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
+<% end %>

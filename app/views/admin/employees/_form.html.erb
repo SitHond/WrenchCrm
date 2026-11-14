@@ -1,0 +1,17 @@
+<%= form_with model: [ :admin, employee ], class: "form narrow" do |form| %>
+  <%= render "shared/errors", record: employee %>
+  <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
+  <div class="row">
+    <div class="field"><%= form.label :position %><%= form.select :position, enum_options(Employee, :position) %></div>
+    <div class="field"><%= form.label :phone %><%= form.telephone_field :phone %></div>
+  </div>
+  <div class="field"><%= form.label :user_id %><%= form.collection_select :user_id, User.ordered, :id, :name, include_blank: "—" %></div>
+  <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), admin_employees_path, class: "btn" %>
+  </div>
+<% end %>
+<% if employee.persisted? %>
+  <%= button_to t("delete"), admin_employee_path(employee), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
+<% end %>

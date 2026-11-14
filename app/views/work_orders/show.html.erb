@@ -1,0 +1,126 @@
+<% editable = @work_order.editable? && can?(:manage_orders) %>
+<%= page_header t("work_orders.title", number: @work_order.number) do %>
+  <%= link_to t("work_orders.print"), print_work_order_path(@work_order), class: "btn" %>
+  <%= link_to t("edit"), edit_work_order_path(@work_order), class: "btn" if editable %>
+  <%= button_to t("delete"), @work_order, method: :delete, class: "btn btn-danger",
+        form: { data: { turbo_confirm: t("confirm") } } if can?(:delete_records) %>
+<% end %>
+
+<div class="order-status">
+  <%= status_badge(@work_order) %>
+  <% if can?(:manage_orders) %>
+    <% @work_order.next_statuses.each do |status| %>
+      <%= button_to t("work_orders.transition.#{status}"), status_work_order_path(@work_order, status: status), method: :patch,
+            class: [ "btn", ("btn-primary" if status.in?(%w[ready closed])), ("btn-danger" if status == "cancelled") ],
+            form: (status == "cancelled" ? { data: { turbo_confirm: t("work_orders.confirm_cancel") } } : {}) %>
+    <% end %>
+  <% end %>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("work_orders.sections.vehicle") %></h2>
+    <dl class="details">
+      <%= detail_row Vehicle.model_name.human, link_to(@work_order.vehicle.title, @work_order.vehicle) %>
+      <%= detail_row Vehicle.human_attribute_name(:plate_number), (tag.span(@work_order.vehicle.plate_number, class: "plate") if @work_order.vehicle.plate_number) %>
+      <%= detail_row Vehicle.human_attribute_name(:vin), (tag.span(@work_order.vehicle.vin, class: "mono") if @work_order.vehicle.vin) %>
+      <%= detail_row WorkOrder.human_attribute_name(:mileage), (t("vehicles.km", count: number_with_delimiter(@work_order.mileage)) if @work_order.mileage) %>
+      <%= detail_row Client.model_name.human, link_to(@work_order.client.display_name, @work_order.client) %>
+      <%= detail_row Client.human_attribute_name(:phone), link_to(@work_order.client.phone, "tel:#{@work_order.client.phone}") %>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><%= t("work_orders.sections.order") %></h2>
+    <dl class="details">
+      <%= detail_row WorkOrder.human_attribute_name(:created_at), l(@work_order.created_at, format: :short) %>
+      <%= detail_row WorkOrder.human_attribute_name(:mechanic), @work_order.mechanic&.name %>
+      <%= detail_row WorkOrder.human_attribute_name(:promised_at), (l(@work_order.promised_at, format: :short) if @work_order.promised_at) %>
+      <%= detail_row WorkOrder.human_attribute_name(:completed_at), (l(@work_order.completed_at, format: :short) if @work_order.completed_at) %>
+      <%= detail_row WorkOrder.human_attribute_name(:closed_at), (l(@work_order.closed_at, format: :short) if @work_order.closed_at) %>
+      <%= detail_row WorkOrder.human_attribute_name(:created_by), @work_order.created_by&.name %>
+    </dl>
+  </section>
+</div>
+
+<% if @work_order.complaint.present? || @work_order.diagnosis.present? || @work_order.recommendations.present? %>
+  <section class="card">
+    <dl class="details stacked">
+      <%= detail_row WorkOrder.human_attribute_name(:complaint), simple_format(@work_order.complaint) if @work_order.complaint.present? %>
+      <%= detail_row WorkOrder.human_attribute_name(:diagnosis), simple_format(@work_order.diagnosis) if @work_order.diagnosis.present? %>
+      <%= detail_row WorkOrder.human_attribute_name(:recommendations), simple_format(@work_order.recommendations) if @work_order.recommendations.present? %>
+    </dl>
+  </section>
+<% end %>
+
+<section class="card" id="work_order_labor">
+  <h2><%= t("work_orders.sections.labor") %></h2>
+  <%= render "work_orders/lines", lines: @labor_lines, editable: editable, kind: :labor %>
+  <% if editable %>
+    <%= form_with model: [ @work_order, WorkOrderLabor.new ], class: "line-form" do |form| %>
+      <%= form.collection_select :service_id, Service.active.ordered, :id, ->(s) { "#{s.label} — #{money(s.price)}" },
+            { include_blank: t("work_orders.from_catalog") }, aria: { label: Service.model_name.human } %>
+      <%= form.text_field :name, placeholder: t("work_orders.or_custom_name"), aria: { label: WorkOrderLabor.human_attribute_name(:name) } %>
+      <%= form.number_field :quantity, value: 1, step: 0.1, min: 0.1, class: "qty", aria: { label: WorkOrderLabor.human_attribute_name(:quantity) } %>
+      <%= form.number_field :price, step: 0.01, min: 0, placeholder: WorkOrderLabor.human_attribute_name(:price), class: "price", aria: { label: WorkOrderLabor.human_attribute_name(:price) } %>
+      <%= form.collection_select :employee_id, Employee.active.mechanic.ordered, :id, :name,
+            { include_blank: WorkOrderLabor.human_attribute_name(:employee), selected: @work_order.mechanic_id }, aria: { label: WorkOrderLabor.human_attribute_name(:employee) } %>
+      <%= form.submit t("add"), class: "btn" %>
+    <% end %>
+    <p class="hint"><%= t("work_orders.catalog_hint") %></p>
+  <% end %>
+</section>
+
+<section class="card" id="work_order_part">
+  <h2><%= t("work_orders.sections.parts") %></h2>
+  <%= render "work_orders/lines", lines: @part_lines, editable: editable, kind: :part %>
+  <% if editable %>
+    <%= form_with model: [ @work_order, WorkOrderPart.new ], class: "line-form" do |form| %>
+      <%= form.collection_select :part_id, Part.active.ordered, :id,
+            ->(p) { "#{p.label} — #{money(p.price)} (#{quantity_with_unit(p.quantity, p.unit)})" },
+            { include_blank: t("work_orders.from_stock") }, aria: { label: Part.model_name.human } %>
+      <%= form.text_field :name, placeholder: t("work_orders.or_custom_name"), aria: { label: WorkOrderPart.human_attribute_name(:name) } %>
+      <%= form.number_field :quantity, value: 1, step: 0.001, min: 0.001, class: "qty", aria: { label: WorkOrderPart.human_attribute_name(:quantity) } %>
+      <%= form.number_field :price, step: 0.01, min: 0, placeholder: WorkOrderPart.human_attribute_name(:price), class: "price", aria: { label: WorkOrderPart.human_attribute_name(:price) } %>
+      <%= form.submit t("add"), class: "btn" %>
+    <% end %>
+  <% end %>
+</section>
+
+<div class="grid-2">
+  <section class="card totals-card">
+    <h2><%= t("work_orders.sections.totals") %></h2>
+    <%= render "work_orders/totals", work_order: @work_order %>
+  </section>
+
+  <section class="card" id="payments">
+    <h2><%= Payment.model_name.human(count: 2) %></h2>
+    <% if @payments.any? %>
+      <ul class="list">
+        <% @payments.each do |payment| %>
+          <li>
+            <strong><%= money(payment.amount) %></strong>
+            <span><%= enum_label(Payment, :payment_method, payment.payment_method) %></span>
+            <span class="muted"><%= l(payment.paid_at, format: :short) %><%= " · #{payment.comment}" if payment.comment.present? %></span>
+            <% if can?(:manage_payments) %>
+              <%= button_to "×", work_order_payment_path(@work_order, payment), method: :delete, class: "link-button danger",
+                    title: t("delete"), form: { data: { turbo_confirm: t("confirm") } } %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("payments.empty") %></p>
+    <% end %>
+    <% if can?(:manage_payments) && !@work_order.cancelled? && @work_order.balance.positive? %>
+      <%= form_with model: [ @work_order, Payment.new ], class: "inline-form" do |form| %>
+        <%= form.number_field :amount, value: @work_order.balance, step: 0.01, class: "price", aria: { label: Payment.human_attribute_name(:amount) } %>
+        <%= form.select :payment_method, enum_options(Payment, :payment_method), {}, aria: { label: Payment.human_attribute_name(:payment_method) } %>
+        <%= form.text_field :comment, placeholder: Payment.human_attribute_name(:comment), aria: { label: Payment.human_attribute_name(:comment) } %>
+        <%= form.submit t("payments.add"), class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+  </section>
+</div>
+
+<%= render "notes/section", notable: @work_order, notes: @notes %>

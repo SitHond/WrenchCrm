@@ -6,13 +6,13 @@ admin:
   password_digest: <%= password_digest %>
   admin: true
 
-editor:
-  name: Editor
-  email_address: editor@example.com
+advisor:
+  name: Advisor
+  email_address: advisor@example.com
   password_digest: <%= password_digest %>
-  add_records: true
-  edit_records: true
-  notes: true
+  manage_clients: true
+  manage_orders: true
+  manage_payments: true
 
 viewer:
   name: Viewer

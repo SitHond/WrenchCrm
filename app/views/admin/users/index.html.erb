@@ -18,12 +18,11 @@
         <tr class="<%= "inactive" unless user.active? %>">
           <td>
             <%= user.name %>
-            <% if user.person %><span class="muted">(<%= link_to user.person.short_name, user.person %>)</span><% end %>
           </td>
           <td><%= user.email_address %></td>
           <td>
             <% if user.admin? %>
-              <span class="badge badge-member"><%= User.human_attribute_name(:admin) %></span>
+              <span class="badge status-ready"><%= User.human_attribute_name(:admin) %></span>
             <% else %>
               <%= User::PERMISSIONS.select { |p| user.public_send(p) }.map { |p| User.human_attribute_name(p) }.join(", ").presence || "—" %>
             <% end %>

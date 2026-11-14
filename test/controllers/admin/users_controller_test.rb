@@ -5,9 +5,9 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
     sign_in_as users(:admin)
     assert_difference(-> { User.count }) do
       post admin_users_path, params: { user: { name: "Пастор", email_address: "pastor@example.com", password: "secret123",
-                                               password_confirmation: "secret123", locale: "ru", manage_groups: "1" } }
+                                               password_confirmation: "secret123", locale: "ru", manage_catalog: "1" } }
     end
-    assert User.find_by!(email_address: "pastor@example.com").can_manage_groups?
+    assert User.find_by!(email_address: "pastor@example.com").can_manage_catalog?
   end
 
   test "blank password keeps the old one" do
@@ -26,7 +26,7 @@ class Admin::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "non-admin is denied" do
-    sign_in_as users(:editor)
+    sign_in_as users(:advisor)
     get admin_users_path
     assert_redirected_to root_path
   end

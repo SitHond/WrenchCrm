@@ -1,0 +1,43 @@
+<% if lines.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= WorkOrderLabor.human_attribute_name(:name) %></th>
+          <% if kind == :labor %><th><%= WorkOrderLabor.human_attribute_name(:employee) %></th><% end %>
+          <th class="num"><%= kind == :labor ? WorkOrderLabor.human_attribute_name(:quantity) : WorkOrderPart.human_attribute_name(:quantity) %></th>
+          <th class="num"><%= WorkOrderLabor.human_attribute_name(:price) %></th>
+          <th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th>
+          <% if editable %><th></th><% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% lines.each do |line| %>
+          <tr>
+            <td><%= line.name %></td>
+            <% if kind == :labor %><td><%= line.employee&.name %></td><% end %>
+            <td class="num">
+              <% if editable %>
+                <%= form_with model: [ @work_order, line ], class: "inline-form compact" do |form| %>
+                  <%= form.number_field :quantity, step: (kind == :labor ? 0.1 : 0.001), min: 0.001, class: "qty",
+                        data: { controller: "auto-submit", action: "change->auto-submit#submit" }, aria: { label: WorkOrderLabor.human_attribute_name(:quantity) } %>
+                <% end %>
+              <% else %>
+                <%= number(line.quantity) %>
+              <% end %>
+            </td>
+            <td class="num"><%= money(line.price) %></td>
+            <td class="num"><%= money(line.total) %></td>
+            <% if editable %>
+              <td class="actions-cell">
+                <%= button_to "×", [ @work_order, line ], method: :delete, class: "link-button danger", title: t("delete") %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="muted"><%= t("work_orders.no_lines") %></p>
+<% end %>

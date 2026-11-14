@@ -1,0 +1,12 @@
+open_order:
+  client: petrov
+  vehicle: solaris
+  mechanic: ivan
+  status: 1
+  mileage: 90000
+  complaint: Скрип тормозов
+
+closed_order:
+  client: petrov
+  vehicle: solaris
+  status: 4

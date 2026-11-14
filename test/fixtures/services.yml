@@ -1,0 +1,5 @@
+oil_change:
+  name: Замена масла
+  code: M01
+  norm_hours: 0.5
+  price: 1200

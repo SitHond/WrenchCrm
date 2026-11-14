@@ -4,7 +4,7 @@ module Admin
     before_action :set_user, only: %i[ edit update destroy ]
 
     def index
-      @users = User.ordered.includes(:person)
+      @users = User.ordered
     end
 
     def new
@@ -51,7 +51,7 @@ module Admin
       end
 
       def user_params
-        params.expect(user: [ :name, :email_address, :password, :password_confirmation, :locale, :person_id,
+        params.expect(user: [ :name, :email_address, :password, :password_confirmation, :locale,
                               :active, :admin, *User::PERMISSIONS ])
       end
   end

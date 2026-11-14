@@ -1,13 +1,11 @@
 <section class="card">
   <h2><%= Note.model_name.human(count: 2) %></h2>
-  <% if can?(:notes) %>
-    <%= form_with model: [ notable, Note.new ], class: "form note-form" do |form| %>
-      <%= form.text_area :body, rows: 3, required: true, placeholder: t("notes.placeholder"), aria: { label: Note.human_attribute_name(:body) } %>
-      <div class="row between">
-        <div class="field checkbox"><%= form.check_box :private %><%= form.label :private %></div>
-        <%= form.submit t("notes.add"), class: "btn" %>
-      </div>
-    <% end %>
+  <%= form_with model: [ notable, Note.new ], class: "form note-form" do |form| %>
+    <%= form.text_area :body, rows: 3, required: true, placeholder: t("notes.placeholder"), aria: { label: Note.human_attribute_name(:body) } %>
+    <div class="row between">
+      <div class="field checkbox"><%= form.check_box :private %><%= form.label :private %></div>
+      <%= form.submit t("notes.add"), class: "btn" %>
+    </div>
   <% end %>
   <% if notes.any? %>
     <ul class="notes">
@@ -16,7 +14,7 @@
           <div class="note-meta">
             <%= note.author&.name || t("notes.unknown_author") %> · <%= l(note.created_at, format: :short) %>
             <% if note.private? %><span class="badge"><%= Note.human_attribute_name(:private) %></span><% end %>
-            <% if can?(:notes) && note.editable_by?(current_user) %>
+            <% if note.editable_by?(current_user) %>
               <%= link_to t("edit"), edit_note_path(note), class: "link-button" %>
               <%= button_to t("delete"), note_path(note), method: :delete, class: "link-button danger",
                     form: { data: { turbo_confirm: t("confirm") } } %>
@@ -26,7 +24,5 @@
         </li>
       <% end %>
     </ul>
-  <% elsif !can?(:notes) %>
-    <p class="muted"><%= t("notes.empty") %></p>
   <% end %>
 </section>

@@ -5,20 +5,31 @@ Rails.application.routes.draw do
   resource :locale, only: :update
   resource :profile, only: %i[ edit update ]
 
-  resources :people do
+  resources :clients do
     resources :notes, only: :create
   end
-  resources :families do
+  resources :vehicles do
+    resources :notes, only: :create
+  end
+  resources :work_orders do
+    member do
+      get :print
+      patch :status
+    end
+    resources :work_order_labors, only: %i[ create update destroy ]
+    resources :work_order_parts, only: %i[ create update destroy ]
+    resources :payments, only: %i[ create destroy ]
     resources :notes, only: :create
   end
   resources :notes, only: %i[ edit update destroy ]
-  resources :groups do
-    resources :group_memberships, only: %i[ create update destroy ]
-    resources :group_roles, only: %i[ create update destroy ]
+  resources :services, except: :show
+  resources :parts, except: :show do
+    patch :receive, on: :member
   end
 
   namespace :admin do
     resources :users, except: :show
+    resources :employees, except: :show
   end
 
   root "dashboard#show"

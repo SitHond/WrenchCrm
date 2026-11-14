@@ -23,22 +23,26 @@ module ApplicationHelper
     end
   end
 
-  def classification_badge(person)
-    tag.span(enum_label(Person, :classification, person.classification), class: "badge badge-#{person.classification}")
-  end
-
   def detail_row(label, value)
     return if value.blank?
 
     safe_join([ tag.dt(label), tag.dd(value) ])
   end
 
-  def birthday_text(person)
-    return unless person.birth_month && person.birth_day
+  def money(amount)
+    number_to_currency(amount || 0, unit: Rails.configuration.x.currency_unit, format: "%n %u", precision: 2)
+  end
 
-    date = Date.new(person.birth_year || 2000, person.birth_month, person.birth_day)
-    text = l(date, format: person.birth_year ? :long : :day_month)
-    person.age ? "#{text} (#{t('people.age', count: person.age)})" : text
+  def quantity_with_unit(quantity, unit)
+    "#{number_with_precision(quantity, precision: 3, strip_insignificant_zeros: true)} #{t("parts.units.#{unit}")}"
+  end
+
+  def number(value)
+    number_with_precision(value, precision: 2, strip_insignificant_zeros: true)
+  end
+
+  def status_badge(work_order)
+    tag.span(enum_label(WorkOrder, :status, work_order.status), class: "badge status-#{work_order.status}")
   end
 
   def can?(permission)
@@ -47,5 +51,9 @@ module ApplicationHelper
 
   def pagination(pagy)
     render "shared/pagination", pagy: pagy if pagy.pages > 1
+  end
+
+  def status_filter_options
+    [ [ t("status.active"), "active" ], [ t("status.inactive"), "inactive" ] ]
   end
 end

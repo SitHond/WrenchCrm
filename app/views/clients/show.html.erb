@@ -1,0 +1,54 @@
+<%= page_header @client.display_name do %>
+  <% if can?(:manage_orders) && @client.vehicles.any? %>
+    <%= link_to t("work_orders.new"), new_work_order_path(vehicle_id: @client.vehicles.first.id), class: "btn btn-primary" %>
+  <% end %>
+  <%= link_to t("edit"), edit_client_path(@client), class: "btn" if can?(:manage_clients) %>
+  <%= button_to t("delete"), @client, method: :delete, class: "btn btn-danger",
+        form: { data: { turbo_confirm: t("confirm") } } if can?(:delete_records) %>
+<% end %>
+
+<p class="subtitle">
+  <%= enum_label(Client, :kind, @client.kind) %>
+  <% unless @client.active? %>· <span class="badge"><%= t("status.inactive") %></span><% end %>
+</p>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("clients.sections.contacts") %></h2>
+    <dl class="details">
+      <%= detail_row Client.human_attribute_name(:phone), link_to(@client.phone, "tel:#{@client.phone}") %>
+      <%= detail_row Client.human_attribute_name(:phone2), (link_to(@client.phone2, "tel:#{@client.phone2}") if @client.phone2.present?) %>
+      <%= detail_row Client.human_attribute_name(:email), (mail_to(@client.email) if @client.email.present?) %>
+      <%= detail_row Client.human_attribute_name(:address), @client.address %>
+      <%= detail_row Client.human_attribute_name(:inn), @client.inn %>
+      <%= detail_row Client.human_attribute_name(:discount_percent), ("#{number(@client.discount_percent)}%" if @client.discount_percent.positive?) %>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><%= Client.human_attribute_name(:vehicles) %></h2>
+    <% if @client.vehicles.any? %>
+      <ul class="list">
+        <% @client.vehicles.each do |vehicle| %>
+          <li>
+            <%= link_to vehicle.title, vehicle %>
+            <% if vehicle.plate_number %><span class="plate"><%= vehicle.plate_number %></span><% end %>
+            <% if can?(:manage_orders) %>
+              <%= link_to t("work_orders.new_short"), new_work_order_path(vehicle_id: vehicle.id), class: "link-button" %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("clients.no_vehicles") %></p>
+    <% end %>
+    <%= link_to t("vehicles.new"), new_vehicle_path(client_id: @client.id), class: "btn" if can?(:manage_clients) %>
+  </section>
+</div>
+
+<section class="card">
+  <h2><%= t("nav.work_orders") %></h2>
+  <%= render "work_orders/table", work_orders: @work_orders, show_client: false %>
+</section>
+
+<%= render "notes/section", notable: @client, notes: @notes %>

@@ -14,15 +14,19 @@
     <div class="shell">
       <aside class="sidebar">
         <%= link_to root_path, class: "brand" do %>
-          <span class="brand-mark">✚</span> <%= t("app.name") %>
+          <span class="brand-mark">🔧</span> <%= t("app.name") %>
         <% end %>
         <nav>
           <%= nav_link t("nav.dashboard"), root_path, active_prefix: "/" %>
-          <%= nav_link t("nav.people"), people_path %>
-          <%= nav_link t("nav.families"), families_path %>
-          <%= nav_link t("nav.groups"), groups_path %>
+          <%= nav_link t("nav.work_orders"), work_orders_path %>
+          <%= nav_link t("nav.clients"), clients_path %>
+          <%= nav_link t("nav.vehicles"), vehicles_path %>
+          <div class="nav-section"><%= t("nav.catalog") %></div>
+          <%= nav_link t("nav.services"), services_path %>
+          <%= nav_link t("nav.parts"), parts_path %>
           <% if can?(:admin) %>
             <div class="nav-section"><%= t("nav.admin") %></div>
+            <%= nav_link t("nav.employees"), admin_employees_path %>
             <%= nav_link t("nav.users"), admin_users_path %>
           <% end %>
         </nav>

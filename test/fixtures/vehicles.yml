@@ -1,0 +1,14 @@
+solaris:
+  client: petrov
+  make: Hyundai
+  model: Solaris
+  year: 2017
+  plate_number: А123ВС 777
+  vin: Z94CT41DAJR123456
+  mileage: 90000
+
+polo:
+  client: taxi
+  make: Volkswagen
+  model: Polo
+  plate_number: Т789ХК 750

@@ -1,0 +1,13 @@
+<%= page_header t("nav.work_orders") do %>
+  <%= link_to t("work_orders.new"), new_work_order_path, class: "btn btn-primary" if can?(:manage_orders) %>
+<% end %>
+
+<%= form_with url: work_orders_path, method: :get, class: "filters" do |form| %>
+  <%= form.search_field :q, value: params[:q], placeholder: t("work_orders.search_placeholder"), aria: { label: t("search") } %>
+  <%= form.select :status, [ [ t("work_orders.filter.unfinished"), "" ], *enum_options(WorkOrder, :status), [ t("work_orders.filter.all"), "all" ] ],
+        selected: params[:status], aria: { label: WorkOrder.human_attribute_name(:status) } %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<%= render "table", work_orders: @work_orders %>
+<%= pagination(@pagy) %>

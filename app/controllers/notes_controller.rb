@@ -1,5 +1,4 @@
 class NotesController < ApplicationController
-  require_permission :notes
   before_action :set_notable, only: :create
   before_action :set_note, only: %i[ edit update destroy ]
 
@@ -30,7 +29,11 @@ class NotesController < ApplicationController
 
   private
     def set_notable
-      @notable = params[:person_id] ? Person.find(params[:person_id]) : Family.find(params[:family_id])
+      @notable =
+        if params[:client_id] then Client.find(params[:client_id])
+        elsif params[:vehicle_id] then Vehicle.find(params[:vehicle_id])
+        else WorkOrder.find(params[:work_order_id])
+        end
     end
 
     def set_note

@@ -1,0 +1,6 @@
+oil_line:
+  work_order: open_order
+  part: oil
+  name: Масло 5W-30
+  quantity: 1
+  price: 3800

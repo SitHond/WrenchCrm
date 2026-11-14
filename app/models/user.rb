@@ -1,10 +1,10 @@
 class User < ApplicationRecord
-  PERMISSIONS = %i[add_records edit_records delete_records manage_groups notes].freeze
+  PERMISSIONS = %i[manage_clients manage_orders manage_catalog manage_payments delete_records].freeze
   LOCALES = %w[ru en].freeze
 
   has_secure_password
   has_many :sessions, dependent: :destroy
-  belongs_to :person, optional: true
+  has_one :employee, dependent: :nullify
 
   normalizes :email_address, with: ->(e) { e.strip.downcase }
 

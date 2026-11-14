@@ -2,7 +2,6 @@
   <%= render "shared/errors", record: user %>
   <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
   <div class="field"><%= form.label :email_address %><%= form.email_field :email_address, required: true %></div>
-  <div class="field"><%= form.label :person_id %><%= form.collection_select :person_id, Person.active.ordered, :id, ->(p) { "#{p.last_name} #{p.first_name}" }, include_blank: "—" %></div>
   <div class="field"><%= form.label :locale %><%= form.select :locale, User::LOCALES.map { |l| [ t("locales.#{l}"), l ] } %></div>
 
   <fieldset>

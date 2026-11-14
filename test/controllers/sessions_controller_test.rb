@@ -1,7 +1,7 @@
 require "test_helper"
 
 class SessionsControllerTest < ActionDispatch::IntegrationTest
-  setup { @user = users(:editor) }
+  setup { @user = users(:advisor) }
 
   test "new" do
     get new_session_path
@@ -40,7 +40,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "pages require sign in" do
-    get people_path
+    get clients_path
     assert_redirected_to new_session_path
   end
 end

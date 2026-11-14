@@ -1,36 +1,61 @@
-return if Family.exists?
+return if Client.exists?
 
-I18n.with_locale(:ru) do
-  ActiveRecord::Base.transaction do
-    ivanovs = Family.create!(name: "Ивановы", city: "Москва", address1: "ул. Ленина, 10, кв. 5", zip: "101000",
-                             country: "Россия", home_phone: "+7 495 123-45-67", wedding_date: Date.new(2005, 6, 18))
-    ivanovs.people.create!(first_name: "Сергей", middle_name: "Петрович", last_name: "Иванов", gender: :male,
-                           family_role: :head_of_household, classification: :member, birth_day: 12, birth_month: Date.current.month,
-                           birth_year: 1978, cell_phone: "+7 916 111-22-33", email: "sergey@example.com", membership_date: Date.new(2010, 4, 4))
-    ivanovs.people.create!(first_name: "Анна", middle_name: "Викторовна", last_name: "Иванова", gender: :female,
-                           family_role: :spouse, classification: :member, birth_day: 3, birth_month: 9, birth_year: 1981,
-                           cell_phone: "+7 916 444-55-66", email: "anna@example.com", membership_date: Date.new(2010, 4, 4))
-    ivanovs.people.create!(first_name: "Миша", last_name: "Иванов", gender: :male, family_role: :child,
-                           classification: :regular_attender, birth_day: 21, birth_month: Date.current.month, birth_year: 2012)
+ActiveRecord::Base.transaction do
+  ivan = Employee.create!(name: "Иван Кузнецов", position: :mechanic, phone: "+7 900 100-00-01")
+  oleg = Employee.create!(name: "Олег Смирнов", position: :mechanic, phone: "+7 900 100-00-02")
+  Employee.create!(name: "Марина Орлова", position: :service_advisor, phone: "+7 900 100-00-03")
 
-    smiths = Family.create!(name: "Петровы", city: "Санкт-Петербург", address1: "Невский пр., 100", country: "Россия")
-    smiths.people.create!(first_name: "Ольга", last_name: "Петрова", gender: :female, family_role: :head_of_household,
-                          classification: :regular_attender, birth_day: 30, birth_month: 1, cell_phone: "+7 921 777-88-99")
+  services = {
+    diag: Service.create!(code: "D01", name: "Компьютерная диагностика", norm_hours: 0.5, price: 1500),
+    oil: Service.create!(code: "M01", name: "Замена масла в двигателе", norm_hours: 0.5, price: 1200),
+    pads: Service.create!(code: "B01", name: "Замена передних тормозных колодок", norm_hours: 1, price: 2000),
+    tires: Service.create!(code: "T01", name: "Шиномонтаж, комплект 4 колеса", norm_hours: 1, price: 3200),
+    align: Service.create!(code: "S01", name: "Развал-схождение", norm_hours: 1, price: 2500)
+  }
 
-    guest = Person.create!(first_name: "Дмитрий", last_name: "Соколов", gender: :male, classification: :guest,
-                           friend_date: 2.weeks.ago.to_date, telegram: "@dsokolov")
+  parts = {
+    oil: Part.create!(sku: "SH-5W30-4", name: "Масло моторное 5W-30, 4 л", brand: "Shell", unit: "pcs", cost: 2900, price: 3800, quantity: 12, min_quantity: 4),
+    filter: Part.create!(sku: "MANN-W712", name: "Фильтр масляный", brand: "MANN", unit: "pcs", cost: 450, price: 750, quantity: 3, min_quantity: 5),
+    pads: Part.create!(sku: "TRW-GDB1550", name: "Колодки тормозные передние", brand: "TRW", unit: "set", cost: 2400, price: 3600, quantity: 4, min_quantity: 2),
+    fluid: Part.create!(sku: "DOT4-1", name: "Тормозная жидкость DOT 4", brand: "Bosch", unit: "l", cost: 400, price: 650, quantity: 6, min_quantity: 2)
+  }
 
-    worship = Group.create!(name: "Прославление", group_type: :team, description: "Музыкальная команда воскресного служения.")
-    youth = Group.create!(name: "Молодёжь", group_type: :ministry)
-    Group.create!(name: "Домашняя группа на Таганке", group_type: :bible_study)
+  petrov = Client.create!(last_name: "Петров", first_name: "Алексей", middle_name: "Игоревич", phone: "+7 916 555-12-34", email: "petrov@example.com")
+  solaris = petrov.vehicles.create!(make: "Hyundai", model: "Solaris", year: 2017, plate_number: "А123ВС 777", vin: "Z94CT41DAJR123456", color: "Белый", mileage: 98_500)
 
-    leader = worship.group_roles.find_by!(default: false)
-    worship.group_memberships.create!(person: ivanovs.people.find_by!(first_name: "Анна"), group_role: leader)
-    worship.group_memberships.create!(person: ivanovs.people.find_by!(first_name: "Сергей"))
-    youth.group_memberships.create!(person: ivanovs.people.find_by!(first_name: "Миша"))
-    youth.group_memberships.create!(person: guest)
+  ivanova = Client.create!(last_name: "Иванова", first_name: "Елена", phone: "+7 926 222-33-44", discount_percent: 5)
+  rio = ivanova.vehicles.create!(make: "Kia", model: "Rio", year: 2020, plate_number: "М456ОР 799", color: "Синий", mileage: 41_200)
 
-    guest.notes.create!(body: "Пришёл по приглашению Сергея, интересуется молодёжной группой.")
-  end
+  taxi = Client.create!(kind: :company, company_name: "ООО «Быстрое такси»", inn: "7701234567", phone: "+7 495 777-00-00", discount_percent: 10)
+  polo = taxi.vehicles.create!(make: "Volkswagen", model: "Polo", year: 2019, plate_number: "Т789ХК 750", mileage: 210_000)
+  taxi.vehicles.create!(make: "Skoda", model: "Rapid", year: 2021, plate_number: "Т790ХК 750", mileage: 156_000)
+
+  done = WorkOrder.create!(vehicle: solaris, mechanic: ivan, mileage: 95_000, complaint: "Плановое ТО",
+                           created_at: 3.weeks.ago, recommendations: "Через 5 000 км заменить передние колодки.")
+  done.labor_lines.create!(service: services[:oil], employee: ivan)
+  done.part_lines.create!(part: parts[:oil])
+  done.part_lines.create!(part: parts[:filter])
+  done.change_status!(:in_progress)
+  done.change_status!(:ready)
+  done.payments.create!(amount: done.reload.total, payment_method: :card)
+  done.change_status!(:closed)
+
+  brakes = WorkOrder.create!(vehicle: solaris, mechanic: oleg, mileage: 98_500, complaint: "Скрип при торможении", promised_at: Date.current.noon)
+  brakes.labor_lines.create!(service: services[:diag], employee: oleg)
+  brakes.labor_lines.create!(service: services[:pads], employee: oleg)
+  brakes.part_lines.create!(part: parts[:pads])
+  brakes.part_lines.create!(part: parts[:fluid], quantity: 1)
+  brakes.change_status!(:in_progress)
+
+  tires = WorkOrder.create!(vehicle: rio, mechanic: ivan, complaint: "Сезонная смена шин, проверить развал")
+  tires.labor_lines.create!(service: services[:tires], employee: ivan)
+  tires.labor_lines.create!(service: services[:align], employee: ivan)
+  tires.change_status!(:in_progress)
+  tires.change_status!(:ready)
+
+  fleet = WorkOrder.create!(vehicle: polo, complaint: "Горит Check Engine, плавают обороты на холостом ходу")
+  fleet.labor_lines.create!(service: services[:diag])
+  fleet.change_status!(:waiting_parts)
+  fleet.notes.create!(body: "Заказан датчик положения дроссельной заслонки, поставка в четверг.")
 end
 puts "Loaded demo data"

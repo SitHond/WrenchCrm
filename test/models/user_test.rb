@@ -2,8 +2,7 @@ require "test_helper"
 
 class UserTest < ActiveSupport::TestCase
   test "downcases and strips email_address" do
-    user = User.new(email_address: " DOWNCASED@EXAMPLE.COM ")
-    assert_equal("downcased@example.com", user.email_address)
+    assert_equal "downcased@example.com", User.new(email_address: " DOWNCASED@EXAMPLE.COM ").email_address
   end
 
   test "admin has every permission" do
@@ -11,13 +10,13 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "permissions come from flags" do
-    editor = users(:editor)
-    assert editor.can_add_records?
-    assert_not editor.can_delete_records?
-    assert_not editor.can_manage_groups?
+    advisor = users(:advisor)
+    assert advisor.can_manage_orders?
+    assert_not advisor.can_manage_catalog?
+    assert_not advisor.can_delete_records?
   end
 
   test "inactive user has no permissions" do
-    assert_not users(:disabled).can_add_records?
+    assert_not users(:disabled).can_manage_orders?
   end
 end

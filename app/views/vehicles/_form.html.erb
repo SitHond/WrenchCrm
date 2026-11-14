@@ -1,0 +1,34 @@
+<%= form_with model: vehicle, class: "form" do |form| %>
+  <%= render "shared/errors", record: vehicle %>
+  <%= form.hidden_field :client_id if vehicle.new_record? %>
+
+  <p class="subtitle"><%= Client.model_name.human %>: <%= link_to vehicle.client.display_name, vehicle.client %></p>
+
+  <fieldset>
+    <div class="row">
+      <div class="field"><%= form.label :make %><%= form.text_field :make, required: true, list: "vehicle-makes" %></div>
+      <div class="field"><%= form.label :model %><%= form.text_field :model, required: true %></div>
+      <div class="field small"><%= form.label :year %><%= form.number_field :year, in: 1900..(Date.current.year + 1) %></div>
+    </div>
+    <div class="row">
+      <div class="field"><%= form.label :plate_number %><%= form.text_field :plate_number, class: "upper" %></div>
+      <div class="field wide"><%= form.label :vin %><%= form.text_field :vin, maxlength: 17, class: "upper mono" %></div>
+    </div>
+    <div class="row">
+      <div class="field"><%= form.label :color %><%= form.text_field :color %></div>
+      <div class="field"><%= form.label :engine %><%= form.text_field :engine %></div>
+      <div class="field"><%= form.label :mileage %><%= form.number_field :mileage, min: 0 %></div>
+    </div>
+  </fieldset>
+
+  <datalist id="vehicle-makes">
+    <% %w[Audi BMW Chery Chevrolet Ford Geely Haval Honda Hyundai Kia Lada Lexus Mazda Mercedes-Benz Mitsubishi Nissan Opel Renault Skoda Subaru Toyota Volkswagen Volvo].each do |make| %>
+      <option value="<%= make %>">
+    <% end %>
+  </datalist>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), vehicle.persisted? ? vehicle : vehicle.client, class: "btn" %>
+  </div>
+<% end %>

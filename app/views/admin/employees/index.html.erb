@@ -1,0 +1,32 @@
+<%= page_header t("nav.employees") do %>
+  <%= link_to t("employees.new"), new_admin_employee_path, class: "btn btn-primary" %>
+<% end %>
+
+<% if @employees.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Employee.human_attribute_name(:name) %></th>
+          <th><%= Employee.human_attribute_name(:position) %></th>
+          <th><%= Employee.human_attribute_name(:phone) %></th>
+          <th><%= Employee.human_attribute_name(:user) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @employees.each do |employee| %>
+          <tr class="<%= "inactive" unless employee.active? %>">
+            <td><%= employee.name %></td>
+            <td><%= enum_label(Employee, :position, employee.position) %></td>
+            <td><%= employee.phone %></td>
+            <td><%= employee.user&.email_address %></td>
+            <td class="actions-cell"><%= link_to t("edit"), edit_admin_employee_path(employee) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="empty"><%= t("employees.empty") %></p>
+<% end %>

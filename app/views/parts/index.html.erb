@@ -1,0 +1,51 @@
+<%= page_header t("nav.parts") do %>
+  <%= link_to t("parts.new"), new_part_path, class: "btn btn-primary" if can?(:manage_catalog) %>
+<% end %>
+
+<%= form_with url: parts_path, method: :get, class: "filters" do |form| %>
+  <%= form.search_field :q, value: params[:q], placeholder: t("parts.search_placeholder"), aria: { label: t("search") } %>
+  <%= form.select :status, [ [ t("status.active"), "" ], [ t("parts.filter.low"), "low" ], [ t("filter.all"), "all" ] ], selected: params[:status] %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<% if @parts.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Part.human_attribute_name(:sku) %></th>
+          <th><%= Part.human_attribute_name(:name) %></th>
+          <th><%= Part.human_attribute_name(:brand) %></th>
+          <th class="num"><%= Part.human_attribute_name(:quantity) %></th>
+          <% if can?(:manage_catalog) %><th class="num"><%= Part.human_attribute_name(:cost) %></th><% end %>
+          <th class="num"><%= Part.human_attribute_name(:price) %></th>
+          <% if can?(:manage_catalog) %><th></th><% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @parts.each do |part| %>
+          <tr class="<%= "inactive" unless part.active? %>">
+            <td class="mono"><%= part.sku %></td>
+            <td><%= part.name %></td>
+            <td><%= part.brand %></td>
+            <td class="num <%= "danger" if part.low_stock? %>"><%= quantity_with_unit(part.quantity, part.unit) %></td>
+            <% if can?(:manage_catalog) %><td class="num"><%= money(part.cost) %></td><% end %>
+            <td class="num"><%= money(part.price) %></td>
+            <% if can?(:manage_catalog) %>
+              <td class="actions-cell">
+                <%= form_with url: receive_part_path(part), method: :patch, class: "inline-form compact" do |form| %>
+                  <%= form.number_field :amount, step: 0.001, min: 0.001, class: "qty", placeholder: "+", aria: { label: t("parts.receive") } %>
+                  <%= form.submit t("parts.receive"), class: "link-button" %>
+                <% end %>
+                <%= link_to t("edit"), edit_part_path(part) %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= pagination(@pagy) %>
+<% else %>
+  <p class="empty"><%= t("parts.empty") %></p>
+<% end %>

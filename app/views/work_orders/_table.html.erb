@@ -1,0 +1,34 @@
+<% show_client = local_assigns.fetch(:show_client, true) %>
+<% if work_orders.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th><%= WorkOrder.human_attribute_name(:created_at) %></th>
+          <th><%= Vehicle.model_name.human %></th>
+          <% if show_client %><th><%= Client.model_name.human %></th><% end %>
+          <th><%= WorkOrder.human_attribute_name(:status) %></th>
+          <th class="num"><%= WorkOrder.human_attribute_name(:total) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% work_orders.each do |order| %>
+          <tr>
+            <td><%= link_to order.number, order %></td>
+            <td><%= l(order.created_at.to_date) %></td>
+            <td>
+              <%= order.vehicle.title %>
+              <% if order.vehicle.plate_number %><span class="plate"><%= order.vehicle.plate_number %></span><% end %>
+            </td>
+            <% if show_client %><td><%= order.client.display_name %></td><% end %>
+            <td><%= status_badge(order) %></td>
+            <td class="num"><%= money(order.total) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="muted"><%= t("work_orders.empty") %></p>
+<% end %>

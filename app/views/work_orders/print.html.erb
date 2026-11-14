@@ -1,0 +1,51 @@
+<% content_for :title, t("work_orders.title", number: @work_order.number) %>
+<article class="print-doc">
+  <header class="print-head">
+    <div>
+      <div class="print-shop"><%= ENV.fetch("SHOP_NAME", t("app.name")) %></div>
+      <div class="muted"><%= ENV["SHOP_DETAILS"] %></div>
+    </div>
+    <div class="print-title">
+      <h1><%= t("work_orders.title", number: @work_order.number) %></h1>
+      <div><%= t("work_orders.print_dated", date: l(@work_order.created_at.to_date, format: :long)) %></div>
+    </div>
+  </header>
+
+  <table class="print-info">
+    <tr><th><%= Client.model_name.human %></th><td><%= @work_order.client.display_name %>, <%= @work_order.client.phone %></td></tr>
+    <tr><th><%= Vehicle.model_name.human %></th><td><%= @work_order.vehicle.title %></td></tr>
+    <tr><th><%= Vehicle.human_attribute_name(:plate_number) %></th><td><%= @work_order.vehicle.plate_number %></td></tr>
+    <tr><th><%= Vehicle.human_attribute_name(:vin) %></th><td><%= @work_order.vehicle.vin %></td></tr>
+    <tr><th><%= WorkOrder.human_attribute_name(:mileage) %></th><td><%= t("vehicles.km", count: number_with_delimiter(@work_order.mileage)) if @work_order.mileage %></td></tr>
+    <% if @work_order.complaint.present? %>
+      <tr><th><%= WorkOrder.human_attribute_name(:complaint) %></th><td><%= @work_order.complaint %></td></tr>
+    <% end %>
+  </table>
+
+  <% [ [ :labor, @work_order.labor_lines.order(:created_at) ], [ :parts, @work_order.part_lines.order(:created_at) ] ].each do |section, lines| %>
+    <% next if lines.empty? %>
+    <h2><%= t("work_orders.sections.#{section}") %></h2>
+    <table class="print-lines">
+      <thead>
+        <tr><th>#</th><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:quantity) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:price) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr>
+      </thead>
+      <tbody>
+        <% lines.each_with_index do |line, index| %>
+          <tr><td><%= index + 1 %></td><td><%= line.name %></td><td class="num"><%= number(line.quantity) %></td><td class="num"><%= money(line.price) %></td><td class="num"><%= money(line.total) %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <div class="print-totals"><%= render "work_orders/totals", work_order: @work_order %></div>
+
+  <% if @work_order.recommendations.present? %>
+    <h2><%= WorkOrder.human_attribute_name(:recommendations) %></h2>
+    <p><%= @work_order.recommendations %></p>
+  <% end %>
+
+  <div class="signatures">
+    <div><%= t("work_orders.signature_shop") %> ____________________</div>
+    <div><%= t("work_orders.signature_client") %> ____________________</div>
+  </div>
+</article>

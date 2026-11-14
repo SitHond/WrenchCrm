@@ -1,0 +1,16 @@
+<% if work_orders.any? %>
+  <ul class="list">
+    <% work_orders.each do |order| %>
+      <li>
+        <%= link_to "№ #{order.number}", order %>
+        <span><%= order.vehicle.label %></span>
+        <span class="muted"><%= order.client.display_name %></span>
+        <% if order.promised_at && order.unfinished? %>
+          <span class="muted <%= "danger" if order.promised_at.past? %>"><%= l(order.promised_at, format: :short) %></span>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p class="muted"><%= empty %></p>
+<% end %>
