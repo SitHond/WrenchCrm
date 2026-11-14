@@ -1,0 +1,5 @@
+<nav class="tabs">
+  <% { index: reports_path, labor: labor_reports_path, parts: parts_reports_path, stock: stock_reports_path }.each do |key, path| %>
+    <%= link_to t("reports.tabs.#{key}"), "#{path}?#{{ from: period_from, to: period_to }.to_query}", class: [ "tab", ("active" if action_name == key.to_s) ] %>
+  <% end %>
+</nav>

@@ -1,0 +1,106 @@
+<%= page_header @part.name do %>
+  <%= link_to t("edit"), edit_part_path(@part), class: "btn" if can?(:manage_catalog) %>
+<% end %>
+
+<p class="subtitle">
+  <%= [ @part.sku, @part.brand ].compact_blank.join(" · ") %>
+  <% if @part.location.present? %> · <%= Part.human_attribute_name(:location) %>: <strong><%= @part.location %></strong><% end %>
+  <% unless @part.active? %> · <span class="badge"><%= t("status.inactive") %></span><% end %>
+</p>
+
+<div class="stats">
+  <div class="stat"><span class="stat-value <%= "danger" if @part.low_stock? %>"><%= quantity_with_unit(@part.quantity, @part.unit) %></span><span class="stat-label"><%= Part.human_attribute_name(:quantity) %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@part.price) %></span><span class="stat-label"><%= Part.human_attribute_name(:price) %></span></div>
+  <% if can?(:manage_catalog) %>
+    <div class="stat"><span class="stat-value"><%= money(@part.cost) %></span><span class="stat-label"><%= t("parts.average_cost") %></span></div>
+    <div class="stat"><span class="stat-value"><%= money(@part.stock_value) %></span><span class="stat-label"><%= t("parts.stock_value") %></span></div>
+  <% end %>
+</div>
+
+<div class="grid-2">
+  <% if can?(:manage_catalog) %>
+    <section class="card">
+      <h2><%= t("parts.stock_actions") %></h2>
+      <%= form_with url: receive_part_path(@part), method: :patch, class: "inline-form" do |form| %>
+        <%= form.number_field :amount, step: 0.001, min: 0.001, class: "qty", required: true, aria: { label: t("parts.receive") } %>
+        <%= form.text_field :comment, placeholder: t("parts.comment_placeholder"), aria: { label: t("parts.comment_placeholder") } %>
+        <%= form.submit t("parts.receive"), class: "btn" %>
+      <% end %>
+      <%= form_with url: write_off_part_path(@part), method: :patch, class: "inline-form" do |form| %>
+        <%= form.number_field :amount, step: 0.001, min: 0.001, class: "qty", required: true, aria: { label: t("parts.write_off") } %>
+        <%= form.text_field :comment, placeholder: t("parts.write_off_reason"), required: true, aria: { label: t("parts.write_off_reason") } %>
+        <%= form.submit t("parts.write_off"), class: "btn btn-danger" %>
+      <% end %>
+      <%= form_with url: count_part_path(@part), method: :patch, class: "inline-form" do |form| %>
+        <%= form.number_field :counted, step: 0.001, min: 0, class: "qty", required: true, value: number(@part.quantity), aria: { label: t("parts.count") } %>
+        <%= form.text_field :comment, placeholder: t("parts.comment_placeholder"), aria: { label: t("parts.comment_placeholder") } %>
+        <%= form.submit t("parts.count"), class: "btn" %>
+      <% end %>
+      <p class="hint"><%= t("parts.stock_actions_hint_html", link: link_to(t("purchase_receipts.new"), new_purchase_receipt_path)) %></p>
+    </section>
+  <% end %>
+
+  <section class="card">
+    <h2><%= t("parts.analogs") %></h2>
+    <% if @part.oem.present? %><p class="muted"><%= Part.human_attribute_name(:oem) %>: <span class="mono"><%= @part.oem %></span></p><% end %>
+    <% if @analogs.any? %>
+      <ul class="list">
+        <% @analogs.each do |analog| %>
+          <li>
+            <%= link_to analog.label, analog %>
+            <span class="muted"><%= quantity_with_unit(analog.quantity, analog.unit) %> · <%= money(analog.price) %></span>
+            <% if can?(:manage_catalog) %>
+              <%= button_to "×", remove_analog_part_path(@part, analog_id: analog.id), method: :delete, class: "link-button danger", title: t("delete") %>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("parts.no_analogs") %></p>
+    <% end %>
+    <% if can?(:manage_catalog) %>
+      <%= form_with url: add_analog_part_path(@part), class: "inline-form" do |form| %>
+        <%= form.collection_select :analog_id, Part.active.ordered.where.not(id: [ @part.id, *@analogs.map(&:id) ]), :id, :label, {}, aria: { label: t("parts.analogs") } %>
+        <%= form.submit t("parts.add_analog"), class: "btn" %>
+      <% end %>
+    <% end %>
+  </section>
+</div>
+
+<section class="card">
+  <h2><%= t("parts.movements") %></h2>
+  <% if @movements.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= t("parts.movement_date") %></th>
+            <th><%= t("parts.movement_kind") %></th>
+            <th class="num"><%= Part.human_attribute_name(:quantity) %></th>
+            <th><%= t("parts.movement_source") %></th>
+            <th><%= t("parts.movement_user") %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @movements.each do |movement| %>
+            <tr>
+              <td><%= l(movement.created_at, format: :short) %></td>
+              <td><%= enum_label(StockMovement, :kind, movement.kind) %></td>
+              <td class="num <%= movement.quantity.negative? ? "danger" : "ok" %>"><%= movement.quantity.positive? ? "+" : "" %><%= number_with_precision(movement.quantity, precision: 3, strip_insignificant_zeros: true) %></td>
+              <td>
+                <% if movement.source.is_a?(WorkOrder) %><%= link_to t("work_orders.title", number: movement.source.number), movement.source %>
+                <% elsif movement.source.is_a?(PurchaseReceipt) %><%= link_to t("purchase_receipts.title", number: movement.source.number.presence || movement.source.id), movement.source %>
+                <% elsif movement.source.is_a?(Sale) %><%= link_to t("sales.title", number: movement.source.number), movement.source %>
+                <% end %>
+                <span class="muted"><%= movement.comment %></span>
+              </td>
+              <td class="muted"><%= movement.created_by&.name %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted"><%= t("parts.no_movements") %></p>
+  <% end %>
+</section>

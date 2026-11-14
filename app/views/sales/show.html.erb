@@ -1,0 +1,41 @@
+<%= page_header t("sales.title", number: @sale.number) do %>
+  <%= button_to t("delete"), @sale, method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("sales.confirm_delete") } } if can?(:delete_records) %>
+<% end %>
+
+<p class="subtitle">
+  <%= l(@sale.sold_at, format: :long) %> · <%= enum_label(Sale, :payment_method, @sale.payment_method) %> · <%= @sale.cash_account.name %>
+  <% if @sale.client %> · <%= link_to @sale.client.display_name, @sale.client %><% end %>
+  <% if @sale.created_by %> · <%= @sale.created_by.name %><% end %>
+</p>
+
+<section class="card">
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= SaleLine.human_attribute_name(:name) %></th>
+          <th class="num"><%= SaleLine.human_attribute_name(:quantity) %></th>
+          <th class="num"><%= SaleLine.human_attribute_name(:price) %></th>
+          <th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @sale.lines.each do |line| %>
+          <tr>
+            <td><%= line.part ? link_to(line.name, line.part) : line.name %></td>
+            <td class="num"><%= number(line.quantity) %></td>
+            <td class="num"><%= money(line.price) %></td>
+            <td class="num"><%= money(line.total) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <dl class="totals narrow-totals">
+    <% if @sale.discount_percent.positive? %>
+      <dt><%= t("work_orders.totals.discount", percent: number(@sale.discount_percent)) %></dt><dd>−<%= money(@sale.discount_amount) %></dd>
+    <% end %>
+    <dt class="grand"><%= t("total") %></dt><dd class="grand"><%= money(@sale.total) %></dd>
+  </dl>
+  <% if @sale.comment.present? %><p class="muted"><%= @sale.comment %></p><% end %>
+</section>

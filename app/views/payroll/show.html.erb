@@ -1,0 +1,95 @@
+<% employee = @payroll.employee %>
+<%= page_header t("payroll.title", name: employee.name) %>
+<%= render "month_nav", month: @month %>
+
+<div class="grid-2">
+  <section class="card totals-card">
+    <h2><%= t("payroll.accrued") %></h2>
+    <dl class="totals">
+      <dt><%= Employee.human_attribute_name(:monthly_salary) %></dt><dd><%= money(employee.monthly_salary) %></dd>
+      <dt><%= t("payroll.labor_line", percent: number(employee.labor_percent), base: money(@payroll.labor_base)) %></dt><dd><%= money(@payroll.labor_pay) %></dd>
+      <dt><%= t("payroll.orders_line", percent: number(employee.order_percent), base: money(@payroll.orders_base)) %></dt><dd><%= money(@payroll.orders_pay) %></dd>
+      <dt><%= t("payroll.adjustments") %></dt><dd><%= money(@payroll.adjustments_total) %></dd>
+      <dt class="grand"><%= t("payroll.accrued") %></dt><dd class="grand"><%= money(@payroll.accrued) %></dd>
+      <dt><%= t("payroll.paid") %></dt><dd><%= money(@payroll.paid) %></dd>
+      <dt><%= t("payroll.due") %></dt><dd class="<%= @payroll.due.positive? ? "danger" : "ok" %>"><%= money(@payroll.due) %></dd>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><%= t("payroll.payouts") %></h2>
+    <% if @payroll.payouts.any? %>
+      <ul class="list">
+        <% @payroll.payouts.each do |payout| %>
+          <li>
+            <strong><%= money(payout.amount) %></strong>
+            <span class="muted"><%= l(payout.paid_on) %> · <%= payout.cash_account.name %><%= " · #{payout.comment}" if payout.comment.present? %></span>
+            <%= button_to "×", salary_payout_path(payout), method: :delete, class: "link-button danger", title: t("delete"), form: { data: { turbo_confirm: t("confirm") } } %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <%= form_with model: SalaryPayout.new, class: "inline-form" do |form| %>
+      <%= form.hidden_field :employee_id, value: employee.id %>
+      <%= form.hidden_field :period, value: @month %>
+      <%= form.number_field :amount, step: 0.01, min: 0.01, class: "price", required: true, value: (@payroll.due if @payroll.due.positive?), aria: { label: SalaryPayout.human_attribute_name(:amount) } %>
+      <%= form.collection_select :cash_account_id, CashAccount.active.ordered, :id, :name, {}, aria: { label: CashAccount.model_name.human } %>
+      <%= form.date_field :paid_on, value: Date.current, aria: { label: SalaryPayout.human_attribute_name(:paid_on) } %>
+      <%= form.submit t("payroll.pay"), class: "btn btn-primary" %>
+    <% end %>
+
+    <h2 class="spaced"><%= t("payroll.adjustments") %></h2>
+    <% if @payroll.adjustments.any? %>
+      <ul class="list">
+        <% @payroll.adjustments.each do |adjustment| %>
+          <li>
+            <strong class="<%= adjustment.amount.negative? ? "danger" : "ok" %>"><%= money(adjustment.amount) %></strong>
+            <span><%= adjustment.comment %></span>
+            <%= button_to "×", payroll_adjustment_path(adjustment), method: :delete, class: "link-button danger", title: t("delete") %>
+          </li>
+        <% end %>
+      </ul>
+    <% end %>
+    <%= form_with model: PayrollAdjustment.new, class: "inline-form" do |form| %>
+      <%= form.hidden_field :employee_id, value: employee.id %>
+      <%= form.hidden_field :period, value: @month %>
+      <%= form.number_field :amount, step: 0.01, class: "price", required: true, placeholder: t("payroll.adjustment_placeholder"), aria: { label: PayrollAdjustment.human_attribute_name(:amount) } %>
+      <%= form.text_field :comment, required: true, placeholder: PayrollAdjustment.human_attribute_name(:comment), aria: { label: PayrollAdjustment.human_attribute_name(:comment) } %>
+      <%= form.submit t("add"), class: "btn" %>
+    <% end %>
+  </section>
+</div>
+
+<section class="card">
+  <h2><%= t("payroll.labor_details") %></h2>
+  <% if @payroll.labor_lines.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr><th><%= WorkOrder.human_attribute_name(:closed_at) %></th><th>№</th><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr>
+        </thead>
+        <tbody>
+          <% @payroll.labor_lines.each do |line| %>
+            <tr>
+              <td><%= l(line.work_order.closed_at.to_date) %></td>
+              <td><%= link_to line.work_order.number, line.work_order %></td>
+              <td><%= line.name %></td>
+              <td class="num"><%= money(line.total) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted"><%= t("payroll.no_labor") %></p>
+  <% end %>
+</section>
+
+<% if @payroll.advised_orders.any? %>
+  <section class="card">
+    <h2><%= t("payroll.advised_orders") %></h2>
+    <%= render "work_orders/table", work_orders: @payroll.advised_orders %>
+  </section>
+<% end %>
+
+<%= link_to t("back"), payroll_index_path(month: @month.strftime("%Y-%m")), class: "btn" %>

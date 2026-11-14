@@ -87,3 +87,38 @@ unless Bay.exists?
   end
   puts "Loaded demo appointments"
 end
+
+unless Supplier.exists?
+  ActiveRecord::Base.transaction do
+    cash = CashAccount.default_for(:cash)
+    bank = CashAccount.default_for(:card)
+    %w[Аренда Коммунальные\ услуги Инструмент Реклама Хозтовары].each { |name| ExpenseCategory.find_or_create_by!(name: name, kind: :expense) }
+    ExpenseCategory.find_or_create_by!(name: "Сдача металлолома", kind: :income)
+
+    Employee.mechanic.each { |employee| employee.update!(labor_percent: 40, monthly_salary: 20_000) }
+    Employee.service_advisor.each { |employee| employee.update!(order_percent: 5, monthly_salary: 35_000) }
+
+    parts_supplier = Supplier.create!(name: "ООО «АвтоДеталь»", inn: "7712345678", phone: "+7 495 111-22-33", contact_person: "Сергей")
+    Supplier.create!(name: "ИП Маслов (масла и жидкости)", phone: "+7 916 000-11-22")
+
+    oil = Part.find_by(sku: "SH-5W30-4")
+    filter = Part.find_by(sku: "MANN-W712")
+    if oil && filter
+      oil.update!(location: "A-1", oem: "550046306")
+      filter.update!(location: "B-3", oem: "26300-35503")
+      receipt = parts_supplier.purchase_receipts.create!(number: "АД-1024", received_on: 3.days.ago.to_date)
+      receipt.lines.create!(part: oil, quantity: 6, cost: 2950)
+      receipt.lines.create!(part: filter, quantity: 10, cost: 430)
+      receipt.post!
+      CashOperation.create!(kind: :supplier_payment, cash_account: bank, supplier: parts_supplier, amount: -15_000,
+                            occurred_at: 2.days.ago, comment: "Частичная оплата АД-1024")
+
+      Sale.create!(payment_method: :cash, lines_attributes: [ { part_id: oil.id, quantity: 1 } ], comment: "Продажа с прилавка")
+    end
+
+    CashOperation.create!(kind: :expense, cash_account: bank, amount: -45_000, occurred_at: Date.current.beginning_of_month.in_time_zone.change(hour: 10),
+                          expense_category: ExpenseCategory.find_by(name: "Аренда"), comment: "Аренда бокса")
+    CashOperation.create!(kind: :expense, cash_account: cash, amount: -1_200, expense_category: ExpenseCategory.find_by(name: "Хозтовары"), comment: "Перчатки, ветошь")
+  end
+  puts "Loaded demo finance and stock"
+end

@@ -8,6 +8,7 @@ class Client < ApplicationRecord
   has_many :work_orders, -> { order(created_at: :desc) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
   has_many :appointments, dependent: :destroy
+  has_many :sales, dependent: :nullify
 
   normalizes :phone, :phone2, with: ->(phone) { phone.strip }
   normalizes :email, with: ->(email) { email.strip.downcase }

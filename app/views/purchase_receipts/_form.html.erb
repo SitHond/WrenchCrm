@@ -1,0 +1,14 @@
+<%= form_with model: receipt, class: "form narrow" do |form| %>
+  <%= render "shared/errors", record: receipt %>
+  <div class="field"><%= form.label :supplier_id %><%= form.collection_select :supplier_id, Supplier.active.ordered, :id, :name, { include_blank: true }, required: true %></div>
+  <p class="hint"><%= link_to t("suppliers.new"), new_supplier_path %></p>
+  <div class="row">
+    <div class="field"><%= form.label :number %><%= form.text_field :number %></div>
+    <div class="field"><%= form.label :received_on %><%= form.date_field :received_on, required: true %></div>
+  </div>
+  <div class="field"><%= form.label :comment %><%= form.text_field :comment %></div>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), receipt.persisted? ? receipt : purchase_receipts_path, class: "btn" %>
+  </div>
+<% end %>

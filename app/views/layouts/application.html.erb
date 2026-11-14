@@ -22,9 +22,18 @@
           <%= nav_link t("nav.appointments"), appointments_path %>
           <%= nav_link t("nav.clients"), clients_path %>
           <%= nav_link t("nav.vehicles"), vehicles_path %>
-          <div class="nav-section"><%= t("nav.catalog") %></div>
-          <%= nav_link t("nav.services"), services_path %>
+          <%= nav_link t("nav.sales"), sales_path %>
+          <div class="nav-section"><%= t("nav.stock") %></div>
           <%= nav_link t("nav.parts"), parts_path %>
+          <%= nav_link t("nav.purchase_receipts"), purchase_receipts_path %>
+          <%= nav_link t("nav.suppliers"), suppliers_path %>
+          <%= nav_link t("nav.services"), services_path %>
+          <% if can?(:manage_finance) || can?(:view_reports) %>
+            <div class="nav-section"><%= t("nav.finance") %></div>
+            <%= nav_link t("nav.cash"), cash_operations_path if can?(:manage_finance) %>
+            <%= nav_link t("nav.payroll"), payroll_index_path if can?(:manage_finance) %>
+            <%= nav_link t("nav.reports"), reports_path if can?(:view_reports) %>
+          <% end %>
           <% if can?(:admin) %>
             <div class="nav-section"><%= t("nav.admin") %></div>
             <%= nav_link t("nav.employees"), admin_employees_path %>

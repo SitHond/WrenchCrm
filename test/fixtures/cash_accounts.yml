@@ -1,0 +1,9 @@
+cash:
+  name: Касса
+  kind: 0
+  position: 1
+
+bank:
+  name: Расчётный счёт
+  kind: 1
+  position: 2

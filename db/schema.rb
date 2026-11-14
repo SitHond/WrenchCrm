@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -44,6 +44,40 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "cash_accounts", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "kind", default: 0, null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "cash_operations", force: :cascade do |t|
+    t.bigint "cash_account_id", null: false
+    t.integer "kind", null: false
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.datetime "occurred_at", null: false
+    t.bigint "expense_category_id"
+    t.bigint "supplier_id"
+    t.bigint "employee_id"
+    t.string "source_type"
+    t.bigint "source_id"
+    t.bigint "counterpart_id"
+    t.string "comment"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cash_account_id"], name: "index_cash_operations_on_cash_account_id"
+    t.index ["counterpart_id"], name: "index_cash_operations_on_counterpart_id"
+    t.index ["created_by_id"], name: "index_cash_operations_on_created_by_id"
+    t.index ["employee_id"], name: "index_cash_operations_on_employee_id"
+    t.index ["expense_category_id"], name: "index_cash_operations_on_expense_category_id"
+    t.index ["occurred_at"], name: "index_cash_operations_on_occurred_at"
+    t.index ["source_type", "source_id"], name: "index_cash_operations_on_source"
+    t.index ["supplier_id"], name: "index_cash_operations_on_supplier_id"
+  end
+
   create_table "clients", force: :cascade do |t|
     t.integer "kind", default: 0, null: false
     t.string "last_name"
@@ -74,7 +108,18 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "monthly_salary", precision: 12, scale: 2, default: "0.0", null: false
+    t.decimal "labor_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "order_percent", precision: 5, scale: 2, default: "0.0", null: false
     t.index ["user_id"], name: "index_employees_on_user_id", unique: true
+  end
+
+  create_table "expense_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "kind", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "notes", force: :cascade do |t|
@@ -89,6 +134,16 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.index ["notable_type", "notable_id"], name: "index_notes_on_notable"
   end
 
+  create_table "part_analogs", force: :cascade do |t|
+    t.bigint "part_id", null: false
+    t.bigint "analog_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["analog_id"], name: "index_part_analogs_on_analog_id"
+    t.index ["part_id", "analog_id"], name: "index_part_analogs_on_part_id_and_analog_id", unique: true
+    t.index ["part_id"], name: "index_part_analogs_on_part_id"
+  end
+
   create_table "parts", force: :cascade do |t|
     t.string "name", null: false
     t.string "sku"
@@ -101,7 +156,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "location"
+    t.string "oem"
     t.index ["name"], name: "index_parts_on_name"
+    t.index ["oem"], name: "index_parts_on_oem"
     t.index ["sku"], name: "index_parts_on_sku"
   end
 
@@ -114,8 +172,90 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "cash_account_id"
+    t.index ["cash_account_id"], name: "index_payments_on_cash_account_id"
     t.index ["created_by_id"], name: "index_payments_on_created_by_id"
     t.index ["work_order_id"], name: "index_payments_on_work_order_id"
+  end
+
+  create_table "payroll_adjustments", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.date "period", null: false
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.string "comment", null: false
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_payroll_adjustments_on_created_by_id"
+    t.index ["employee_id"], name: "index_payroll_adjustments_on_employee_id"
+  end
+
+  create_table "purchase_receipt_lines", force: :cascade do |t|
+    t.bigint "purchase_receipt_id", null: false
+    t.bigint "part_id", null: false
+    t.decimal "quantity", precision: 12, scale: 3, null: false
+    t.decimal "cost", precision: 12, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["part_id"], name: "index_purchase_receipt_lines_on_part_id"
+    t.index ["purchase_receipt_id"], name: "index_purchase_receipt_lines_on_purchase_receipt_id"
+  end
+
+  create_table "purchase_receipts", force: :cascade do |t|
+    t.bigint "supplier_id", null: false
+    t.string "number"
+    t.date "received_on", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "posted_at"
+    t.text "comment"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_purchase_receipts_on_created_by_id"
+    t.index ["supplier_id"], name: "index_purchase_receipts_on_supplier_id"
+  end
+
+  create_table "salary_payouts", force: :cascade do |t|
+    t.bigint "employee_id", null: false
+    t.bigint "cash_account_id", null: false
+    t.decimal "amount", precision: 12, scale: 2, null: false
+    t.date "period", null: false
+    t.date "paid_on", null: false
+    t.string "comment"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cash_account_id"], name: "index_salary_payouts_on_cash_account_id"
+    t.index ["created_by_id"], name: "index_salary_payouts_on_created_by_id"
+    t.index ["employee_id"], name: "index_salary_payouts_on_employee_id"
+  end
+
+  create_table "sale_lines", force: :cascade do |t|
+    t.bigint "sale_id", null: false
+    t.bigint "part_id"
+    t.string "name", null: false
+    t.decimal "quantity", precision: 12, scale: 3, null: false
+    t.decimal "price", precision: 12, scale: 2, null: false
+    t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["part_id"], name: "index_sale_lines_on_part_id"
+    t.index ["sale_id"], name: "index_sale_lines_on_sale_id"
+  end
+
+  create_table "sales", force: :cascade do |t|
+    t.bigint "client_id"
+    t.bigint "cash_account_id", null: false
+    t.integer "payment_method", default: 0, null: false
+    t.decimal "discount_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.datetime "sold_at", null: false
+    t.string "comment"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["cash_account_id"], name: "index_sales_on_cash_account_id"
+    t.index ["client_id"], name: "index_sales_on_client_id"
+    t.index ["created_by_id"], name: "index_sales_on_created_by_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -138,6 +278,33 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.index ["user_id"], name: "index_sessions_on_user_id"
   end
 
+  create_table "stock_movements", force: :cascade do |t|
+    t.bigint "part_id", null: false
+    t.decimal "quantity", precision: 12, scale: 3, null: false
+    t.integer "kind", null: false
+    t.string "source_type"
+    t.bigint "source_id"
+    t.string "comment"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_stock_movements_on_created_by_id"
+    t.index ["part_id"], name: "index_stock_movements_on_part_id"
+    t.index ["source_type", "source_id"], name: "index_stock_movements_on_source"
+  end
+
+  create_table "suppliers", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "inn"
+    t.string "phone"
+    t.string "email"
+    t.string "contact_person"
+    t.text "comment"
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
@@ -154,6 +321,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.integer "login_count", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "manage_finance", default: false, null: false
+    t.boolean "view_reports", default: false, null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
@@ -196,6 +365,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
     t.index ["part_id"], name: "index_work_order_parts_on_part_id"
     t.index ["work_order_id"], name: "index_work_order_parts_on_work_order_id"
   end
@@ -216,6 +386,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "advisor_id"
+    t.index ["advisor_id"], name: "index_work_orders_on_advisor_id"
     t.index ["client_id"], name: "index_work_orders_on_client_id"
     t.index ["created_by_id"], name: "index_work_orders_on_created_by_id"
     t.index ["mechanic_id"], name: "index_work_orders_on_mechanic_id"
@@ -229,12 +401,37 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
   add_foreign_key "appointments", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "appointments", "vehicles"
   add_foreign_key "appointments", "work_orders", on_delete: :nullify
+  add_foreign_key "cash_operations", "cash_accounts"
+  add_foreign_key "cash_operations", "cash_operations", column: "counterpart_id", on_delete: :nullify
+  add_foreign_key "cash_operations", "employees", on_delete: :nullify
+  add_foreign_key "cash_operations", "expense_categories", on_delete: :nullify
+  add_foreign_key "cash_operations", "suppliers", on_delete: :nullify
+  add_foreign_key "cash_operations", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "employees", "users", on_delete: :nullify
   add_foreign_key "notes", "users", column: "author_id", on_delete: :nullify
+  add_foreign_key "part_analogs", "parts", column: "analog_id", on_delete: :cascade
+  add_foreign_key "part_analogs", "parts", on_delete: :cascade
+  add_foreign_key "payments", "cash_accounts"
   add_foreign_key "payments", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "payments", "work_orders"
+  add_foreign_key "payroll_adjustments", "employees"
+  add_foreign_key "payroll_adjustments", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "purchase_receipt_lines", "parts"
+  add_foreign_key "purchase_receipt_lines", "purchase_receipts", on_delete: :cascade
+  add_foreign_key "purchase_receipts", "suppliers"
+  add_foreign_key "purchase_receipts", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "salary_payouts", "cash_accounts"
+  add_foreign_key "salary_payouts", "employees"
+  add_foreign_key "salary_payouts", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "sale_lines", "parts", on_delete: :nullify
+  add_foreign_key "sale_lines", "sales", on_delete: :cascade
+  add_foreign_key "sales", "cash_accounts"
+  add_foreign_key "sales", "clients", on_delete: :nullify
+  add_foreign_key "sales", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "sessions", "users"
+  add_foreign_key "stock_movements", "parts", on_delete: :cascade
+  add_foreign_key "stock_movements", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "vehicles", "clients"
   add_foreign_key "work_order_labors", "employees", on_delete: :nullify
   add_foreign_key "work_order_labors", "services", on_delete: :nullify
@@ -242,6 +439,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
   add_foreign_key "work_order_parts", "parts", on_delete: :nullify
   add_foreign_key "work_order_parts", "work_orders", on_delete: :cascade
   add_foreign_key "work_orders", "clients"
+  add_foreign_key "work_orders", "employees", column: "advisor_id", on_delete: :nullify
   add_foreign_key "work_orders", "employees", column: "mechanic_id", on_delete: :nullify
   add_foreign_key "work_orders", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "work_orders", "vehicles"

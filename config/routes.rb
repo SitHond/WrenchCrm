@@ -30,8 +30,35 @@ Rails.application.routes.draw do
   end
   resources :notes, only: %i[ edit update destroy ]
   resources :services, except: :show
-  resources :parts, except: :show do
-    patch :receive, on: :member
+  resources :parts do
+    member do
+      patch :receive
+      patch :write_off
+      patch :count
+      post :add_analog
+      delete :remove_analog
+    end
+  end
+  resources :suppliers
+  resources :purchase_receipts do
+    post :post, on: :member
+    resources :purchase_receipt_lines, only: %i[ create update destroy ]
+  end
+  resources :sales, only: %i[ index show new create destroy ]
+  resources :cash_operations, only: %i[ index new create destroy ] do
+    post :transfer, on: :collection
+  end
+  resources :cash_accounts, only: %i[ index new create edit update ]
+  resources :expense_categories, only: %i[ create update ]
+  resources :payroll, only: %i[ index show ]
+  resources :salary_payouts, only: %i[ create destroy ]
+  resources :payroll_adjustments, only: %i[ create destroy ]
+  resources :reports, only: :index do
+    collection do
+      get :labor
+      get :parts
+      get :stock
+    end
   end
 
   namespace :admin do

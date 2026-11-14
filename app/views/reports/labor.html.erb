@@ -1,0 +1,33 @@
+<%= page_header t("nav.reports") %>
+<%= render "tabs" %>
+<%= render "shared/period_filter", url: labor_reports_path %>
+
+<p class="subtitle"><%= t("reports.labor_total") %>: <strong><%= money(@report.total) %></strong> · <%= t("reports.labor_note") %></p>
+
+<section class="card">
+  <h2><%= t("reports.by_employee") %></h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th><%= Employee.model_name.human %></th><th class="num"><%= t("reports.orders") %></th><th class="num"><%= t("reports.hours") %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr></thead>
+      <tbody>
+        <% @report.by_employee.each do |name, orders, hours, sum| %>
+          <tr><td><%= name || t("reports.no_employee") %></td><td class="num"><%= orders %></td><td class="num"><%= number(hours) %></td><td class="num"><%= money(sum) %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <h2><%= t("reports.by_service") %></h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= t("reports.times") %></th><th class="num"><%= t("reports.hours") %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr></thead>
+      <tbody>
+        <% @report.by_service.each do |name, count, hours, sum| %>
+          <tr><td><%= name %></td><td class="num"><%= count %></td><td class="num"><%= number(hours) %></td><td class="num"><%= money(sum) %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</section>

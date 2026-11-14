@@ -1,0 +1,37 @@
+<%= page_header t("nav.suppliers") do %>
+  <%= link_to t("suppliers.new"), new_supplier_path, class: "btn btn-primary" if can?(:manage_catalog) %>
+<% end %>
+
+<%= form_with url: suppliers_path, method: :get, class: "filters" do |form| %>
+  <%= form.search_field :q, value: params[:q], placeholder: t("suppliers.search_placeholder"), aria: { label: t("search") } %>
+  <%= form.select :status, [ [ t("status.active"), "" ], [ t("filter.all"), "all" ] ], selected: params[:status] %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<% if @suppliers.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Supplier.human_attribute_name(:name) %></th>
+          <th><%= Supplier.human_attribute_name(:phone) %></th>
+          <th><%= Supplier.human_attribute_name(:contact_person) %></th>
+          <th class="num"><%= t("suppliers.debt") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @suppliers.each do |supplier| %>
+          <% debt = supplier.debt %>
+          <tr class="<%= "inactive" unless supplier.active? %>">
+            <td><%= link_to supplier.name, supplier %></td>
+            <td><%= supplier.phone %></td>
+            <td><%= supplier.contact_person %></td>
+            <td class="num <%= "danger" if debt.positive? %>"><%= money(debt) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="empty"><%= t("suppliers.empty") %></p>
+<% end %>

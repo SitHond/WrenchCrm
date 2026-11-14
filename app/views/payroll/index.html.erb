@@ -1,0 +1,46 @@
+<%= page_header t("nav.payroll") %>
+<%= render "month_nav", month: @month %>
+
+<% if @payrolls.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Employee.model_name.human %></th>
+          <th class="num"><%= Employee.human_attribute_name(:monthly_salary) %></th>
+          <th class="num"><%= t("payroll.labor_pay") %></th>
+          <th class="num"><%= t("payroll.orders_pay") %></th>
+          <th class="num"><%= t("payroll.adjustments") %></th>
+          <th class="num"><%= t("payroll.accrued") %></th>
+          <th class="num"><%= t("payroll.paid") %></th>
+          <th class="num"><%= t("payroll.due") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @payrolls.each do |payroll| %>
+          <tr>
+            <td><%= link_to payroll.employee.name, payroll_path(payroll.employee, month: @month.strftime("%Y-%m")) %> <span class="muted"><%= enum_label(Employee, :position, payroll.employee.position) %></span></td>
+            <td class="num"><%= money(payroll.employee.monthly_salary) %></td>
+            <td class="num"><%= money(payroll.labor_pay) %></td>
+            <td class="num"><%= money(payroll.orders_pay) %></td>
+            <td class="num"><%= money(payroll.adjustments_total) %></td>
+            <td class="num"><strong><%= money(payroll.accrued) %></strong></td>
+            <td class="num"><%= money(payroll.paid) %></td>
+            <td class="num <%= "danger" if payroll.due.positive? %>"><%= money(payroll.due) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <th><%= t("total") %></th>
+          <th class="num" colspan="5"><%= money(@payrolls.sum(&:accrued)) %></th>
+          <th class="num"><%= money(@payrolls.sum(&:paid)) %></th>
+          <th class="num"><%= money(@payrolls.sum(&:due)) %></th>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <p class="hint"><%= t("payroll.hint_html", link: link_to(t("nav.employees"), admin_employees_path)) %></p>
+<% else %>
+  <p class="empty"><%= t("employees.empty") %></p>
+<% end %>

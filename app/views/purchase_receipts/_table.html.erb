@@ -1,0 +1,28 @@
+<% if receipts.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= PurchaseReceipt.human_attribute_name(:received_on) %></th>
+          <th><%= PurchaseReceipt.human_attribute_name(:number) %></th>
+          <th><%= Supplier.model_name.human %></th>
+          <th><%= PurchaseReceipt.human_attribute_name(:status) %></th>
+          <th class="num"><%= t("total") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% receipts.each do |receipt| %>
+          <tr>
+            <td><%= link_to l(receipt.received_on), receipt %></td>
+            <td><%= receipt.number %></td>
+            <td><%= receipt.supplier.name %></td>
+            <td><span class="badge receipt-<%= receipt.status %>"><%= enum_label(PurchaseReceipt, :status, receipt.status) %></span></td>
+            <td class="num"><%= money(receipt.total) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="muted"><%= t("purchase_receipts.empty") %></p>
+<% end %>

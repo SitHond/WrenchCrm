@@ -3,7 +3,7 @@ class PaymentsController < ApplicationController
   before_action :set_work_order
 
   def create
-    payment = @work_order.payments.new(params.expect(payment: [ :amount, :payment_method, :comment ]))
+    payment = @work_order.payments.new(params.expect(payment: [ :amount, :payment_method, :cash_account_id, :comment ]))
     if payment.save
       redirect_to work_order_path(@work_order, anchor: "payments"), notice: t("payments.created")
     else

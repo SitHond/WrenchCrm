@@ -1,0 +1,82 @@
+<%= page_header t("nav.cash") do %>
+  <%= link_to t("finance.new_expense"), new_cash_operation_path(kind: "expense"), class: "btn btn-primary" %>
+  <%= link_to t("finance.new_income"), new_cash_operation_path(kind: "other_income"), class: "btn" %>
+  <%= link_to t("finance.new_supplier_payment"), new_cash_operation_path(kind: "supplier_payment"), class: "btn" %>
+  <%= link_to t("finance.accounts_settings"), cash_accounts_path, class: "btn" %>
+<% end %>
+
+<div class="stats">
+  <% @accounts.each do |account| %>
+    <%= link_to cash_operations_path(account_id: account.id, from: period_from, to: period_to), class: "stat" do %>
+      <span class="stat-value"><%= money(account.balance) %></span>
+      <span class="stat-label"><%= account.name %></span>
+    <% end %>
+  <% end %>
+</div>
+
+<% if @accounts.size > 1 %>
+  <%= form_with url: transfer_cash_operations_path, class: "inline-form card" do |form| %>
+    <strong><%= t("finance.transfer") %></strong>
+    <%= form.collection_select :from_id, @accounts, :id, :name, {}, aria: { label: t("finance.transfer_from") } %>
+    →
+    <%= form.collection_select :to_id, @accounts, :id, :name, { selected: @accounts.second&.id }, aria: { label: t("finance.transfer_to") } %>
+    <%= form.number_field :amount, step: 0.01, min: 0.01, class: "price", required: true, aria: { label: CashOperation.human_attribute_name(:amount) } %>
+    <%= form.text_field :comment, placeholder: CashOperation.human_attribute_name(:comment), aria: { label: CashOperation.human_attribute_name(:comment) } %>
+    <%= form.submit t("finance.transfer_submit"), class: "btn" %>
+  <% end %>
+<% end %>
+
+<%= render "shared/period_filter", url: cash_operations_path, keep: params.permit(:account_id, :kind).to_h %>
+<%= form_with url: cash_operations_path, method: :get, class: "filters" do |form| %>
+  <%= hidden_field_tag :from, period_from %><%= hidden_field_tag :to, period_to %>
+  <%= form.collection_select :account_id, @accounts, :id, :name, { include_blank: t("finance.all_accounts"), selected: params[:account_id] }, aria: { label: CashAccount.model_name.human } %>
+  <%= form.select :kind, enum_options(CashOperation, :kind), { include_blank: t("finance.all_kinds"), selected: params[:kind] }, aria: { label: CashOperation.human_attribute_name(:kind) } %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<div class="stats">
+  <div class="stat"><span class="stat-value ok"><%= money(@income) %></span><span class="stat-label"><%= t("finance.income") %></span></div>
+  <div class="stat"><span class="stat-value danger"><%= money(@expense) %></span><span class="stat-label"><%= t("finance.expenses") %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@income - @expense) %></span><span class="stat-label"><%= t("finance.result") %></span></div>
+</div>
+
+<% if @operations.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= CashOperation.human_attribute_name(:occurred_at) %></th>
+          <th><%= CashOperation.human_attribute_name(:kind) %></th>
+          <th><%= CashOperation.human_attribute_name(:comment) %></th>
+          <th><%= CashAccount.model_name.human %></th>
+          <th class="num"><%= CashOperation.human_attribute_name(:amount) %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @operations.each do |operation| %>
+          <tr>
+            <td><%= l(operation.occurred_at, format: :short) %></td>
+            <td><%= enum_label(CashOperation, :kind, operation.kind) %></td>
+            <td>
+              <% if operation.source.is_a?(Payment) %><%= link_to operation.comment, operation.source.work_order %>
+              <% elsif operation.source.is_a?(Sale) %><%= link_to operation.comment, operation.source %>
+              <% else %><%= operation.comment %><% end %>
+              <span class="muted"><%= [ operation.expense_category&.name, operation.supplier&.name ].compact.join(" · ") %></span>
+            </td>
+            <td><%= operation.cash_account.name %></td>
+            <td class="num <%= operation.amount.negative? ? "danger" : "ok" %>"><%= money(operation.amount) %></td>
+            <td class="actions-cell">
+              <% if operation.manual? %>
+                <%= button_to "×", cash_operation_path(operation), method: :delete, class: "link-button danger", title: t("delete"), form: { data: { turbo_confirm: t("confirm") } } %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= pagination(@pagy) %>
+<% else %>
+  <p class="empty"><%= t("finance.empty") %></p>
+<% end %>

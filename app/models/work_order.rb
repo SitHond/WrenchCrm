@@ -14,6 +14,7 @@ class WorkOrder < ApplicationRecord
   belongs_to :client
   belongs_to :vehicle
   belongs_to :mechanic, class_name: "Employee", optional: true
+  belongs_to :advisor, class_name: "Employee", optional: true
   belongs_to :created_by, class_name: "User", optional: true
   has_many :labor_lines, class_name: "WorkOrderLabor", dependent: :destroy
   has_many :part_lines, class_name: "WorkOrderPart", dependent: :destroy
@@ -27,6 +28,7 @@ class WorkOrder < ApplicationRecord
 
   before_validation :inherit_client_defaults, on: :create
   before_create { self.created_by ||= Current.user }
+  before_create { self.advisor ||= Current.user&.employee }
   after_save { vehicle.record_mileage!(mileage) if saved_change_to_mileage? }
 
   scope :unfinished, -> { where(status: OPEN_STATUSES) }

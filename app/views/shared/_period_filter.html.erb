@@ -1,0 +1,10 @@
+<%= form_with url: url, method: :get, class: "filters" do |form| %>
+  <% (local_assigns[:keep] || {}).each do |name, value| %><%= hidden_field_tag name, value %><% end %>
+  <%= form.date_field :from, value: period_from, aria: { label: t("period.from") } %>
+  <span class="muted">—</span>
+  <%= form.date_field :to, value: period_to, aria: { label: t("period.to") } %>
+  <% month = Date.current.beginning_of_month %>
+  <%= link_to t("period.this_month"), url_for(from: month, to: month.end_of_month), class: "btn" %>
+  <%= link_to t("period.last_month"), url_for(from: month.prev_month, to: month.prev_month.end_of_month), class: "btn" %>
+  <%= form.submit t("period.show"), class: "btn btn-primary", name: nil %>
+<% end %>

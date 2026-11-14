@@ -70,7 +70,7 @@ class WorkOrdersController < ApplicationController
     end
 
     def work_order_params
-      permitted = params.expect(work_order: [ :vehicle_id, :mechanic_id, :mileage, :complaint, :diagnosis,
+      permitted = params.expect(work_order: [ :vehicle_id, :mechanic_id, :advisor_id, :mileage, :complaint, :diagnosis,
                                               :recommendations, :discount_percent, :promised_at ])
       permitted[:client_id] = Vehicle.find_by(id: permitted[:vehicle_id])&.client_id if permitted.key?(:vehicle_id)
       permitted

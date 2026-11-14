@@ -3,6 +3,7 @@
   <div class="field"><%= form.label :name %><%= form.text_field :name, required: true %></div>
   <div class="row">
     <div class="field"><%= form.label :sku %><%= form.text_field :sku %></div>
+    <div class="field"><%= form.label :oem %><%= form.text_field :oem, class: "mono" %></div>
     <div class="field"><%= form.label :brand %><%= form.text_field :brand %></div>
     <div class="field small"><%= form.label :unit %><%= form.select :unit, Part::UNITS.map { |u| [ t("parts.units.#{u}"), u ] } %></div>
   </div>
@@ -17,12 +18,13 @@
       <div class="field"><%= form.label :quantity %><input type="text" value="<%= quantity_with_unit(part.quantity, part.unit) %>" disabled></div>
     <% end %>
     <div class="field"><%= form.label :min_quantity %><%= form.number_field :min_quantity, step: 0.001, min: 0 %></div>
+    <div class="field"><%= form.label :location %><%= form.text_field :location, placeholder: t("parts.location_placeholder") %></div>
   </div>
   <% if part.persisted? %><p class="hint"><%= t("parts.quantity_hint") %></p><% end %>
   <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
   <div class="form-actions">
     <%= form.submit class: "btn btn-primary" %>
-    <%= link_to t("cancel"), parts_path, class: "btn" %>
+    <%= link_to t("cancel"), part.persisted? ? part : parts_path, class: "btn" %>
   </div>
 <% end %>
 <% if part.persisted? %>

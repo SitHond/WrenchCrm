@@ -1,0 +1,5 @@
+<div class="filters">
+  <%= link_to "←", url_for(month: month.prev_month.strftime("%Y-%m")), class: "btn", title: t("payroll.prev_month") %>
+  <strong><%= MonthLabel.call(month) %></strong>
+  <%= link_to "→", url_for(month: month.next_month.strftime("%Y-%m")), class: "btn", title: t("payroll.next_month") %>
+</div>

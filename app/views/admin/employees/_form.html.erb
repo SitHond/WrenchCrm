@@ -5,6 +5,15 @@
     <div class="field"><%= form.label :position %><%= form.select :position, enum_options(Employee, :position) %></div>
     <div class="field"><%= form.label :phone %><%= form.telephone_field :phone %></div>
   </div>
+  <fieldset>
+    <legend><%= t("employees.pay") %></legend>
+    <div class="row">
+      <div class="field"><%= form.label :monthly_salary %><%= form.number_field :monthly_salary, step: 0.01, min: 0 %></div>
+      <div class="field small"><%= form.label :labor_percent %><%= form.number_field :labor_percent, step: 0.5, min: 0, max: 100 %></div>
+      <div class="field small"><%= form.label :order_percent %><%= form.number_field :order_percent, step: 0.5, min: 0, max: 100 %></div>
+    </div>
+    <p class="hint"><%= t("employees.pay_hint") %></p>
+  </fieldset>
   <div class="field"><%= form.label :user_id %><%= form.collection_select :user_id, User.ordered, :id, :name, include_blank: "—" %></div>
   <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
   <div class="form-actions">

@@ -170,6 +170,14 @@ en:
     new: "New bay"
     empty: "No bays yet."
     name_placeholder: "Lift 1"
+  finance:
+    default_accounts:
+      cash: "Cash desk"
+      bank: "Bank account"
+    operation_comments:
+      payment: "Payment for work order #%{number}"
+      sale: "Sale #%{number}"
+      salary: "Salary: %{name}, %{period}"
   payments:
     add: "Take payment"
     created: "Payment recorded."
@@ -396,6 +404,8 @@ en:
           mechanic: "Mechanic"
           service_advisor: "Service advisor"
           manager: "Manager"
+  date:
+    standalone_month_names: [~, January, February, March, April, May, June, July, August, September, October, November, December]
   time:
     formats:
       time: "%H:%M"

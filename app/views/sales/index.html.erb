@@ -1,0 +1,35 @@
+<%= page_header t("nav.sales") do %>
+  <%= link_to t("sales.new"), new_sale_path, class: "btn btn-primary" if can?(:manage_payments) %>
+<% end %>
+
+<% if @sales.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th><%= Sale.human_attribute_name(:sold_at) %></th>
+          <th><%= Client.model_name.human %></th>
+          <th><%= t("sales.items") %></th>
+          <th><%= Sale.human_attribute_name(:payment_method) %></th>
+          <th class="num"><%= t("total") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @sales.each do |sale| %>
+          <tr>
+            <td><%= link_to sale.number, sale %></td>
+            <td><%= l(sale.sold_at, format: :short) %></td>
+            <td><%= sale.client&.display_name %></td>
+            <td class="muted"><%= truncate(sale.lines.map(&:name).join(", "), length: 60) %></td>
+            <td><%= enum_label(Sale, :payment_method, sale.payment_method) %></td>
+            <td class="num"><%= money(sale.total) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= pagination(@pagy) %>
+<% else %>
+  <p class="empty"><%= t("sales.empty") %></p>
+<% end %>

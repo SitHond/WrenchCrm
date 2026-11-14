@@ -1,0 +1,2 @@
+<%= page_header t("purchase_receipts.title", number: @receipt.number.presence || @receipt.id) %>
+<%= render "form", receipt: @receipt %>

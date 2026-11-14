@@ -1,0 +1,51 @@
+<%= page_header t("nav.reports") %>
+<%= render "tabs" %>
+<%= render "shared/period_filter", url: reports_path %>
+
+<div class="stats">
+  <div class="stat"><span class="stat-value ok"><%= money(@revenue.income) %></span><span class="stat-label"><%= t("finance.income") %></span></div>
+  <div class="stat"><span class="stat-value danger"><%= money(@revenue.expenses) %></span><span class="stat-label"><%= t("finance.expenses") %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@revenue.profit) %></span><span class="stat-label"><%= t("finance.result") %></span></div>
+</div>
+<div class="stats">
+  <div class="stat"><span class="stat-value"><%= @revenue.closed_orders.size %></span><span class="stat-label"><%= t("reports.closed_orders") %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@revenue.orders_total) %></span><span class="stat-label"><%= t("reports.orders_total") %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@revenue.average_check) %></span><span class="stat-label"><%= t("reports.average_check") %></span></div>
+  <div class="stat"><span class="stat-value"><%= @revenue.sales.size %></span><span class="stat-label"><%= t("reports.sales_count") %></span></div>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("finance.income") %></h2>
+    <dl class="totals">
+      <% @revenue.income_by_kind.each do |kind, amount| %>
+        <dt><%= enum_label(CashOperation, :kind, kind) %></dt><dd><%= money(amount) %></dd>
+      <% end %>
+    </dl>
+  </section>
+  <section class="card">
+    <h2><%= t("finance.expenses") %></h2>
+    <dl class="totals">
+      <% @revenue.expenses_by_kind.each do |kind, amount| %>
+        <dt><%= enum_label(CashOperation, :kind, kind) %></dt><dd><%= money(amount) %></dd>
+      <% end %>
+    </dl>
+  </section>
+</div>
+
+<% daily = @revenue.daily_income %>
+<% if daily.any? %>
+  <section class="card">
+    <h2><%= t("reports.daily_income") %></h2>
+    <% max = daily.values.max %>
+    <div class="bars">
+      <% daily.each do |day, amount| %>
+        <div class="bar-row">
+          <span class="bar-label"><%= l(day.to_date, format: :short) %></span>
+          <span class="bar"><span style="width: <%= (amount / max * 100).round(1) %>%"></span></span>
+          <span class="bar-value"><%= money(amount) %></span>
+        </div>
+      <% end %>
+    </div>
+  </section>
+<% end %>

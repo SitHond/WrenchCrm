@@ -25,3 +25,10 @@ disabled:
   password_digest: <%= password_digest %>
   admin: true
   active: false
+
+accountant:
+  name: Accountant
+  email_address: accountant@example.com
+  password_digest: <%= password_digest %>
+  manage_finance: true
+  view_reports: true

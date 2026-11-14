@@ -1,0 +1,33 @@
+<%= page_header t("nav.reports") %>
+<%= render "tabs" %>
+
+<div class="stats">
+  <div class="stat"><span class="stat-value"><%= @parts.size %></span><span class="stat-label"><%= t("reports.stock_items") %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@total_cost) %></span><span class="stat-label"><%= t("reports.stock_cost") %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@total_retail) %></span><span class="stat-label"><%= t("reports.stock_retail") %></span></div>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr>
+        <th><%= Part.model_name.human %></th>
+        <th><%= Part.human_attribute_name(:location) %></th>
+        <th class="num"><%= Part.human_attribute_name(:quantity) %></th>
+        <th class="num"><%= t("parts.average_cost") %></th>
+        <th class="num"><%= t("parts.stock_value") %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @parts.each do |part| %>
+        <tr>
+          <td><%= link_to part.label, part %></td>
+          <td><%= part.location %></td>
+          <td class="num <%= "danger" if part.quantity.negative? || part.low_stock? %>"><%= quantity_with_unit(part.quantity, part.unit) %></td>
+          <td class="num"><%= money(part.cost) %></td>
+          <td class="num"><%= money(part.stock_value) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

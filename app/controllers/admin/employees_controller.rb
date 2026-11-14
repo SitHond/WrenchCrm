@@ -42,7 +42,7 @@ module Admin
       end
 
       def employee_params
-        params.expect(employee: [ :name, :position, :phone, :active, :user_id ])
+        params.expect(employee: [ :name, :position, :phone, :active, :user_id, :monthly_salary, :labor_percent, :order_percent ])
       end
   end
 end

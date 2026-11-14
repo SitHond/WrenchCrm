@@ -1,0 +1,73 @@
+<% editable = @receipt.draft? && can?(:manage_catalog) %>
+<%= page_header t("purchase_receipts.title", number: @receipt.number.presence || @receipt.id) do %>
+  <% if editable %>
+    <%= button_to t("purchase_receipts.post"), post_purchase_receipt_path(@receipt), class: "btn btn-primary",
+          form: { data: { turbo_confirm: t("purchase_receipts.confirm_post") } }, disabled: @lines.empty? %>
+    <%= link_to t("edit"), edit_purchase_receipt_path(@receipt), class: "btn" %>
+    <%= button_to t("delete"), @receipt, method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
+  <% end %>
+<% end %>
+
+<p class="subtitle">
+  <span class="badge receipt-<%= @receipt.status %>"><%= enum_label(PurchaseReceipt, :status, @receipt.status) %></span>
+  <%= link_to @receipt.supplier.name, @receipt.supplier %> · <%= l(@receipt.received_on, format: :long) %>
+  <% if @receipt.comment.present? %> · <%= @receipt.comment %><% end %>
+</p>
+
+<section class="card" id="lines">
+  <h2><%= t("purchase_receipts.lines") %></h2>
+  <% if @lines.any? %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><%= Part.model_name.human %></th>
+            <th class="num"><%= PurchaseReceiptLine.human_attribute_name(:quantity) %></th>
+            <th class="num"><%= PurchaseReceiptLine.human_attribute_name(:cost) %></th>
+            <th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th>
+            <% if editable %><th></th><% end %>
+          </tr>
+        </thead>
+        <tbody>
+          <% @lines.each do |line| %>
+            <tr>
+              <td><%= link_to line.part.label, line.part %></td>
+              <% if editable %>
+                <td class="num" colspan="2">
+                  <%= form_with model: [ @receipt, line ], class: "inline-form compact right" do |form| %>
+                    <%= form.number_field :quantity, step: 0.001, min: 0.001, class: "qty", aria: { label: PurchaseReceiptLine.human_attribute_name(:quantity) } %>
+                    <%= form.number_field :cost, step: 0.01, min: 0, class: "price", aria: { label: PurchaseReceiptLine.human_attribute_name(:cost) } %>
+                    <%= form.submit t("save"), class: "link-button" %>
+                  <% end %>
+                </td>
+              <% else %>
+                <td class="num"><%= quantity_with_unit(line.quantity, line.part.unit) %></td>
+                <td class="num"><%= money(line.cost) %></td>
+              <% end %>
+              <td class="num"><%= money(line.total) %></td>
+              <% if editable %>
+                <td class="actions-cell"><%= button_to "×", [ @receipt, line ], method: :delete, class: "link-button danger", title: t("delete") %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="muted"><%= t("work_orders.no_lines") %></p>
+  <% end %>
+
+  <% if editable %>
+    <%= form_with model: [ @receipt, PurchaseReceiptLine.new ], class: "line-form" do |form| %>
+      <%= form.collection_select :part_id, Part.ordered, :id, ->(p) { "#{p.label} (#{t("parts.average_cost")}: #{money(p.cost)})" }, { include_blank: true }, required: true, aria: { label: Part.model_name.human } %>
+      <%= form.number_field :quantity, value: 1, step: 0.001, min: 0.001, class: "qty", aria: { label: PurchaseReceiptLine.human_attribute_name(:quantity) } %>
+      <%= form.number_field :cost, step: 0.01, min: 0, placeholder: PurchaseReceiptLine.human_attribute_name(:cost), class: "price", aria: { label: PurchaseReceiptLine.human_attribute_name(:cost) } %>
+      <%= form.submit t("add"), class: "btn" %>
+    <% end %>
+    <p class="hint"><%= t("purchase_receipts.lines_hint_html", link: link_to(t("parts.new"), new_part_path)) %></p>
+  <% end %>
+
+  <dl class="totals narrow-totals">
+    <dt class="grand"><%= t("total") %></dt><dd class="grand"><%= money(@receipt.total) %></dd>
+  </dl>
+</section>

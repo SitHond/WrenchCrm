@@ -1,6 +1,6 @@
 class PartsController < ApplicationController
-  before_action :set_part, only: %i[ edit update destroy receive ]
-  require_permission :manage_catalog, except: :index
+  before_action :set_part, only: %i[ show edit update destroy receive write_off count add_analog remove_analog ]
+  require_permission :manage_catalog, except: %i[ index show ]
 
   def index
     scope = Part.search(params[:q])
@@ -12,6 +12,11 @@ class PartsController < ApplicationController
     @pagy, @parts = pagy(scope.ordered, limit: 50)
   end
 
+  def show
+    @movements = @part.stock_movements.recent_first.includes(:source, :created_by).limit(50)
+    @analogs = @part.all_analogs.ordered
+  end
+
   def new
     @part = Part.new
   end
@@ -19,7 +24,7 @@ class PartsController < ApplicationController
   def create
     @part = Part.new(part_params)
     if @part.save
-      redirect_to parts_path, notice: t("flash.created", model: Part.model_name.human)
+      redirect_to @part, notice: t("flash.created", model: Part.model_name.human)
     else
       render :new, status: :unprocessable_entity
     end
@@ -30,7 +35,7 @@ class PartsController < ApplicationController
 
   def update
     if @part.update(part_params.except(:quantity))
-      redirect_to parts_path, notice: t("flash.updated", model: Part.model_name.human)
+      redirect_to @part, notice: t("flash.updated", model: Part.model_name.human)
     else
       render :edit, status: :unprocessable_entity
     end
@@ -39,11 +44,41 @@ class PartsController < ApplicationController
   def receive
     amount = params[:amount].to_d
     if amount.positive?
-      @part.adjust_stock!(amount)
-      redirect_to parts_path, notice: t("parts.received", name: @part.name, quantity: helpers.quantity_with_unit(amount, @part.unit))
+      @part.adjust_stock!(amount, kind: :manual, comment: params[:comment].presence)
+      redirect_back fallback_location: parts_path, notice: t("parts.received", name: @part.name, quantity: helpers.quantity_with_unit(amount, @part.unit))
     else
-      redirect_to parts_path, alert: t("parts.receive_invalid")
+      redirect_back fallback_location: parts_path, alert: t("parts.receive_invalid")
     end
+  end
+
+  def write_off
+    amount = params[:amount].to_d
+    if amount.positive?
+      @part.adjust_stock!(-amount, kind: :write_off, comment: params[:comment].presence)
+      redirect_to @part, notice: t("parts.written_off", quantity: helpers.quantity_with_unit(amount, @part.unit))
+    else
+      redirect_to @part, alert: t("parts.receive_invalid")
+    end
+  end
+
+  def count
+    if params[:counted].present? && params[:counted].to_d >= 0
+      @part.set_quantity!(params[:counted], comment: params[:comment].presence)
+      redirect_to @part, notice: t("parts.counted", quantity: helpers.quantity_with_unit(@part.quantity, @part.unit))
+    else
+      redirect_to @part, alert: t("parts.receive_invalid")
+    end
+  end
+
+  def add_analog
+    analog = Part.find(params[:analog_id])
+    PartAnalog.link!(@part, analog)
+    redirect_to @part, notice: t("parts.analog_added", name: analog.name)
+  end
+
+  def remove_analog
+    PartAnalog.unlink!(@part, Part.find(params[:analog_id]))
+    redirect_to @part, status: :see_other
   end
 
   def destroy
@@ -57,6 +92,6 @@ class PartsController < ApplicationController
     end
 
     def part_params
-      params.expect(part: [ :name, :sku, :brand, :unit, :cost, :price, :quantity, :min_quantity, :active ])
+      params.expect(part: [ :name, :sku, :oem, :brand, :location, :unit, :cost, :price, :quantity, :min_quantity, :active ])
     end
 end

@@ -1,5 +1,8 @@
 <%= page_header t("nav.parts") do %>
-  <%= link_to t("parts.new"), new_part_path, class: "btn btn-primary" if can?(:manage_catalog) %>
+  <% if can?(:manage_catalog) %>
+    <%= link_to t("purchase_receipts.new"), new_purchase_receipt_path, class: "btn" %>
+    <%= link_to t("parts.new"), new_part_path, class: "btn btn-primary" %>
+  <% end %>
 <% end %>
 
 <%= form_with url: parts_path, method: :get, class: "filters" do |form| %>
@@ -16,6 +19,7 @@
           <th><%= Part.human_attribute_name(:sku) %></th>
           <th><%= Part.human_attribute_name(:name) %></th>
           <th><%= Part.human_attribute_name(:brand) %></th>
+          <th><%= Part.human_attribute_name(:location) %></th>
           <th class="num"><%= Part.human_attribute_name(:quantity) %></th>
           <% if can?(:manage_catalog) %><th class="num"><%= Part.human_attribute_name(:cost) %></th><% end %>
           <th class="num"><%= Part.human_attribute_name(:price) %></th>
@@ -26,8 +30,9 @@
         <% @parts.each do |part| %>
           <tr class="<%= "inactive" unless part.active? %>">
             <td class="mono"><%= part.sku %></td>
-            <td><%= part.name %></td>
+            <td><%= link_to part.name, part %></td>
             <td><%= part.brand %></td>
+            <td><%= part.location %></td>
             <td class="num <%= "danger" if part.low_stock? %>"><%= quantity_with_unit(part.quantity, part.unit) %></td>
             <% if can?(:manage_catalog) %><td class="num"><%= money(part.cost) %></td><% end %>
             <td class="num"><%= money(part.price) %></td>

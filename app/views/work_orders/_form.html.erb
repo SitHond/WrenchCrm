@@ -16,6 +16,7 @@
     <div class="row">
       <div class="field"><%= form.label :mileage %><%= form.number_field :mileage, min: 0 %></div>
       <div class="field"><%= form.label :mechanic_id %><%= form.collection_select :mechanic_id, Employee.active.ordered, :id, :name, include_blank: true %></div>
+      <div class="field"><%= form.label :advisor_id %><%= form.collection_select :advisor_id, Employee.active.ordered, :id, :name, include_blank: true, selected: work_order.advisor_id || current_user.employee&.id %></div>
       <div class="field"><%= form.label :promised_at %><%= form.datetime_field :promised_at %></div>
       <div class="field small"><%= form.label :discount_percent %><%= form.number_field :discount_percent, min: 0, max: 100, step: 0.5 %></div>
     </div>

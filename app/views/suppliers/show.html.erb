@@ -1,0 +1,44 @@
+<%= page_header @supplier.name do %>
+  <% if can?(:manage_catalog) %>
+    <%= link_to t("purchase_receipts.new"), new_purchase_receipt_path(supplier_id: @supplier.id), class: "btn btn-primary" %>
+    <%= link_to t("edit"), edit_supplier_path(@supplier), class: "btn" %>
+  <% end %>
+  <%= link_to t("suppliers.pay"), new_cash_operation_path(kind: "supplier_payment", supplier_id: @supplier.id), class: "btn" if can?(:manage_finance) %>
+<% end %>
+
+<div class="stats">
+  <div class="stat"><span class="stat-value"><%= money(@supplier.purchased_total) %></span><span class="stat-label"><%= t("suppliers.purchased") %></span></div>
+  <div class="stat"><span class="stat-value"><%= money(@supplier.paid_total) %></span><span class="stat-label"><%= t("suppliers.paid") %></span></div>
+  <div class="stat"><span class="stat-value <%= "danger" if @supplier.debt.positive? %>"><%= money(@supplier.debt) %></span><span class="stat-label"><%= t("suppliers.debt") %></span></div>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("clients.sections.contacts") %></h2>
+    <dl class="details">
+      <%= detail_row Supplier.human_attribute_name(:inn), @supplier.inn %>
+      <%= detail_row Supplier.human_attribute_name(:phone), @supplier.phone %>
+      <%= detail_row Supplier.human_attribute_name(:email), (mail_to(@supplier.email) if @supplier.email.present?) %>
+      <%= detail_row Supplier.human_attribute_name(:contact_person), @supplier.contact_person %>
+      <%= detail_row Supplier.human_attribute_name(:comment), @supplier.comment %>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><%= t("suppliers.payments") %></h2>
+    <% if @payments.any? %>
+      <ul class="list">
+        <% @payments.each do |operation| %>
+          <li><strong><%= money(-operation.amount) %></strong> <span class="muted"><%= l(operation.occurred_at.to_date) %> · <%= operation.cash_account.name %></span></li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("payments.empty") %></p>
+    <% end %>
+  </section>
+</div>
+
+<section class="card">
+  <h2><%= t("nav.purchase_receipts") %></h2>
+  <%= render "purchase_receipts/table", receipts: @receipts %>
+</section>

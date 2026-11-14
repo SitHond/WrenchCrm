@@ -1,0 +1,38 @@
+<%= page_header t("finance.accounts_settings") do %>
+  <%= link_to t("finance.new_account"), new_cash_account_path, class: "btn btn-primary" %>
+<% end %>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= CashAccount.model_name.human(count: 2) %></h2>
+    <ul class="list">
+      <% @accounts.each do |account| %>
+        <li class="<%= "inactive" unless account.active? %>">
+          <%= link_to account.name, edit_cash_account_path(account) %>
+          <span class="muted"><%= enum_label(CashAccount, :kind, account.kind) %></span>
+          <span class="spacer"></span>
+          <strong><%= money(account.balance) %></strong>
+        </li>
+      <% end %>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2><%= ExpenseCategory.model_name.human(count: 2) %></h2>
+    <ul class="list">
+      <% @categories.each do |category| %>
+        <li class="<%= "inactive" unless category.active? %>">
+          <%= category.name %>
+          <span class="muted"><%= enum_label(ExpenseCategory, :kind, category.kind) %></span>
+          <span class="spacer"></span>
+          <%= button_to category.active? ? t("finance.hide") : t("finance.show"), expense_category_path(category), method: :patch, class: "link-button" %>
+        </li>
+      <% end %>
+    </ul>
+    <%= form_with model: ExpenseCategory.new, class: "inline-form" do |form| %>
+      <%= form.text_field :name, required: true, placeholder: ExpenseCategory.human_attribute_name(:name), aria: { label: ExpenseCategory.human_attribute_name(:name) } %>
+      <%= form.select :kind, enum_options(ExpenseCategory, :kind), {}, aria: { label: ExpenseCategory.human_attribute_name(:kind) } %>
+      <%= form.submit t("add"), class: "btn" %>
+    <% end %>
+  </section>
+</div>
