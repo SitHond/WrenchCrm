@@ -4,9 +4,12 @@ class Vehicle < ApplicationRecord
   belongs_to :client
   has_many :work_orders, -> { order(created_at: :desc) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
+  has_many :appointments, dependent: :destroy
 
   normalizes :vin, with: ->(vin) { vin.strip.upcase.presence }
-  normalizes :plate_number, with: ->(plate) { plate.strip.upcase.gsub(/\s+/, " ").presence }
+  normalizes :plate_number, with: ->(plate) { PlateNumber.normalize(plate) }
+  normalizes :make, with: ->(make) { VehicleCatalog.canonical_make(make) }
+  normalizes :model, :color, :engine, with: ->(value) { value.strip.presence }
 
   validates :make, :model, presence: true
   validates :vin, length: { is: 17 }, format: { with: /\A[A-HJ-NPR-Z0-9]+\z/ }, uniqueness: true, allow_nil: true
@@ -17,8 +20,8 @@ class Vehicle < ApplicationRecord
   scope :search, ->(query) {
     next all if query.blank?
 
-    where(<<~SQL.squish, q: like_pattern(query))
-      vehicles.plate_number ILIKE :q OR vehicles.vin ILIKE :q OR vehicles.make ILIKE :q
+    where(<<~SQL.squish, q: like_pattern(query), p: like_pattern(PlateNumber.normalize(query)))
+      vehicles.plate_number ILIKE :q OR vehicles.plate_number ILIKE :p OR vehicles.vin ILIKE :q OR vehicles.make ILIKE :q
       OR vehicles.model ILIKE :q OR (vehicles.make || ' ' || vehicles.model) ILIKE :q
     SQL
   }

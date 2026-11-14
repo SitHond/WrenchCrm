@@ -10,9 +10,39 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_000500) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "appointments", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.bigint "vehicle_id", null: false
+    t.bigint "bay_id"
+    t.bigint "mechanic_id"
+    t.bigint "work_order_id"
+    t.bigint "created_by_id"
+    t.datetime "starts_at", null: false
+    t.datetime "ends_at", null: false
+    t.integer "status", default: 0, null: false
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bay_id"], name: "index_appointments_on_bay_id"
+    t.index ["client_id"], name: "index_appointments_on_client_id"
+    t.index ["created_by_id"], name: "index_appointments_on_created_by_id"
+    t.index ["mechanic_id"], name: "index_appointments_on_mechanic_id"
+    t.index ["starts_at", "ends_at"], name: "index_appointments_on_starts_at_and_ends_at"
+    t.index ["vehicle_id"], name: "index_appointments_on_vehicle_id"
+    t.index ["work_order_id"], name: "index_appointments_on_work_order_id", unique: true
+  end
+
+  create_table "bays", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "clients", force: :cascade do |t|
     t.integer "kind", default: 0, null: false
@@ -193,6 +223,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_000500) do
     t.index ["vehicle_id"], name: "index_work_orders_on_vehicle_id"
   end
 
+  add_foreign_key "appointments", "bays", on_delete: :nullify
+  add_foreign_key "appointments", "clients"
+  add_foreign_key "appointments", "employees", column: "mechanic_id", on_delete: :nullify
+  add_foreign_key "appointments", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "appointments", "vehicles"
+  add_foreign_key "appointments", "work_orders", on_delete: :nullify
   add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "employees", "users", on_delete: :nullify
   add_foreign_key "notes", "users", column: "author_id", on_delete: :nullify

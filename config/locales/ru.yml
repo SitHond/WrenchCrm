@@ -27,6 +27,7 @@ ru:
   nav:
     dashboard: "Главная"
     work_orders: "Заказ-наряды"
+    appointments: "Запись"
     clients: "Клиенты"
     vehicles: "Автомобили"
     catalog: "Справочники"
@@ -34,6 +35,7 @@ ru:
     parts: "Склад запчастей"
     admin: "Администрирование"
     employees: "Сотрудники"
+    bays: "Посты"
     users: "Пользователи"
     sign_out: "Выйти"
   pagination:
@@ -61,6 +63,8 @@ ru:
     due: "Срок сегодня или просрочены"
     no_due: "Просроченных нет."
     low_stock: "Заканчиваются на складе"
+    appointments_today: "Запись на сегодня"
+    no_appointments: "На сегодня записей нет."
     stock_ok: "Остатков хватает."
   clients:
     new: "Новый клиент"
@@ -80,6 +84,14 @@ ru:
     history: "История обслуживания"
     no_history: "Обслуживаний пока не было."
     km: "%{count} км"
+    vin_hint: "Введите VIN — марка, страна и год определятся автоматически. Марку и модель можно выбрать из подсказок."
+    engine_placeholder: "1.6 бензин"
+    vin_labels:
+      decoded: "По VIN"
+      year_note: "г. (проверьте)"
+      unknown: "Производитель по VIN не определён, заполните марку вручную."
+      invalid: "VIN содержит недопустимые символы (I, O, Q не используются)."
+      existing: "Этот VIN уже есть в базе:"
     sections:
       details: "Данные автомобиля"
   work_orders:
@@ -125,6 +137,43 @@ ru:
       total: "К оплате"
       paid: "Оплачено"
       balance: "Остаток"
+  appointments:
+    title: "Запись на %{time}"
+    title_for: "Запись на %{date}"
+    new: "Записать клиента"
+    edit: "Изменение записи"
+    book: "Записать на приём"
+    book_at: "Записать на %{time}"
+    today: "Сегодня"
+    prev_day: "Предыдущий день"
+    next_day: "Следующий день"
+    pick_date: "Выбрать дату"
+    no_bay: "Без поста"
+    upcoming: "Ближайшие записи"
+    outside_hours: "Вне рабочего времени"
+    back_to_day: "К календарю"
+    check_in: "Клиент приехал → заказ-наряд"
+    checked_in: "Заказ-наряд создан из записи."
+    status_changed: "Статус записи: %{status}."
+    status_failed: "Не удалось изменить статус: время уже занято или переход невозможен."
+    description_placeholder: "Что нужно сделать, со слов клиента"
+    duration: "%{hours} ч"
+    no_bays_hint_html: "Добавьте посты в разделе %{link}, чтобы видеть загрузку по каждому подъёмнику."
+    count:
+      zero: "записей нет"
+      one: "%{count} запись"
+      few: "%{count} записи"
+      many: "%{count} записей"
+      other: "%{count} записи"
+    transition:
+      scheduled: "Вернуть в запись"
+      confirmed: "Подтвердил"
+      no_show: "Не приехал"
+      cancelled: "Отменить"
+  bays:
+    new: "Новый пост"
+    empty: "Постов пока нет."
+    name_placeholder: "Подъёмник 1"
   payments:
     add: "Принять оплату"
     created: "Оплата принята."
@@ -172,6 +221,8 @@ ru:
     errors:
       messages:
         order_locked: "Заказ-наряд закрыт или отменён, его нельзя изменить"
+        busy: "занят в это время"
+        after_start: "должно быть позже начала"
     models:
       client:
         one: "Клиент"
@@ -206,6 +257,8 @@ ru:
         many: "Оплаты"
         other: "Оплаты"
       employee: "Сотрудник"
+      appointment: "Запись"
+      bay: "Пост"
       note:
         one: "Заметка"
         few: "Заметки"
@@ -297,6 +350,24 @@ ru:
         active: "Работает"
         user: "Учётная запись"
         user_id: "Учётная запись"
+      appointment:
+        vehicle: "Автомобиль"
+        vehicle_id: "Автомобиль"
+        bay: "Пост"
+        bay_id: "Пост"
+        mechanic: "Мастер"
+        mechanic_id: "Мастер"
+        date: "Дата"
+        time: "Время"
+        duration_minutes: "Длительность"
+        starts_at: "Время"
+        ends_at: "Окончание"
+        description: "Что сделать"
+        created_by: "Записал"
+      bay:
+        name: "Название"
+        position: "Порядок"
+        active: "Работает"
       note:
         body: "Текст"
         private: "Личная"
@@ -328,6 +399,13 @@ ru:
           ready: "Готов"
           closed: "Выдан"
           cancelled: "Отменён"
+      appointment:
+        status:
+          scheduled: "Записан"
+          confirmed: "Подтвердил"
+          arrived: "Приехал"
+          no_show: "Не приехал"
+          cancelled: "Отменена"
       payment:
         payment_method:
           cash: "Наличные"
@@ -338,6 +416,9 @@ ru:
           mechanic: "Механик"
           service_advisor: "Мастер-приёмщик"
           manager: "Руководитель"
+  time:
+    formats:
+      time: "%H:%M"
   helpers:
     submit:
       create: "Создать"

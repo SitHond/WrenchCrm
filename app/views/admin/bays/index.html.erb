@@ -1,0 +1,24 @@
+<%= page_header t("nav.bays") do %>
+  <%= link_to t("bays.new"), new_admin_bay_path, class: "btn btn-primary" %>
+<% end %>
+
+<% if @bays.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr><th><%= Bay.human_attribute_name(:position) %></th><th><%= Bay.human_attribute_name(:name) %></th><th></th></tr>
+      </thead>
+      <tbody>
+        <% @bays.each do |bay| %>
+          <tr class="<%= "inactive" unless bay.active? %>">
+            <td><%= bay.position %></td>
+            <td><%= bay.name %></td>
+            <td class="actions-cell"><%= link_to t("edit"), edit_admin_bay_path(bay) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="empty"><%= t("bays.empty") %></p>
+<% end %>

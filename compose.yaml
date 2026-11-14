@@ -32,6 +32,9 @@ services:
       SHOP_NAME: ${SHOP_NAME:-WrenchCRM}
       SHOP_DETAILS: ${SHOP_DETAILS:-}
       CURRENCY_UNIT: ${CURRENCY_UNIT:-₽}
+      TIME_ZONE: ${TIME_ZONE:-Europe/Moscow}
+      WORKDAY_START: ${WORKDAY_START:-9}
+      WORKDAY_END: ${WORKDAY_END:-20}
     ports:
       - "${APP_PORT:-3000}:8080"
 

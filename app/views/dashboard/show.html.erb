@@ -26,6 +26,23 @@
 
 <div class="grid-2">
   <section class="card">
+    <h2><%= link_to t("dashboard.appointments_today"), appointments_path %></h2>
+    <% if @appointments_today.any? %>
+      <ul class="list">
+        <% @appointments_today.each do |appointment| %>
+          <li>
+            <%= link_to appointment_time_range(appointment), appointment %>
+            <span><%= appointment.vehicle.label %></span>
+            <span class="muted"><%= appointment.bay&.name %></span>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p class="muted"><%= t("dashboard.no_appointments") %></p>
+    <% end %>
+  </section>
+
+  <section class="card">
     <h2><%= t("dashboard.ready") %></h2>
     <%= render "work_orders/compact_list", work_orders: @ready_orders, empty: t("dashboard.no_ready") %>
   </section>

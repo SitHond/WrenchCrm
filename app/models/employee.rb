@@ -3,6 +3,7 @@ class Employee < ApplicationRecord
 
   belongs_to :user, optional: true
   has_many :work_orders, foreign_key: :mechanic_id, dependent: :nullify, inverse_of: :mechanic
+  has_many :appointments, foreign_key: :mechanic_id, dependent: :nullify, inverse_of: :mechanic
 
   validates :name, presence: true
 

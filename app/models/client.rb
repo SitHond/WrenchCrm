@@ -7,6 +7,7 @@ class Client < ApplicationRecord
   has_many :vehicles, -> { order(:make, :model) }, dependent: :restrict_with_error
   has_many :work_orders, -> { order(created_at: :desc) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
+  has_many :appointments, dependent: :destroy
 
   normalizes :phone, :phone2, with: ->(phone) { phone.strip }
   normalizes :email, with: ->(email) { email.strip.downcase }
@@ -31,13 +32,13 @@ class Client < ApplicationRecord
       OR (clients.last_name || ' ' || COALESCE(clients.first_name, '')) ILIKE :q
       OR (COALESCE(clients.first_name, '') || ' ' || clients.last_name) ILIKE :q
       OR clients.email ILIKE :q OR clients.inn ILIKE :q
-      OR clients.id IN (SELECT client_id FROM vehicles WHERE plate_number ILIKE :q OR vin ILIKE :q)
+      OR clients.id IN (SELECT client_id FROM vehicles WHERE plate_number ILIKE :q OR plate_number ILIKE :p OR vin ILIKE :q)
     SQL
     digits = digits_pattern(query)
     if digits
       conditions += " OR regexp_replace(clients.phone, '\\D', '', 'g') LIKE :d OR regexp_replace(COALESCE(clients.phone2, ''), '\\D', '', 'g') LIKE :d"
     end
-    where(conditions, q: like_pattern(query), d: digits)
+    where(conditions, q: like_pattern(query), p: like_pattern(PlateNumber.normalize(query)), d: digits)
   }
 
   def display_name

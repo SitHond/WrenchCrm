@@ -1,0 +1,9 @@
+morning:
+  client: petrov
+  vehicle: solaris
+  bay: lift1
+  mechanic: ivan
+  starts_at: <%= 1.day.from_now.change(hour: 10, min: 0).to_fs(:db) %>
+  ends_at: <%= 1.day.from_now.change(hour: 11, min: 0).to_fs(:db) %>
+  status: 0
+  description: Замена масла

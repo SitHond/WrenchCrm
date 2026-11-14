@@ -1,0 +1,15 @@
+<%= form_with model: [ :admin, bay ], class: "form narrow" do |form| %>
+  <%= render "shared/errors", record: bay %>
+  <div class="row">
+    <div class="field wide"><%= form.label :name %><%= form.text_field :name, required: true, placeholder: t("bays.name_placeholder") %></div>
+    <div class="field small"><%= form.label :position %><%= form.number_field :position, min: 0 %></div>
+  </div>
+  <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), admin_bays_path, class: "btn" %>
+  </div>
+<% end %>
+<% if bay.persisted? %>
+  <%= button_to t("delete"), admin_bay_path(bay), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
+<% end %>

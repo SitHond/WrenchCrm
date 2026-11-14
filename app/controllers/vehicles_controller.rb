@@ -9,6 +9,7 @@ class VehiclesController < ApplicationController
 
   def show
     @work_orders = @vehicle.work_orders.includes(:mechanic, :labor_lines, :part_lines)
+    @appointments = @vehicle.appointments.upcoming.includes(:bay)
     @notes = @vehicle.notes.visible_to(current_user).recent_first.includes(:author)
   end
 

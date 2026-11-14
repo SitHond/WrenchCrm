@@ -1,0 +1,49 @@
+<%= page_header t("appointments.title", time: l(@appointment.starts_at, format: :long)) do %>
+  <% if can?(:manage_orders) %>
+    <% if @appointment.scheduled? || @appointment.confirmed? %>
+      <%= button_to t("appointments.check_in"), check_in_appointment_path(@appointment), class: "btn btn-primary" %>
+    <% end %>
+    <%= link_to t("edit"), edit_appointment_path(@appointment), class: "btn" unless @appointment.arrived? %>
+    <%= button_to t("delete"), @appointment, method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
+  <% end %>
+<% end %>
+
+<div class="order-status">
+  <span class="badge status-<%= @appointment.status %>"><%= enum_label(Appointment, :status, @appointment.status) %></span>
+  <% if can?(:manage_orders) %>
+    <% @appointment.next_statuses.each do |status| %>
+      <%= button_to t("appointments.transition.#{status}"), status_appointment_path(@appointment, status: status), method: :patch,
+            class: [ "btn", ("btn-danger" if status == "cancelled") ] %>
+    <% end %>
+  <% end %>
+  <% if @appointment.work_order %>
+    <%= link_to t("work_orders.title", number: @appointment.work_order.number), @appointment.work_order, class: "btn" %>
+  <% end %>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("work_orders.sections.vehicle") %></h2>
+    <dl class="details">
+      <%= detail_row Vehicle.model_name.human, link_to(@appointment.vehicle.label, @appointment.vehicle) %>
+      <%= detail_row Client.model_name.human, link_to(@appointment.client.display_name, @appointment.client) %>
+      <%= detail_row Client.human_attribute_name(:phone), link_to(@appointment.client.phone, "tel:#{@appointment.client.phone}") %>
+    </dl>
+  </section>
+
+  <section class="card">
+    <h2><%= Appointment.model_name.human %></h2>
+    <dl class="details">
+      <%= detail_row Appointment.human_attribute_name(:starts_at), appointment_time_range(@appointment) %>
+      <%= detail_row Appointment.human_attribute_name(:bay), @appointment.bay&.name %>
+      <%= detail_row Appointment.human_attribute_name(:mechanic), @appointment.mechanic&.name %>
+      <%= detail_row Appointment.human_attribute_name(:created_by), @appointment.created_by&.name %>
+    </dl>
+  </section>
+</div>
+
+<% if @appointment.description.present? %>
+  <section class="card prose"><%= simple_format(@appointment.description) %></section>
+<% end %>
+
+<%= link_to t("appointments.back_to_day"), appointments_path(date: @appointment.starts_at.to_date), class: "btn" %>

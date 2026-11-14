@@ -35,7 +35,8 @@ module WrenchCrm
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
-    # config.time_zone = "Central Time (US & Canada)"
+    config.time_zone = ENV.fetch("TIME_ZONE", "Europe/Moscow")
+    config.x.workday_hours = ENV.fetch("WORKDAY_START", "9").to_i...ENV.fetch("WORKDAY_END", "20").to_i
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Don't generate system test files.

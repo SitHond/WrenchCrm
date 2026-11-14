@@ -1,0 +1,30 @@
+<%= form_with model: appointment, class: "form" do |form| %>
+  <%= render "shared/errors", record: appointment %>
+
+  <fieldset>
+    <div class="field">
+      <%= form.label :vehicle_id %>
+      <%= form.grouped_collection_select :vehicle_id, Client.active.ordered.includes(:vehicles).select { |c| c.vehicles.any? },
+            :vehicles, :display_name, :id, :label, { include_blank: true }, required: true %>
+    </div>
+    <p class="hint"><%= t("work_orders.new_client_hint_html", link: link_to(t("clients.new"), new_client_path(with_vehicle: 1))) %></p>
+    <div class="row">
+      <div class="field"><%= form.label :date %><%= form.date_field :date, value: appointment.starts_at&.to_date, required: true %></div>
+      <div class="field small"><%= form.label :time %><%= form.time_field :time, value: appointment.starts_at&.strftime("%H:%M"), step: 900, required: true %></div>
+      <div class="field">
+        <%= form.label :duration_minutes %>
+        <%= form.select :duration_minutes, Appointment::DURATIONS.map { |m| [ t("appointments.duration", hours: number(m / 60.0)), m ] }, selected: appointment.duration || 60 %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="field"><%= form.label :bay_id %><%= form.collection_select :bay_id, Bay.active.ordered, :id, :name, include_blank: "—" %></div>
+      <div class="field"><%= form.label :mechanic_id %><%= form.collection_select :mechanic_id, Employee.active.mechanic.ordered, :id, :name, include_blank: "—" %></div>
+    </div>
+    <div class="field"><%= form.label :description %><%= form.text_area :description, rows: 3, placeholder: t("appointments.description_placeholder") %></div>
+  </fieldset>
+
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), appointment.persisted? ? appointment : appointments_path(date: appointment.starts_at&.to_date), class: "btn" %>
+  </div>
+<% end %>

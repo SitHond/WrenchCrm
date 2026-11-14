@@ -1,4 +1,10 @@
-<%= form_with model: vehicle, class: "form" do |form| %>
+<%= form_with model: vehicle, class: "form", data: {
+      controller: "vehicle-form",
+      vehicle_form_models_value: VehicleCatalog.models_by_make.to_json,
+      vehicle_form_decode_url_value: vin_decode_path,
+      vehicle_form_vehicle_id_value: vehicle.id.to_s,
+      vehicle_form_labels_value: t("vehicles.vin_labels").to_json
+    } do |form| %>
   <%= render "shared/errors", record: vehicle %>
   <%= form.hidden_field :client_id if vehicle.new_record? %>
 
@@ -6,25 +12,45 @@
 
   <fieldset>
     <div class="row">
-      <div class="field"><%= form.label :make %><%= form.text_field :make, required: true, list: "vehicle-makes" %></div>
-      <div class="field"><%= form.label :model %><%= form.text_field :model, required: true %></div>
-      <div class="field small"><%= form.label :year %><%= form.number_field :year, in: 1900..(Date.current.year + 1) %></div>
+      <div class="field wide">
+        <%= form.label :vin %>
+        <%= form.text_field :vin, maxlength: 17, class: "upper mono", autocomplete: "off", autofocus: vehicle.new_record?,
+              data: { vehicle_form_target: "vin", action: "input->vehicle-form#decodeVin" } %>
+      </div>
+      <div class="field"><%= form.label :plate_number %><%= form.text_field :plate_number, class: "upper", autocomplete: "off", placeholder: "А123ВС 77" %></div>
+    </div>
+    <p class="hint" data-vehicle-form-target="hint"><%= t("vehicles.vin_hint") %></p>
+    <div class="row">
+      <div class="field">
+        <%= form.label :make %>
+        <%= form.text_field :make, required: true, list: "vehicle-makes", autocomplete: "off",
+              data: { vehicle_form_target: "make", action: "input->vehicle-form#updateModels" } %>
+      </div>
+      <div class="field">
+        <%= form.label :model %>
+        <%= form.text_field :model, required: true, list: "vehicle-models", autocomplete: "off", data: { vehicle_form_target: "model" } %>
+      </div>
+      <div class="field small">
+        <%= form.label :year %>
+        <%= form.number_field :year, in: 1900..(Date.current.year + 1), data: { vehicle_form_target: "year" } %>
+      </div>
     </div>
     <div class="row">
-      <div class="field"><%= form.label :plate_number %><%= form.text_field :plate_number, class: "upper" %></div>
-      <div class="field wide"><%= form.label :vin %><%= form.text_field :vin, maxlength: 17, class: "upper mono" %></div>
-    </div>
-    <div class="row">
-      <div class="field"><%= form.label :color %><%= form.text_field :color %></div>
-      <div class="field"><%= form.label :engine %><%= form.text_field :engine %></div>
+      <div class="field"><%= form.label :color %><%= form.text_field :color, list: "vehicle-colors", autocomplete: "off" %></div>
+      <div class="field"><%= form.label :engine %><%= form.text_field :engine, list: "vehicle-engines", autocomplete: "off", placeholder: t("vehicles.engine_placeholder") %></div>
       <div class="field"><%= form.label :mileage %><%= form.number_field :mileage, min: 0 %></div>
     </div>
   </fieldset>
 
   <datalist id="vehicle-makes">
-    <% %w[Audi BMW Chery Chevrolet Ford Geely Haval Honda Hyundai Kia Lada Lexus Mazda Mercedes-Benz Mitsubishi Nissan Opel Renault Skoda Subaru Toyota Volkswagen Volvo].each do |make| %>
-      <option value="<%= make %>">
-    <% end %>
+    <% VehicleCatalog.models_by_make.each_key do |make| %><option value="<%= make %>"><% end %>
+  </datalist>
+  <datalist id="vehicle-models" data-vehicle-form-target="modelList"></datalist>
+  <datalist id="vehicle-colors">
+    <% VehicleCatalog.colors.each do |color| %><option value="<%= color %>"><% end %>
+  </datalist>
+  <datalist id="vehicle-engines">
+    <% VehicleCatalog.engines.each do |engine| %><option value="<%= engine %>"><% end %>
   </datalist>
 
   <div class="form-actions">

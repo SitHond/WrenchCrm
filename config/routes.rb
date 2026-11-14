@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   resources :clients do
     resources :notes, only: :create
   end
+  resource :vin_decode, only: :show
   resources :vehicles do
     resources :notes, only: :create
   end
@@ -21,6 +22,12 @@ Rails.application.routes.draw do
     resources :payments, only: %i[ create destroy ]
     resources :notes, only: :create
   end
+  resources :appointments do
+    member do
+      patch :status
+      post :check_in
+    end
+  end
   resources :notes, only: %i[ edit update destroy ]
   resources :services, except: :show
   resources :parts, except: :show do
@@ -30,6 +37,7 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :users, except: :show
     resources :employees, except: :show
+    resources :bays, except: :show
   end
 
   root "dashboard#show"

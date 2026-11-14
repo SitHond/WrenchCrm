@@ -19,6 +19,7 @@ class WorkOrder < ApplicationRecord
   has_many :part_lines, class_name: "WorkOrderPart", dependent: :destroy
   has_many :payments, -> { order(:paid_at) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
+  has_one :appointment, dependent: :nullify
 
   validates :discount_percent, numericality: { in: 0..100 }
   validates :mileage, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
@@ -35,8 +36,9 @@ class WorkOrder < ApplicationRecord
 
     pattern = "%#{sanitize_sql_like(query.strip)}%"
     number = query.to_s.gsub(/\D/, "")
-    scope = joins(:vehicle, :client).where(<<~SQL.squish, q: pattern)
-      vehicles.plate_number ILIKE :q OR vehicles.vin ILIKE :q OR vehicles.make ILIKE :q OR vehicles.model ILIKE :q
+    plate = "%#{sanitize_sql_like(PlateNumber.normalize(query).to_s)}%"
+    scope = joins(:vehicle, :client).where(<<~SQL.squish, q: pattern, p: plate)
+      vehicles.plate_number ILIKE :p OR vehicles.plate_number ILIKE :q OR vehicles.vin ILIKE :q OR vehicles.make ILIKE :q OR vehicles.model ILIKE :q
       OR clients.last_name ILIKE :q OR clients.company_name ILIKE :q OR clients.phone ILIKE :q
     SQL
     number.present? && number.length <= 18 ? scope.or(joins(:vehicle, :client).where(id: number.to_i)) : scope

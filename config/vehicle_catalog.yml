@@ -1,0 +1,108 @@
+# Suggestions for the vehicle form. Values entered in the shop are suggested too.
+makes:
+  Lada: [Granta, Vesta, Vesta SW Cross, Niva Legend, Niva Travel, Largus, XRAY, Kalina, Priora, "2107", "2110", "2114", Iskra]
+  UAZ: [Patriot, Hunter, Pickup, Profi, "Буханка"]
+  GAZ: [Gazelle Next, Gazelle Business, Sobol, Valdai]
+  Kia: [Rio, Rio X, Ceed, Cerato, K5, Optima, Sportage, Sorento, Soul, Seltos, Picanto, Carnival, Mohave]
+  Hyundai: [Solaris, Creta, Elantra, Sonata, Tucson, Santa Fe, i30, i40, ix35, Accent, Getz, Palisade, Staria]
+  Toyota: [Camry, Corolla, RAV4, Land Cruiser, Land Cruiser Prado, Highlander, Hilux, Fortuner, Yaris, Avensis, Auris, C-HR, Prius, Alphard]
+  Lexus: [RX, NX, ES, LX, GX, IS, UX]
+  Nissan: [Almera, Qashqai, X-Trail, Terrano, Juke, Murano, Teana, Note, Tiida, Pathfinder, Patrol, Navara]
+  Renault: [Logan, Sandero, Sandero Stepway, Duster, Kaptur, Arkana, Megane, Fluence, Koleos, Kangoo, Symbol, Clio]
+  Volkswagen: [Polo, Jetta, Golf, Passat, Tiguan, Touareg, Teramont, Taos, Caddy, Transporter, Multivan, Amarok]
+  Skoda: [Rapid, Octavia, Superb, Kodiaq, Karoq, Fabia, Yeti, Kamiq]
+  Chery: [Tiggo 4, Tiggo 4 Pro, Tiggo 7 Pro, Tiggo 7 Pro Max, Tiggo 8, Tiggo 8 Pro, Arrizo 8]
+  Haval: [Jolion, F7, F7x, H6, H9, Dargo, M6]
+  Geely: [Coolray, Monjaro, Atlas, Atlas Pro, Tugella, Emgrand, Okavango, Preface]
+  Changan: [CS35 Plus, CS55 Plus, CS75 Plus, UNI-K, UNI-V, Alsvin]
+  Omoda: [C5, S5]
+  Exeed: [LX, TXL, VX, RX]
+  Tank: ["300", "500"]
+  Jetour: [Dashing, X70, X90]
+  Mitsubishi: [Outlander, ASX, Pajero, Pajero Sport, Lancer, L200, Eclipse Cross]
+  Mazda: ["3", "6", CX-5, CX-30, CX-9, "2"]
+  Honda: [Civic, Accord, CR-V, HR-V, Pilot, Fit, Jazz]
+  Subaru: [Forester, Outback, XV, Impreza, Legacy]
+  Suzuki: [Vitara, Grand Vitara, SX4, Jimny, Swift]
+  Ford: [Focus, Mondeo, Kuga, EcoSport, Fiesta, Explorer, Transit, Ranger]
+  Chevrolet: [Niva, Cruze, Aveo, Lacetti, Cobalt, Captiva, Lanos, Spark, Tahoe]
+  Daewoo: [Nexia, Matiz, Gentra]
+  Opel: [Astra, Corsa, Insignia, Mokka, Zafira, Vectra, Antara]
+  Peugeot: ["208", "308", "408", "3008", "4008", "5008", Partner]
+  Citroen: [C3, C4, C5 Aircross, C-Elysee, Berlingo, Jumper]
+  BMW: ["1 Series", "3 Series", "5 Series", "7 Series", X1, X3, X5, X6, X7]
+  Mercedes-Benz: [A-Class, C-Class, E-Class, S-Class, GLA, GLC, GLE, GLS, G-Class, Sprinter, Vito]
+  Audi: [A3, A4, A6, A8, Q3, Q5, Q7, Q8]
+  Volvo: [S60, S90, XC40, XC60, XC90]
+  Land Rover: [Range Rover, Range Rover Sport, Range Rover Evoque, Discovery, Discovery Sport, Defender]
+  Infiniti: [QX50, QX60, QX70, QX80, Q50]
+  Datsun: [on-DO, mi-DO]
+  Tesla: [Model 3, Model S, Model X, Model Y]
+
+colors: [Белый, Чёрный, Серебристый, Серый, Синий, Голубой, Красный, Бордовый, Зелёный, Бежевый, Коричневый, Жёлтый, Оранжевый, Фиолетовый, Золотистый]
+
+# World manufacturer identifier: first three VIN characters.
+wmi:
+  XTA: { makes: [Lada], country: Россия }
+  XTT: { makes: [UAZ], country: Россия }
+  X96: { makes: [GAZ], country: Россия }
+  X9L: { makes: [Chevrolet], country: Россия }
+  X7L: { makes: [Renault], country: Россия }
+  Z94: { makes: [Hyundai, Kia], country: Россия }
+  XW8: { makes: [Volkswagen, Skoda], country: Россия }
+  XW7: { makes: [Toyota], country: Россия }
+  Z8N: { makes: [Nissan], country: Россия }
+  Z6F: { makes: [Ford], country: Россия }
+  X4X: { makes: [BMW], country: Россия }
+  Z8T: { makes: [Mitsubishi, Peugeot, Citroen], country: Россия }
+  WVW: { makes: [Volkswagen], country: Германия }
+  WV1: { makes: [Volkswagen], country: Германия }
+  WV2: { makes: [Volkswagen], country: Германия }
+  WAU: { makes: [Audi], country: Германия }
+  WBA: { makes: [BMW], country: Германия }
+  WBS: { makes: [BMW], country: Германия }
+  WDB: { makes: [Mercedes-Benz], country: Германия }
+  WDC: { makes: [Mercedes-Benz], country: Германия }
+  WDD: { makes: [Mercedes-Benz], country: Германия }
+  W0L: { makes: [Opel], country: Германия }
+  WF0: { makes: [Ford], country: Германия }
+  VF1: { makes: [Renault], country: Франция }
+  VF3: { makes: [Peugeot], country: Франция }
+  VF7: { makes: [Citroen], country: Франция }
+  VNK: { makes: [Toyota], country: Франция }
+  TMB: { makes: [Skoda], country: Чехия }
+  TMA: { makes: [Hyundai], country: Чехия }
+  U5Y: { makes: [Kia], country: Словакия }
+  KMH: { makes: [Hyundai], country: Южная Корея }
+  KNA: { makes: [Kia], country: Южная Корея }
+  KND: { makes: [Kia], country: Южная Корея }
+  KL1: { makes: [Chevrolet], country: Южная Корея }
+  KLA: { makes: [Daewoo], country: Южная Корея }
+  JTD: { makes: [Toyota], country: Япония }
+  JTE: { makes: [Toyota], country: Япония }
+  JTM: { makes: [Toyota], country: Япония }
+  JTN: { makes: [Toyota], country: Япония }
+  JTH: { makes: [Lexus], country: Япония }
+  JTJ: { makes: [Lexus], country: Япония }
+  JN1: { makes: [Nissan], country: Япония }
+  JN8: { makes: [Nissan], country: Япония }
+  JHM: { makes: [Honda], country: Япония }
+  JMZ: { makes: [Mazda], country: Япония }
+  JMB: { makes: [Mitsubishi], country: Япония }
+  JA3: { makes: [Mitsubishi], country: Япония }
+  JF1: { makes: [Subaru], country: Япония }
+  JF2: { makes: [Subaru], country: Япония }
+  JS2: { makes: [Suzuki], country: Япония }
+  JSA: { makes: [Suzuki], country: Япония }
+  SAL: { makes: [Land Rover], country: Великобритания }
+  SB1: { makes: [Toyota], country: Великобритания }
+  SJN: { makes: [Nissan], country: Великобритания }
+  YV1: { makes: [Volvo], country: Швеция }
+  NMT: { makes: [Toyota], country: Турция }
+  LVV: { makes: [Chery], country: Китай }
+  LGW: { makes: [Haval], country: Китай }
+  L6T: { makes: [Geely], country: Китай }
+  1HG: { makes: [Honda], country: США }
+  1FA: { makes: [Ford], country: США }
+  1G1: { makes: [Chevrolet], country: США }
+  5YJ: { makes: [Tesla], country: США }

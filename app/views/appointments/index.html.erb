@@ -1,0 +1,68 @@
+<%= page_header t("appointments.title_for", date: l(@date, format: :long)) do %>
+  <%= link_to t("appointments.new"), new_appointment_path(starts_at: @date.in_time_zone.change(hour: Rails.configuration.x.workday_hours.first).iso8601), class: "btn btn-primary" if can?(:manage_orders) %>
+<% end %>
+
+<div class="filters">
+  <%= link_to "←", appointments_path(date: @date - 1), class: "btn", title: t("appointments.prev_day") %>
+  <%= link_to t("appointments.today"), appointments_path, class: "btn" %>
+  <%= link_to "→", appointments_path(date: @date + 1), class: "btn", title: t("appointments.next_day") %>
+  <%= form_with url: appointments_path, method: :get, class: "inline-form compact" do |form| %>
+    <%= form.date_field :date, value: @date, data: { controller: "auto-submit", action: "change->auto-submit#submit" }, aria: { label: t("appointments.pick_date") } %>
+  <% end %>
+  <span class="muted"><%= t("appointments.count", count: @appointments.size) %></span>
+</div>
+
+<% if @bays.empty? && can?(:admin) %>
+  <p class="hint"><%= t("appointments.no_bays_hint_html", link: link_to(t("nav.bays"), admin_bays_path)) %></p>
+<% end %>
+
+<% slots = calendar_slots(@date) %>
+<% columns = calendar_columns(@bays, @appointments) %>
+<div class="calendar-wrap">
+  <div class="calendar" style="grid-template-columns: 64px repeat(<%= columns.size %>, minmax(170px, 1fr)); grid-template-rows: auto repeat(<%= slots.size %>, 30px);">
+    <div class="calendar-corner"></div>
+    <% columns.each_with_index do |column, index| %>
+      <div class="calendar-head" style="grid-column: <%= index + 2 %>; grid-row: 1;"><%= column[:label] %></div>
+    <% end %>
+
+    <% slots.each_with_index do |slot, row| %>
+      <div class="calendar-time <%= "hour" if slot.min.zero? %>" style="grid-column: 1; grid-row: <%= row + 2 %>;">
+        <%= l(slot, format: :time) if slot.min.zero? %>
+      </div>
+      <% columns.each_with_index do |column, index| %>
+        <% cell_style = "grid-column: #{index + 2}; grid-row: #{row + 2};" %>
+        <% if can?(:manage_orders) && slot.future? %>
+          <%= link_to "", new_appointment_path(starts_at: slot.iso8601, bay_id: column[:bay]&.id),
+                class: [ "calendar-cell", ("hour" if slot.min.zero?) ], style: cell_style,
+                title: t("appointments.book_at", time: l(slot, format: :time)), aria: { label: t("appointments.book_at", time: l(slot, format: :time)) } %>
+        <% else %>
+          <div class="calendar-cell past <%= "hour" if slot.min.zero? %>" style="<%= cell_style %>"></div>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% @appointments.each do |appointment| %>
+      <% rows = calendar_rows(slots, appointment) %>
+      <% next unless rows %>
+      <%= link_to appointment, class: "calendar-event status-#{appointment.status}",
+            style: "grid-column: #{calendar_column_index(columns, appointment) + 2}; grid-row: #{rows[0]} / span #{rows[1]};" do %>
+        <strong><%= appointment_time_range(appointment) %></strong>
+        <span><%= appointment.vehicle.label %></span>
+        <span class="muted"><%= appointment.client.display_name %></span>
+        <% if appointment.mechanic %><span class="muted"><%= appointment.mechanic.name %></span><% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>
+
+<% outside = @appointments.reject { |a| calendar_rows(slots, a) } %>
+<% if outside.any? %>
+  <section class="card">
+    <h2><%= t("appointments.outside_hours") %></h2>
+    <ul class="list">
+      <% outside.each do |appointment| %>
+        <li><%= link_to appointment_time_range(appointment), appointment %> <%= appointment.vehicle.label %></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>

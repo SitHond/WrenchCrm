@@ -25,6 +25,7 @@ en:
   nav:
     dashboard: "Dashboard"
     work_orders: "Work orders"
+    appointments: "Appointments"
     clients: "Clients"
     vehicles: "Vehicles"
     catalog: "Catalog"
@@ -32,6 +33,7 @@ en:
     parts: "Parts stock"
     admin: "Admin"
     employees: "Employees"
+    bays: "Bays"
     users: "Users"
     sign_out: "Sign out"
   pagination:
@@ -59,6 +61,8 @@ en:
     due: "Due today or overdue"
     no_due: "Nothing overdue."
     low_stock: "Running low"
+    appointments_today: "Today's appointments"
+    no_appointments: "No appointments today."
     stock_ok: "Stock levels are fine."
   clients:
     new: "New client"
@@ -78,6 +82,14 @@ en:
     history: "Service history"
     no_history: "No service history yet."
     km: "%{count} km"
+    vin_hint: "Enter the VIN to fill in the make, country and year. Pick the make and model from the suggestions."
+    engine_placeholder: "1.6 petrol"
+    vin_labels:
+      decoded: "From VIN"
+      year_note: "(check it)"
+      unknown: "Couldn't identify the manufacturer, enter the make yourself."
+      invalid: "The VIN has invalid characters (I, O and Q aren't used)."
+      existing: "This VIN is already registered:"
     sections:
       details: "Vehicle details"
   work_orders:
@@ -123,6 +135,41 @@ en:
       total: "Total due"
       paid: "Paid"
       balance: "Balance"
+  appointments:
+    title: "Appointment at %{time}"
+    title_for: "Appointments for %{date}"
+    new: "Book a client"
+    edit: "Edit appointment"
+    book: "Book appointment"
+    book_at: "Book at %{time}"
+    today: "Today"
+    prev_day: "Previous day"
+    next_day: "Next day"
+    pick_date: "Pick a date"
+    no_bay: "No bay"
+    upcoming: "Upcoming appointments"
+    outside_hours: "Outside working hours"
+    back_to_day: "Back to calendar"
+    check_in: "Client arrived → work order"
+    checked_in: "Work order created from the appointment."
+    status_changed: "Appointment status: %{status}."
+    status_failed: "Couldn't change the status: the slot is taken or the change isn't allowed."
+    description_placeholder: "What the client asked for"
+    duration: "%{hours} h"
+    no_bays_hint_html: "Add bays under %{link} to see the load of each lift."
+    count:
+      zero: "no appointments"
+      one: "%{count} appointment"
+      other: "%{count} appointments"
+    transition:
+      scheduled: "Book again"
+      confirmed: "Confirmed"
+      no_show: "No-show"
+      cancelled: "Cancel"
+  bays:
+    new: "New bay"
+    empty: "No bays yet."
+    name_placeholder: "Lift 1"
   payments:
     add: "Take payment"
     created: "Payment recorded."
@@ -170,6 +217,8 @@ en:
     errors:
       messages:
         order_locked: "The work order is closed or cancelled and can't be changed"
+        busy: "is already booked at that time"
+        after_start: "must be after the start"
     models:
       client:
         one: "Client"
@@ -192,6 +241,8 @@ en:
         one: "Payment"
         other: "Payments"
       employee: "Employee"
+      appointment: "Appointment"
+      bay: "Bay"
       note:
         one: "Note"
         other: "Notes"
@@ -279,6 +330,24 @@ en:
         active: "Employed"
         user: "User account"
         user_id: "User account"
+      appointment:
+        vehicle: "Vehicle"
+        vehicle_id: "Vehicle"
+        bay: "Bay"
+        bay_id: "Bay"
+        mechanic: "Mechanic"
+        mechanic_id: "Mechanic"
+        date: "Date"
+        time: "Time"
+        duration_minutes: "Duration"
+        starts_at: "Time"
+        ends_at: "End"
+        description: "Job"
+        created_by: "Booked by"
+      bay:
+        name: "Name"
+        position: "Order"
+        active: "In use"
       note:
         body: "Text"
         private: "Private"
@@ -310,6 +379,13 @@ en:
           ready: "Ready"
           closed: "Handed over"
           cancelled: "Cancelled"
+      appointment:
+        status:
+          scheduled: "Booked"
+          confirmed: "Confirmed"
+          arrived: "Arrived"
+          no_show: "No-show"
+          cancelled: "Cancelled"
       payment:
         payment_method:
           cash: "Cash"
@@ -320,3 +396,6 @@ en:
           mechanic: "Mechanic"
           service_advisor: "Service advisor"
           manager: "Manager"
+  time:
+    formats:
+      time: "%H:%M"
