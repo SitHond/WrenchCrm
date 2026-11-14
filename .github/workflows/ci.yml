@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: wrench_crm
+          POSTGRES_PASSWORD: wrench_crm
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U wrench_crm"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      RAILS_ENV: test
+      DB_HOST: localhost
+      DB_USER: wrench_crm
+      DB_PASSWORD: wrench_crm
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+
+      - name: Prepare database
+        run: bin/rails db:prepare
+
+      - name: Run tests
+        run: bin/rails test
+
+  docker-build:
+    runs-on: ubuntu-latest
+    if: github.ref_type != 'tag'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - name: Build production image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

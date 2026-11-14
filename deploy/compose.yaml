@@ -1,0 +1,49 @@
+# WrenchCRM: run with `docker compose up -d` (or `podman compose up -d`) next to a filled .env.
+# install.sh / install.ps1 create the .env for you.
+services:
+  db:
+    image: docker.io/library/postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wrench_crm
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: wrench_crm_production
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wrench_crm -d wrench_crm_production"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    image: ghcr.io/sithond/wrenchcrm:${WRENCH_VERSION:?set WRENCH_VERSION in .env}
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://wrench_crm:${POSTGRES_PASSWORD}@db:5432/wrench_crm_production
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?set SECRET_KEY_BASE in .env}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@example.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme123}
+      SHOP_NAME: ${SHOP_NAME:-WrenchCRM}
+      SHOP_DETAILS: ${SHOP_DETAILS:-}
+      CURRENCY_UNIT: ${CURRENCY_UNIT:-₽}
+      TIME_ZONE: ${TIME_ZONE:-Europe/Moscow}
+      WORKDAY_START: ${WORKDAY_START:-9}
+      WORKDAY_END: ${WORKDAY_END:-20}
+      RAILS_ASSUME_SSL: ${RAILS_ASSUME_SSL:-false}
+      RAILS_FORCE_SSL: ${RAILS_FORCE_SSL:-false}
+      SEED_DEMO: ${SEED_DEMO:-}
+    ports:
+      - "${APP_PORT:-3000}:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/up"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+volumes:
+  pgdata:

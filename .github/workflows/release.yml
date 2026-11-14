@@ -1,0 +1,103 @@
+name: Release
+
+# Push a tag like v1.2.3 to publish a release:
+#   git tag v1.2.3 && git push origin v1.2.3
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  test:
+    uses: ./.github/workflows/ci.yml
+
+  image:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.vars.outputs.image }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Image name
+        id: vars
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/wrenchcrm" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ steps.vars.outputs.image }}
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ !contains(github.ref_name, '-') }}
+          labels: |
+            org.opencontainers.image.title=WrenchCRM
+            org.opencontainers.image.description=CRM для автосервиса
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: APP_VERSION=${{ github.ref_name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  release:
+    needs: image
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Build install bundle
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          image="${{ needs.image.outputs.image }}"
+          dir="wrenchcrm-${version}"
+          mkdir -p "dist/${dir}"
+          cp deploy/install.sh deploy/install.ps1 deploy/README.md LICENSE "dist/${dir}/"
+          sed "s|ghcr.io/sithond/wrenchcrm|${image}|" deploy/compose.yaml > "dist/${dir}/compose.yaml"
+          sed "s|__VERSION__|${version}|" deploy/env.example > "dist/${dir}/env.example"
+          echo "${version}" > "dist/${dir}/VERSION"
+          chmod +x "dist/${dir}/install.sh"
+          cd dist
+          tar -czf "${dir}.tar.gz" "${dir}"
+          zip -qr "${dir}.zip" "${dir}"
+          sha256sum "${dir}.tar.gz" "${dir}.zip" > SHA256SUMS
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          image="${{ needs.image.outputs.image }}"
+          prerelease=""
+          [[ "$GITHUB_REF_NAME" == *-* ]] && prerelease="--prerelease"
+          cat > notes.md <<NOTES
+          ## Установка
+
+          Скачайте \`wrenchcrm-${version}.zip\` (Windows) или \`wrenchcrm-${version}.tar.gz\` (Linux, macOS), распакуйте и запустите \`install.ps1\` или \`install.sh\`. Подробности в README внутри архива.
+
+          Обновление с предыдущей версии: впишите \`WRENCH_VERSION=${version}\` в \`.env\` и выполните \`docker compose pull && docker compose up -d\`.
+
+          Образ: \`${image}:${version}\` (linux/amd64, linux/arm64)
+          NOTES
+          gh release create "$GITHUB_REF_NAME" dist/*.tar.gz dist/*.zip dist/SHA256SUMS \
+            --title "WrenchCRM ${version}" --notes-file notes.md --generate-notes --verify-tag $prerelease

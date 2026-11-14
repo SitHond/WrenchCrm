@@ -1,9 +1,8 @@
 # syntax=docker/dockerfile:1
 # check=error=true
 
-# This Dockerfile is designed for production, not development. Use with Kamal or build'n'run by hand:
-# docker build -t wrench_crm .
-# docker run -d -p 80:80 -e RAILS_MASTER_KEY=<value from config/master.key> --name wrench_crm wrench_crm
+# Production image. Release builds are published to ghcr.io by .github/workflows/release.yml.
+# Local build: docker build -t wrenchcrm .
 
 # For a containerized dev environment, see Dev Containers: https://guides.rubyonrails.org/getting_started_with_devcontainer.html
 
@@ -73,6 +72,10 @@ COPY --chown=rails:rails --from=build /rails /rails
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start server via Thruster by default, this can be overwritten at runtime
+# Version shown in the app; release builds pass the git tag.
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+
 # Thruster listens on 8080 so the non-root user can bind it under rootless podman too.
 ENV HTTP_PORT=8080
 EXPOSE 8080

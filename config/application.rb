@@ -29,6 +29,7 @@ module WrenchCrm
     config.autoload_lib(ignore: %w[assets tasks])
 
     config.x.currency_unit = ENV.fetch("CURRENCY_UNIT", "₽")
+    config.x.version = ENV.fetch("APP_VERSION", "dev")
 
     # Configuration for the application, engines, and railties goes here.
     #

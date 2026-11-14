@@ -36,6 +36,7 @@
           <%= link_to current_user.name, edit_profile_path, class: "nav-link" %>
           <%= render "shared/locale_switcher" %>
           <%= button_to t("nav.sign_out"), session_path, method: :delete, class: "link-button" %>
+          <span class="version">v<%= Rails.configuration.x.version.delete_prefix("v") %></span>
         </div>
       </aside>
 

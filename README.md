@@ -36,17 +36,24 @@ CRM для автомастерской на **Ruby on Rails 8.1** и **PostgreS
 | `WORKDAY_START`, `WORKDAY_END` | Часы работы в календаре записи | 9, 20 |
 | `SEED_DEMO` | `1` — загрузить демо-данные в продакшне | — |
 
-## Быстрый старт
+## Установка
+
+Нужен Docker (на Windows и macOS — Docker Desktop) или Podman.
+
+1. Скачайте архив последней версии со страницы [Releases](https://github.com/SitHond/WrenchCrm/releases): `.zip` для Windows, `.tar.gz` для Linux и macOS.
+2. Распакуйте и запустите `install.ps1` (Windows) или `install.sh` (Linux, macOS).
+3. Откройте http://localhost:3000.
+
+Скрипт спросит данные администратора, сгенерирует пароли и запустит программу из готового образа `ghcr.io/sithond/wrenchcrm`. Обновление, резервное копирование и доступ по сети описаны в [deploy/README.md](deploy/README.md).
+
+## Сборка из исходников
 
 ```bash
 cp .env.example .env          # задайте пароли и SECRET_KEY_BASE (openssl rand -hex 64)
 docker compose up -d --build  # или: podman compose up -d --build
 ```
 
-Приложение откроется на http://localhost:3000. Вход — `ADMIN_EMAIL` и `ADMIN_PASSWORD` из `.env`.
 При каждом старте контейнер применяет миграции и создаёт администратора, если его ещё нет.
-
-Если перед приложением стоит прокси с HTTPS, добавьте `RAILS_ASSUME_SSL=true` и `RAILS_FORCE_SSL=true`.
 
 ## Разработка
 
@@ -62,6 +69,17 @@ docker compose -f compose.dev.yaml exec web bin/rails console
 ```
 
 Без контейнера понадобятся Ruby 3.4 и PostgreSQL. Подключение задаётся переменными `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD` (по умолчанию `localhost:5432`, `wrench_crm`/`wrench_crm`).
+
+## Выпуск версии
+
+Тесты запускаются в GitHub Actions на каждый push в `main`. Чтобы выпустить версию, поставьте тег:
+
+```bash
+git tag v1.2.0
+git push origin v1.2.0
+```
+
+Workflow [release.yml](.github/workflows/release.yml) прогонит тесты, соберёт образ для amd64 и arm64, опубликует его в `ghcr.io/sithond/wrenchcrm` с тегами `1.2.0`, `1.2` и `latest` и создаст релиз с архивами установки и списком изменений. Тег с дефисом (`v1.3.0-beta.1`) публикуется как предварительный релиз и не меняет `latest`.
 
 ## Лицензия
 

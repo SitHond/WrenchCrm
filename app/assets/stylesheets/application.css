@@ -288,3 +288,4 @@ a.calendar-cell:hover { background: color-mix(in srgb, var(--primary) 12%, trans
 }
 .calendar-event:hover { text-decoration: none; filter: brightness(.97); }
 .calendar-event span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.version { font-size: .75rem; opacity: .5; padding: 0 .75rem; }
