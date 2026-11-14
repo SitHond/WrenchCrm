@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_210000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -98,6 +98,13 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
     t.index ["created_by_id"], name: "index_clients_on_created_by_id"
     t.index ["last_name", "first_name"], name: "index_clients_on_last_name_and_first_name"
     t.index ["phone"], name: "index_clients_on_phone"
+  end
+
+  create_table "complexity_levels", force: :cascade do |t|
+    t.string "name", null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "employees", force: :cascade do |t|
@@ -258,6 +265,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
     t.index ["created_by_id"], name: "index_sales_on_created_by_id"
   end
 
+  create_table "service_prices", force: :cascade do |t|
+    t.bigint "service_id", null: false
+    t.bigint "complexity_level_id", null: false
+    t.decimal "price", precision: 12, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["complexity_level_id"], name: "index_service_prices_on_complexity_level_id"
+    t.index ["service_id", "complexity_level_id"], name: "index_service_prices_on_service_id_and_complexity_level_id", unique: true
+    t.index ["service_id"], name: "index_service_prices_on_service_id"
+  end
+
   create_table "services", force: :cascade do |t|
     t.string "name", null: false
     t.string "code"
@@ -276,6 +294,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
+  create_table "shop_settings", force: :cascade do |t|
+    t.boolean "allow_negative_stock", default: true, null: false
+    t.string "name"
+    t.string "legal_name"
+    t.string "inn"
+    t.string "kpp"
+    t.string "ogrn"
+    t.string "address"
+    t.string "phone"
+    t.string "email"
+    t.string "website"
+    t.string "bank_name"
+    t.string "bik"
+    t.string "bank_account"
+    t.string "correspondent_account"
+    t.string "director"
+    t.text "work_order_terms"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "stock_movements", force: :cascade do |t|
@@ -343,16 +382,25 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
     t.index ["vin"], name: "index_vehicles_on_vin", unique: true, where: "((vin IS NOT NULL) AND ((vin)::text <> ''::text))"
   end
 
+  create_table "work_order_labor_performers", force: :cascade do |t|
+    t.bigint "work_order_labor_id", null: false
+    t.bigint "employee_id", null: false
+    t.decimal "share", precision: 5, scale: 2, default: "100.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["employee_id"], name: "index_work_order_labor_performers_on_employee_id"
+    t.index ["work_order_labor_id", "employee_id"], name: "index_labor_performers_unique", unique: true
+    t.index ["work_order_labor_id"], name: "index_work_order_labor_performers_on_work_order_labor_id"
+  end
+
   create_table "work_order_labors", force: :cascade do |t|
     t.bigint "work_order_id", null: false
     t.bigint "service_id"
-    t.bigint "employee_id"
     t.string "name", null: false
     t.decimal "quantity", precision: 8, scale: 2, default: "1.0", null: false
     t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["employee_id"], name: "index_work_order_labors_on_employee_id"
     t.index ["service_id"], name: "index_work_order_labors_on_service_id"
     t.index ["work_order_id"], name: "index_work_order_labors_on_work_order_id"
   end
@@ -366,6 +414,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
+    t.boolean "client_supplied", default: false, null: false
     t.index ["part_id"], name: "index_work_order_parts_on_part_id"
     t.index ["work_order_id"], name: "index_work_order_parts_on_work_order_id"
   end
@@ -380,15 +429,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
     t.text "complaint"
     t.text "diagnosis"
     t.text "recommendations"
-    t.decimal "discount_percent", precision: 5, scale: 2, default: "0.0", null: false
     t.datetime "promised_at"
     t.datetime "completed_at"
     t.datetime "closed_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "advisor_id"
+    t.decimal "labor_discount_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "parts_discount_percent", precision: 5, scale: 2, default: "0.0", null: false
+    t.decimal "discount_amount", precision: 12, scale: 2, default: "0.0", null: false
+    t.bigint "complexity_level_id"
     t.index ["advisor_id"], name: "index_work_orders_on_advisor_id"
     t.index ["client_id"], name: "index_work_orders_on_client_id"
+    t.index ["complexity_level_id"], name: "index_work_orders_on_complexity_level_id"
     t.index ["created_by_id"], name: "index_work_orders_on_created_by_id"
     t.index ["mechanic_id"], name: "index_work_orders_on_mechanic_id"
     t.index ["status"], name: "index_work_orders_on_status"
@@ -429,16 +482,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_200100) do
   add_foreign_key "sales", "cash_accounts"
   add_foreign_key "sales", "clients", on_delete: :nullify
   add_foreign_key "sales", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "service_prices", "complexity_levels", on_delete: :cascade
+  add_foreign_key "service_prices", "services", on_delete: :cascade
   add_foreign_key "sessions", "users"
   add_foreign_key "stock_movements", "parts", on_delete: :cascade
   add_foreign_key "stock_movements", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "vehicles", "clients"
-  add_foreign_key "work_order_labors", "employees", on_delete: :nullify
+  add_foreign_key "work_order_labor_performers", "employees", on_delete: :cascade
+  add_foreign_key "work_order_labor_performers", "work_order_labors", on_delete: :cascade
   add_foreign_key "work_order_labors", "services", on_delete: :nullify
   add_foreign_key "work_order_labors", "work_orders", on_delete: :cascade
   add_foreign_key "work_order_parts", "parts", on_delete: :nullify
   add_foreign_key "work_order_parts", "work_orders", on_delete: :cascade
   add_foreign_key "work_orders", "clients"
+  add_foreign_key "work_orders", "complexity_levels", on_delete: :nullify
   add_foreign_key "work_orders", "employees", column: "advisor_id", on_delete: :nullify
   add_foreign_key "work_orders", "employees", column: "mechanic_id", on_delete: :nullify
   add_foreign_key "work_orders", "users", column: "created_by_id", on_delete: :nullify

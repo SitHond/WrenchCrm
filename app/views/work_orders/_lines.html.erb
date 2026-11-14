@@ -14,8 +14,35 @@
       <tbody>
         <% lines.each do |line| %>
           <tr>
-            <td><%= line.name %></td>
-            <% if kind == :labor %><td><%= line.employee&.name %></td><% end %>
+            <td>
+              <%= line.name %>
+              <% if kind == :part && line.client_supplied? %><span class="badge"><%= WorkOrderPart.human_attribute_name(:client_supplied) %></span><% end %>
+            </td>
+            <% if kind == :labor %>
+              <td class="performers">
+                <% line.performers.each do |performer| %>
+                  <span class="performer">
+                    <%= performer.employee.name %><% if performer.share < 100 %> <span class="muted"><%= number(performer.share) %>%</span><% end %>
+                    <% if editable %>
+                      <%= button_to "×", work_order_work_order_labor_performer_path(@work_order, line, performer), method: :delete,
+                            class: "link-button danger", title: t("delete") %>
+                    <% end %>
+                  </span>
+                <% end %>
+                <% if editable && line.performers.sum(&:share) < 100 %>
+                  <details class="add-performer">
+                    <summary class="link-button"><%= line.performers.any? ? t("work_orders.add_performer") : t("work_orders.assign_performer") %></summary>
+                    <%= form_with model: WorkOrderLaborPerformer.new, url: work_order_work_order_labor_performers_path(@work_order, line), class: "inline-form compact" do |form| %>
+                      <%= form.collection_select :employee_id, Employee.active.ordered.where.not(id: line.performers.map(&:employee_id)), :id, :name, {},
+                            aria: { label: WorkOrderLabor.human_attribute_name(:employee) } %>
+                      <%= form.number_field :share, value: number(100 - line.performers.sum(&:share)), min: 1, max: 100, step: 1, class: "qty",
+                            aria: { label: WorkOrderLaborPerformer.human_attribute_name(:share) } %>%
+                      <%= form.submit t("add"), class: "link-button" %>
+                    <% end %>
+                  </details>
+                <% end %>
+              </td>
+            <% end %>
             <td class="num">
               <% if editable %>
                 <%= form_with model: [ @work_order, line ], class: "inline-form compact" do |form| %>

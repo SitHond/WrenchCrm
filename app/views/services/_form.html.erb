@@ -6,6 +6,22 @@
     <div class="field"><%= form.label :norm_hours %><%= form.number_field :norm_hours, step: 0.1, min: 0 %></div>
     <div class="field"><%= form.label :price %><%= form.number_field :price, step: 0.01, min: 0, required: true %></div>
   </div>
+  <% levels = ComplexityLevel.ordered %>
+  <% if levels.any? %>
+    <fieldset>
+      <legend><%= t("services.prices_by_level") %></legend>
+      <% levels.each do |level| %>
+        <% price = service.prices.find { |p| p.complexity_level_id == level.id } || service.prices.build(complexity_level: level) %>
+        <%= form.fields_for :prices, price do |price_form| %>
+          <div class="row">
+            <div class="field"><%= price_form.hidden_field :complexity_level_id %><%= price_form.label :price, level.name %>
+              <%= price_form.number_field :price, step: 0.01, min: 0, placeholder: number(service.price) %></div>
+          </div>
+        <% end %>
+      <% end %>
+      <p class="hint"><%= t("services.prices_by_level_hint") %></p>
+    </fieldset>
+  <% end %>
   <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
   <div class="form-actions">
     <%= form.submit class: "btn btn-primary" %>

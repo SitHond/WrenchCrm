@@ -311,3 +311,10 @@ h2.spaced { margin-top: 1.5rem; }
 .bar { background: var(--border); border-radius: 4px; height: 14px; overflow: hidden; }
 .bar span { display: block; height: 100%; background: var(--primary); border-radius: 4px; }
 .bar-value { text-align: right; font-variant-numeric: tabular-nums; }
+
+label.check { display: inline-flex; align-items: center; gap: .3rem; font-size: .85rem; color: var(--muted); white-space: nowrap; }
+.performers { min-width: 160px; }
+.performer { display: inline-flex; align-items: center; gap: .25rem; margin-right: .5rem; white-space: nowrap; }
+.add-performer summary { list-style: none; font-size: .85rem; }
+.add-performer summary::-webkit-details-marker { display: none; }
+.add-performer[open] summary { margin-bottom: .3rem; }

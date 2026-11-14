@@ -2,8 +2,9 @@
 <article class="print-doc">
   <header class="print-head">
     <div>
-      <div class="print-shop"><%= ENV.fetch("SHOP_NAME", t("app.name")) %></div>
-      <div class="muted"><%= ENV["SHOP_DETAILS"] %></div>
+      <% shop = ShopSetting.current %>
+      <div class="print-shop"><%= shop.display_name %></div>
+      <div class="muted"><%= shop.requisites_line %></div>
     </div>
     <div class="print-title">
       <h1><%= t("work_orders.title", number: @work_order.number) %></h1>
@@ -37,7 +38,7 @@
     </table>
   <% end %>
 
-  <div class="print-totals"><%= render "work_orders/totals", work_order: @work_order %></div>
+  <div class="print-totals"><%= render "work_orders/totals", work_order: @work_order, print: true %></div>
 
   <% if @work_order.recommendations.present? %>
     <h2><%= WorkOrder.human_attribute_name(:recommendations) %></h2>

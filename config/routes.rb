@@ -17,7 +17,9 @@ Rails.application.routes.draw do
       get :print
       patch :status
     end
-    resources :work_order_labors, only: %i[ create update destroy ]
+    resources :work_order_labors, only: %i[ create update destroy ] do
+      resources :performers, controller: "work_order_labor_performers", only: %i[ create destroy ]
+    end
     resources :work_order_parts, only: %i[ create update destroy ]
     resources :payments, only: %i[ create destroy ]
     resources :notes, only: :create
@@ -60,6 +62,9 @@ Rails.application.routes.draw do
       get :stock
     end
   end
+
+  resource :shop_settings, only: %i[ edit update ]
+  resources :complexity_levels, only: %i[ create destroy ]
 
   namespace :admin do
     resources :users, except: :show

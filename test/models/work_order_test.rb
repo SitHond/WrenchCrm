@@ -4,7 +4,8 @@ class WorkOrderTest < ActiveSupport::TestCase
   test "new order takes client, mileage and discount from the vehicle" do
     order = WorkOrder.create!(vehicle: vehicles(:polo))
     assert_equal clients(:taxi), order.client
-    assert_equal 10, order.discount_percent
+    assert_equal 10, order.labor_discount_percent
+    assert_equal 10, order.parts_discount_percent
     assert order.accepted?
   end
 
@@ -15,10 +16,14 @@ class WorkOrderTest < ActiveSupport::TestCase
 
   test "totals with discount and payments" do
     order = work_orders(:open_order)
-    order.update!(discount_percent: 10)
+    order.update!(labor_discount_percent: 10, parts_discount_percent: 5, discount_amount: 100)
     assert_equal 1500, order.labor_total
     assert_equal 3800, order.parts_total
-    assert_equal 530, order.discount_amount
+    assert_equal 150, order.labor_discount
+    assert_equal 190, order.parts_discount
+    assert_equal 4860, order.total
+    order.update!(labor_discount_percent: 0, parts_discount_percent: 0, discount_amount: 0)
+    order.update!(discount_percent: 10)
     assert_equal 4770, order.total
     order.payments.create!(amount: 1000, payment_method: :cash)
     assert_equal 3770, order.reload.balance

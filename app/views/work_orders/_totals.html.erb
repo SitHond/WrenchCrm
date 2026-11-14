@@ -1,10 +1,18 @@
 <dl class="totals">
   <dt><%= t("work_orders.totals.labor") %></dt><dd><%= money(work_order.labor_total) %></dd>
+  <% if work_order.labor_discount.positive? %>
+    <dt><%= t("work_orders.totals.labor_discount", percent: number(work_order.labor_discount_percent)) %></dt><dd>−<%= money(work_order.labor_discount) %></dd>
+  <% end %>
   <dt><%= t("work_orders.totals.parts") %></dt><dd><%= money(work_order.parts_total) %></dd>
-  <% if work_order.discount_percent.positive? %>
-    <dt><%= t("work_orders.totals.discount", percent: number(work_order.discount_percent)) %></dt><dd>−<%= money(work_order.discount_amount) %></dd>
+  <% if work_order.parts_discount.positive? %>
+    <dt><%= t("work_orders.totals.parts_discount", percent: number(work_order.parts_discount_percent)) %></dt><dd>−<%= money(work_order.parts_discount) %></dd>
+  <% end %>
+  <% if work_order.discount_amount.positive? %>
+    <dt><%= t("work_orders.totals.discount_amount") %></dt><dd>−<%= money(work_order.discount_amount) %></dd>
   <% end %>
   <dt class="grand"><%= t("work_orders.totals.total") %></dt><dd class="grand"><%= money(work_order.total) %></dd>
-  <dt><%= t("work_orders.totals.paid") %></dt><dd><%= money(work_order.paid_total) %></dd>
-  <dt><%= t("work_orders.totals.balance") %></dt><dd class="<%= work_order.balance.positive? ? "danger" : "ok" %>"><%= money(work_order.balance) %></dd>
+  <% unless local_assigns[:print] %>
+    <dt><%= t("work_orders.totals.paid") %></dt><dd><%= money(work_order.paid_total) %></dd>
+    <dt><%= t("work_orders.totals.balance") %></dt><dd class="<%= work_order.balance.positive? ? "danger" : "ok" %>"><%= money(work_order.balance) %></dd>
+  <% end %>
 </dl>

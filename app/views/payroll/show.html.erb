@@ -62,18 +62,20 @@
 
 <section class="card">
   <h2><%= t("payroll.labor_details") %></h2>
-  <% if @payroll.labor_lines.any? %>
+  <% if @payroll.performances.any? %>
     <div class="table-wrap">
       <table class="table">
         <thead>
-          <tr><th><%= WorkOrder.human_attribute_name(:closed_at) %></th><th>№</th><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr>
+          <tr><th><%= WorkOrder.human_attribute_name(:closed_at) %></th><th>№</th><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= WorkOrderLaborPerformer.human_attribute_name(:share) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr>
         </thead>
         <tbody>
-          <% @payroll.labor_lines.each do |line| %>
+          <% @payroll.performances.each do |performance| %>
+            <% line = performance.work_order_labor %>
             <tr>
               <td><%= l(line.work_order.closed_at.to_date) %></td>
               <td><%= link_to line.work_order.number, line.work_order %></td>
               <td><%= line.name %></td>
+              <td class="num"><%= number(performance.share) %>%</td>
               <td class="num"><%= money(line.total) %></td>
             </tr>
           <% end %>

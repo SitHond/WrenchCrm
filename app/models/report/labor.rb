@@ -19,8 +19,10 @@ module Report
 
     def by_employee
       names = Employee.pluck(:id, :name).to_h
-      lines.group(:employee_id).pluck(:employee_id, Arel.sql("COUNT(DISTINCT work_order_id)"), Arel.sql("SUM(work_order_labors.quantity)"),
-                                      Arel.sql("SUM(work_order_labors.quantity * work_order_labors.price)"))
+      lines.left_joins(:performers).group("work_order_labor_performers.employee_id")
+        .pluck(Arel.sql("work_order_labor_performers.employee_id"), Arel.sql("COUNT(DISTINCT work_order_id)"),
+               Arel.sql("SUM(work_order_labors.quantity * COALESCE(work_order_labor_performers.share, 100) / 100)"),
+               Arel.sql("SUM(work_order_labors.quantity * work_order_labors.price * COALESCE(work_order_labor_performers.share, 100) / 100)"))
         .map { |id, orders, hours, sum| [ names[id], orders, hours, sum ] }
         .sort_by { |row| -row[3].to_d }
     end

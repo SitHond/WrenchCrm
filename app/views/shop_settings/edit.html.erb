@@ -1,0 +1,67 @@
+<%= page_header t("shop_settings.title") %>
+
+<%= form_with model: @setting, url: shop_settings_path, method: :patch, class: "form" do |form| %>
+  <%= render "shared/errors", record: @setting %>
+
+  <fieldset>
+    <legend><%= t("shop_settings.sections.company") %></legend>
+    <div class="row">
+      <div class="field"><%= form.label :name %><%= form.text_field :name %></div>
+      <div class="field wide"><%= form.label :legal_name %><%= form.text_field :legal_name, placeholder: "ООО «Гайка»" %></div>
+    </div>
+    <div class="row">
+      <div class="field"><%= form.label :inn %><%= form.text_field :inn, inputmode: "numeric", maxlength: 12 %></div>
+      <div class="field"><%= form.label :kpp %><%= form.text_field :kpp, inputmode: "numeric", maxlength: 9 %></div>
+      <div class="field"><%= form.label :ogrn %><%= form.text_field :ogrn, inputmode: "numeric", maxlength: 15 %></div>
+    </div>
+    <div class="field"><%= form.label :address %><%= form.text_field :address %></div>
+    <div class="row">
+      <div class="field"><%= form.label :phone %><%= form.telephone_field :phone %></div>
+      <div class="field"><%= form.label :email %><%= form.email_field :email %></div>
+      <div class="field"><%= form.label :website %><%= form.text_field :website %></div>
+    </div>
+    <div class="field"><%= form.label :director %><%= form.text_field :director %></div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t("shop_settings.sections.bank") %></legend>
+    <div class="row">
+      <div class="field wide"><%= form.label :bank_name %><%= form.text_field :bank_name %></div>
+      <div class="field"><%= form.label :bik %><%= form.text_field :bik, inputmode: "numeric", maxlength: 9 %></div>
+    </div>
+    <div class="row">
+      <div class="field"><%= form.label :bank_account %><%= form.text_field :bank_account, inputmode: "numeric", maxlength: 20, class: "mono" %></div>
+      <div class="field"><%= form.label :correspondent_account %><%= form.text_field :correspondent_account, inputmode: "numeric", maxlength: 20, class: "mono" %></div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t("shop_settings.sections.documents") %></legend>
+    <div class="field"><%= form.label :work_order_terms %><%= form.text_area :work_order_terms, rows: 4, placeholder: t("shop_settings.terms_placeholder") %></div>
+  </fieldset>
+
+  <fieldset>
+    <legend><%= t("shop_settings.sections.stock") %></legend>
+    <div class="field checkbox"><%= form.check_box :allow_negative_stock %><%= form.label :allow_negative_stock %></div>
+    <p class="hint"><%= t("shop_settings.negative_stock_hint") %></p>
+  </fieldset>
+
+  <div class="form-actions"><%= form.submit t("save"), class: "btn btn-primary" %></div>
+<% end %>
+
+<section class="card" id="complexity">
+  <h2><%= t("shop_settings.complexity_levels") %></h2>
+  <p class="hint"><%= t("shop_settings.complexity_hint") %></p>
+  <% if @complexity_levels.any? %>
+    <ul class="list">
+      <% @complexity_levels.each do |level| %>
+        <li><%= level.name %>
+          <%= button_to t("delete"), complexity_level_path(level), method: :delete, class: "link-button danger", form: { data: { turbo_confirm: t("confirm") } } %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  <%= form_with model: ComplexityLevel.new, class: "inline-form" do |form| %>
+    <%= form.text_field :name, required: true, placeholder: t("shop_settings.complexity_placeholder"), aria: { label: ComplexityLevel.human_attribute_name(:name) } %>
+    <%= form.submit t("add"), class: "btn" %>
+  <% end %>
+</section>

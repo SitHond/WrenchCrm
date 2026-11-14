@@ -15,15 +15,23 @@ class Payroll
     period.in_time_zone.all_month
   end
 
-  def labor_lines
-    @labor_lines ||= WorkOrderLabor.joins(:work_order).includes(:work_order)
+  def performances
+    @performances ||= WorkOrderLaborPerformer.joins(work_order_labor: :work_order)
+      .includes(work_order_labor: :work_order)
       .where(employee: employee, work_orders: { status: WorkOrder.statuses[:closed], closed_at: range })
       .order("work_orders.closed_at")
   end
 
-  # Labor amount after the order discount.
+  def labor_lines
+    performances.map(&:work_order_labor)
+  end
+
+  # The employee's share of labor after the order's labor discount.
   def labor_base
-    labor_lines.sum { |line| line.total * (1 - line.work_order.discount_percent / 100) }.round(2)
+    performances.sum do |performance|
+      line = performance.work_order_labor
+      line.total * (1 - line.work_order.labor_discount_percent / 100) * performance.share / 100
+    end.round(2)
   end
 
   def advised_orders

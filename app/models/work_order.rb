@@ -15,6 +15,7 @@ class WorkOrder < ApplicationRecord
   belongs_to :vehicle
   belongs_to :mechanic, class_name: "Employee", optional: true
   belongs_to :advisor, class_name: "Employee", optional: true
+  belongs_to :complexity_level, optional: true
   belongs_to :created_by, class_name: "User", optional: true
   has_many :labor_lines, class_name: "WorkOrderLabor", dependent: :destroy
   has_many :part_lines, class_name: "WorkOrderPart", dependent: :destroy
@@ -22,7 +23,8 @@ class WorkOrder < ApplicationRecord
   has_many :notes, as: :notable, dependent: :destroy
   has_one :appointment, dependent: :nullify
 
-  validates :discount_percent, numericality: { in: 0..100 }
+  validates :labor_discount_percent, :parts_discount_percent, numericality: { in: 0..100 }
+  validates :discount_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :mileage, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
   validate :vehicle_belongs_to_client
 
@@ -86,12 +88,25 @@ class WorkOrder < ApplicationRecord
     labor_total + parts_total
   end
 
-  def discount_amount
-    (subtotal * discount_percent / 100).round(2)
+  def labor_discount
+    (labor_total * labor_discount_percent / 100).round(2)
+  end
+
+  def parts_discount
+    (parts_total * parts_discount_percent / 100).round(2)
+  end
+
+  def total_discount
+    labor_discount + parts_discount + discount_amount
   end
 
   def total
-    subtotal - discount_amount
+    [ subtotal - total_discount, 0 ].max
+  end
+
+  def discount_percent=(value)
+    self.labor_discount_percent = value
+    self.parts_discount_percent = value
   end
 
   def paid_total
@@ -105,7 +120,10 @@ class WorkOrder < ApplicationRecord
   private
     def inherit_client_defaults
       self.client ||= vehicle&.client
-      self.discount_percent = client.discount_percent if client && discount_percent.to_d.zero?
+      if client && labor_discount_percent.to_d.zero? && parts_discount_percent.to_d.zero?
+        self.labor_discount_percent = client.discount_percent
+        self.parts_discount_percent = client.discount_percent
+      end
       self.mileage ||= vehicle&.mileage
     end
 

@@ -5,6 +5,7 @@ class SaleLine < ApplicationRecord
   validates :name, presence: true
   validates :quantity, numericality: { greater_than: 0 }
   validates :price, numericality: { greater_than_or_equal_to: 0 }
+  validate :enough_stock, on: :create
 
   before_validation :copy_from_part, on: :create
 
@@ -17,6 +18,12 @@ class SaleLine < ApplicationRecord
   end
 
   private
+    def enough_stock
+      return unless part && !ShopSetting.current.allow_negative_stock && quantity
+
+      errors.add(:quantity, :not_enough_stock, available: part.quantity.to_s("F").sub(/\.0\z/, "")) if quantity > part.quantity
+    end
+
     def copy_from_part
       return unless part
 

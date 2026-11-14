@@ -1,0 +1,69 @@
+ru:
+  nav:
+    settings: "Настройки"
+  work_orders:
+    add_performer: "+ исполнитель"
+    assign_performer: "назначить"
+    save_to_catalog: "в справочник"
+    totals:
+      labor_discount: "Скидка на работы %{percent}%"
+      parts_discount: "Скидка на запчасти %{percent}%"
+      discount_amount: "Скидка"
+  services:
+    prices_by_level: "Цены по сложности"
+    prices_by_level_hint: "Пустое поле — действует основная цена."
+  shop_settings:
+    title: "Настройки сервиса"
+    sections:
+      company: "Реквизиты для документов"
+      bank: "Банк"
+      documents: "Печатные формы"
+      stock: "Склад"
+    terms_placeholder: "Например: гарантия на работы 30 дней, на запчасти — по гарантии производителя. Не забранный в течение 3 дней автомобиль ставится на платное хранение."
+    negative_stock_hint: "Если выключить, нельзя будет добавить в заказ-наряд или продать больше, чем есть на складе."
+    complexity_levels: "Уровни сложности"
+    complexity_hint: "Например «Легковой», «Кроссовер», «Внедорожник». Для каждого можно задать свою цену работы в справочнике, а уровень выбирается в заказ-наряде."
+    complexity_placeholder: "Внедорожник"
+  activerecord:
+    errors:
+      messages:
+        total_exceeded: "в сумме превышает 100%"
+        not_enough_stock: "больше остатка на складе (%{available})"
+    models:
+      shop_setting: "Настройки"
+      complexity_level: "Уровень сложности"
+      work_order_labor_performer: "Исполнитель"
+    attributes:
+      work_order:
+        labor_discount_percent: "Скидка на работы, %"
+        parts_discount_percent: "Скидка на запчасти, %"
+        discount_amount: "Скидка, ₽"
+        complexity_level: "Сложность"
+        complexity_level_id: "Сложность"
+      work_order_part:
+        client_supplied: "Товар клиента"
+        quantity: "Кол-во"
+      sale_line:
+        quantity: "Кол-во"
+      work_order_labor_performer:
+        share: "Доля"
+        employee: "Исполнитель"
+      complexity_level:
+        name: "Название"
+      shop_setting:
+        allow_negative_stock: "Разрешить минусовые остатки"
+        name: "Название сервиса"
+        legal_name: "Юридическое название"
+        inn: "ИНН"
+        kpp: "КПП"
+        ogrn: "ОГРН / ОГРНИП"
+        address: "Адрес"
+        phone: "Телефон"
+        email: "Email"
+        website: "Сайт"
+        bank_name: "Банк"
+        bik: "БИК"
+        bank_account: "Расчётный счёт"
+        correspondent_account: "Корр. счёт"
+        director: "Руководитель"
+        work_order_terms: "Условия в заказ-наряде"

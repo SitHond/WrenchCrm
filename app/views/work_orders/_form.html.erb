@@ -18,7 +18,14 @@
       <div class="field"><%= form.label :mechanic_id %><%= form.collection_select :mechanic_id, Employee.active.ordered, :id, :name, include_blank: true %></div>
       <div class="field"><%= form.label :advisor_id %><%= form.collection_select :advisor_id, Employee.active.ordered, :id, :name, include_blank: true, selected: work_order.advisor_id || current_user.employee&.id %></div>
       <div class="field"><%= form.label :promised_at %><%= form.datetime_field :promised_at %></div>
-      <div class="field small"><%= form.label :discount_percent %><%= form.number_field :discount_percent, min: 0, max: 100, step: 0.5 %></div>
+    </div>
+    <div class="row">
+      <% if ComplexityLevel.exists? %>
+        <div class="field"><%= form.label :complexity_level_id %><%= form.collection_select :complexity_level_id, ComplexityLevel.ordered, :id, :name, include_blank: "—" %></div>
+      <% end %>
+      <div class="field small"><%= form.label :labor_discount_percent %><%= form.number_field :labor_discount_percent, min: 0, max: 100, step: 0.5 %></div>
+      <div class="field small"><%= form.label :parts_discount_percent %><%= form.number_field :parts_discount_percent, min: 0, max: 100, step: 0.5 %></div>
+      <div class="field small"><%= form.label :discount_amount %><%= form.number_field :discount_amount, min: 0, step: 1 %></div>
     </div>
   </fieldset>
 

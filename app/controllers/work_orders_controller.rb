@@ -14,7 +14,7 @@ class WorkOrdersController < ApplicationController
   end
 
   def show
-    @labor_lines = @work_order.labor_lines.includes(:employee).order(:created_at)
+    @labor_lines = @work_order.labor_lines.includes(performers: :employee).order(:created_at)
     @part_lines = @work_order.part_lines.order(:created_at)
     @payments = @work_order.payments
     @notes = @work_order.notes.visible_to(current_user).recent_first.includes(:author)
@@ -71,7 +71,8 @@ class WorkOrdersController < ApplicationController
 
     def work_order_params
       permitted = params.expect(work_order: [ :vehicle_id, :mechanic_id, :advisor_id, :mileage, :complaint, :diagnosis,
-                                              :recommendations, :discount_percent, :promised_at ])
+                                              :recommendations, :labor_discount_percent, :parts_discount_percent,
+                                              :discount_amount, :complexity_level_id, :promised_at ])
       permitted[:client_id] = Vehicle.find_by(id: permitted[:vehicle_id])&.client_id if permitted.key?(:vehicle_id)
       permitted
     end

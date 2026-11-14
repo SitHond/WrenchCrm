@@ -36,9 +36,9 @@ module Report
       end
 
       def order_lines
-        WorkOrderPart.joins(:work_order).where(work_orders: { status: WorkOrder.statuses[:closed], closed_at: range })
+        WorkOrderPart.joins(:work_order).where(client_supplied: false, work_orders: { status: WorkOrder.statuses[:closed], closed_at: range })
           .group(:part_id, :name).pluck(:part_id, :name, Arel.sql("SUM(work_order_parts.quantity)"),
-                              Arel.sql("SUM(work_order_parts.quantity * work_order_parts.price * (1 - work_orders.discount_percent / 100))"),
+                              Arel.sql("SUM(work_order_parts.quantity * work_order_parts.price * (1 - work_orders.parts_discount_percent / 100))"),
                               Arel.sql("SUM(work_order_parts.quantity * work_order_parts.cost)"))
       end
 

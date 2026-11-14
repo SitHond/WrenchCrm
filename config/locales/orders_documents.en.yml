@@ -1,0 +1,69 @@
+en:
+  nav:
+    settings: "Settings"
+  work_orders:
+    add_performer: "+ employee"
+    assign_performer: "assign"
+    save_to_catalog: "save to catalog"
+    totals:
+      labor_discount: "Labor discount %{percent}%"
+      parts_discount: "Parts discount %{percent}%"
+      discount_amount: "Discount"
+  services:
+    prices_by_level: "Prices by complexity"
+    prices_by_level_hint: "Leave empty to use the base price."
+  shop_settings:
+    title: "Shop settings"
+    sections:
+      company: "Requisites for documents"
+      bank: "Bank"
+      documents: "Printed forms"
+      stock: "Stock"
+    terms_placeholder: "E.g. 30-day warranty on labor; parts are covered by the manufacturer's warranty."
+    negative_stock_hint: "When off, you can't add to a work order or sell more than is in stock."
+    complexity_levels: "Complexity levels"
+    complexity_hint: "E.g. Car, Crossover, SUV. Each service can have its own price per level; the level is picked in the work order."
+    complexity_placeholder: "SUV"
+  activerecord:
+    errors:
+      messages:
+        total_exceeded: "adds up to more than 100%"
+        not_enough_stock: "is more than in stock (%{available})"
+    models:
+      shop_setting: "Settings"
+      complexity_level: "Complexity level"
+      work_order_labor_performer: "Employee"
+    attributes:
+      work_order:
+        labor_discount_percent: "Labor discount, %"
+        parts_discount_percent: "Parts discount, %"
+        discount_amount: "Discount, amount"
+        complexity_level: "Complexity"
+        complexity_level_id: "Complexity"
+      work_order_part:
+        client_supplied: "Customer's part"
+        quantity: "Qty"
+      sale_line:
+        quantity: "Qty"
+      work_order_labor_performer:
+        share: "Share"
+        employee: "Employee"
+      complexity_level:
+        name: "Name"
+      shop_setting:
+        allow_negative_stock: "Allow negative stock"
+        name: "Shop name"
+        legal_name: "Legal name"
+        inn: "Tax ID"
+        kpp: "KPP"
+        ogrn: "Registration number"
+        address: "Address"
+        phone: "Phone"
+        email: "Email"
+        website: "Website"
+        bank_name: "Bank"
+        bik: "BIC"
+        bank_account: "Account number"
+        correspondent_account: "Correspondent account"
+        director: "Director"
+        work_order_terms: "Terms on the work order"
