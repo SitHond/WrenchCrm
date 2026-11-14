@@ -3,7 +3,14 @@
   <%= link_to t("work_orders.new"), new_work_order_path, class: "btn btn-primary" if can?(:manage_orders) %>
 <% end %>
 
-<p class="hint"><%= can?(:manage_orders) ? t("work_orders.board_hint") : t("work_orders.board_readonly") %></p>
+<p class="hint">
+  <% if can?(:manage_orders) %>
+    <span class="only-pointer"><%= t("work_orders.board_hint") %></span>
+    <span class="only-touch"><%= t("work_orders.board_hint_touch") %></span>
+  <% else %>
+    <%= t("work_orders.board_readonly") %>
+  <% end %>
+</p>
 
 <div class="board" data-controller="board" data-board-url-value="<%= work_orders_path %>" data-board-enabled-value="<%= can?(:manage_orders) %>">
   <% @columns.each do |status, orders| %>
@@ -24,6 +31,15 @@
           </div>
           <div><%= order.vehicle.title %> <% if order.vehicle.plate_number %><span class="plate"><%= order.vehicle.plate_number %></span><% end %></div>
           <div class="muted small"><%= order.client.display_name %><%= " · #{order.mechanic.name}" if order.mechanic %></div>
+          <% if can?(:manage_orders) %>
+            <div class="board-card-actions">
+              <% order.next_statuses.each do |next_status| %>
+                <%= button_to "→ #{t("work_orders.transition.#{next_status}")}", status_work_order_path(order, status: next_status), method: :patch,
+                      class: [ "link-button", ("danger" if next_status == "cancelled") ],
+                      form: (next_status == "cancelled" ? { data: { turbo_confirm: t("work_orders.confirm_cancel") } } : {}) %>
+              <% end %>
+            </div>
+          <% end %>
         </article>
       <% end %>
     </section>

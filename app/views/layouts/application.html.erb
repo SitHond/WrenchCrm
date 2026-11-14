@@ -2,7 +2,8 @@
 <html lang="<%= I18n.locale %>">
   <head>
     <title><%= [ content_for(:title), t("app.name") ].compact.join(" · ") %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#1f2937">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
@@ -10,9 +11,19 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body>
+  <body data-controller="nav" data-action="keydown.esc@window->nav#close">
+    <header class="topbar">
+      <button type="button" class="topbar-button" data-action="nav#toggle" aria-label="<%= t("nav.menu") %>" aria-controls="sidebar" data-nav-target="toggle" aria-expanded="false">
+        <span class="burger"></span>
+      </button>
+      <%= link_to root_path, class: "brand" do %>
+        <span class="brand-mark">🔧</span> <%= t("app.name") %>
+      <% end %>
+    </header>
+    <div class="nav-overlay" data-action="click->nav#close"></div>
+
     <div class="shell">
-      <aside class="sidebar">
+      <aside class="sidebar" id="sidebar">
         <%= link_to root_path, class: "brand" do %>
           <span class="brand-mark">🔧</span> <%= t("app.name") %>
         <% end %>
@@ -56,5 +67,23 @@
         <%= yield %>
       </main>
     </div>
+
+    <nav class="tabbar" aria-label="<%= t("nav.quick") %>">
+      <%= link_to root_path, class: [ "tab-item", ("active" if request.path == root_path) ] do %>
+        <span class="tab-icon">⌂</span><span><%= t("nav.dashboard") %></span>
+      <% end %>
+      <%= link_to work_orders_path, class: [ "tab-item", ("active" if request.path.start_with?(work_orders_path)) ] do %>
+        <span class="tab-icon">🛠</span><span><%= t("nav.work_orders_short") %></span>
+      <% end %>
+      <%= link_to appointments_path, class: [ "tab-item", ("active" if request.path.start_with?(appointments_path)) ] do %>
+        <span class="tab-icon">🗓</span><span><%= t("nav.appointments") %></span>
+      <% end %>
+      <%= link_to clients_path, class: [ "tab-item", ("active" if request.path.start_with?(clients_path)) ] do %>
+        <span class="tab-icon">👤</span><span><%= t("nav.clients") %></span>
+      <% end %>
+      <button type="button" class="tab-item" data-action="nav#toggle">
+        <span class="tab-icon">☰</span><span><%= t("nav.more") %></span>
+      </button>
+    </nav>
   </body>
 </html>

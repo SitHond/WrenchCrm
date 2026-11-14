@@ -1,5 +1,9 @@
 en:
   nav:
+    menu: "Menu"
+    quick: "Quick access"
+    more: "More"
+    work_orders_short: "Orders"
     calendar: "Calendar"
   export:
     csv: "To Excel"
@@ -18,4 +22,5 @@ en:
   work_orders:
     board: "Order board"
     board_hint: "Drag a card to another column to change its status. Allowed columns light up."
+    board_hint_touch: "Swipe sideways to see other statuses. Change the status with the buttons on a card."
     board_readonly: "Users with work order permission can change statuses."

@@ -20,7 +20,7 @@
 <% slots = calendar_slots(@date) %>
 <% columns = calendar_columns(@bays, @appointments) %>
 <div class="calendar-wrap">
-  <div class="calendar" style="grid-template-columns: 64px repeat(<%= columns.size %>, minmax(170px, 1fr)); grid-template-rows: auto repeat(<%= slots.size %>, 30px);">
+  <div class="calendar" style="--calendar-columns: <%= columns.size %>; grid-template-columns: 64px repeat(<%= columns.size %>, minmax(170px, 1fr)); grid-template-rows: auto repeat(<%= slots.size %>, 30px);">
     <div class="calendar-corner"></div>
     <% columns.each_with_index do |column, index| %>
       <div class="calendar-head" style="grid-column: <%= index + 2 %>; grid-row: 1;"><%= column[:label] %></div>
