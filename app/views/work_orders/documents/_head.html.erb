@@ -1,0 +1,10 @@
+<header class="print-head">
+  <div>
+    <div class="print-shop"><%= @shop.display_name %></div>
+    <div class="muted small"><%= @shop.requisites_line %></div>
+  </div>
+  <div class="print-title">
+    <h1><%= title %></h1>
+    <div><%= t("work_orders.print_dated", date: l(local_assigns[:date] || @work_order.created_at.to_date, format: :long)) %></div>
+  </div>
+</header>

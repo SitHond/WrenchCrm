@@ -1,0 +1,24 @@
+<% index = 0 %>
+<table class="print-lines">
+  <thead>
+    <tr><th>№</th><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:quantity) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:price) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr>
+  </thead>
+  <tbody>
+    <% [ [ :labor, @work_order.labor_lines.order(:created_at) ], [ :parts, @work_order.part_lines.order(:created_at) ] ].each do |section, lines| %>
+      <% next if lines.empty? %>
+      <tr class="section"><td colspan="5"><%= t("work_orders.sections.#{section}") %></td></tr>
+      <% lines.each do |line| %>
+        <tr>
+          <td><%= index += 1 %></td>
+          <td><%= line.name %><%= " (#{WorkOrderPart.human_attribute_name(:client_supplied).downcase})" if section == :parts && line.client_supplied? %></td>
+          <td class="num"><%= number(line.quantity) %></td>
+          <td class="num"><%= money(line.price) %></td>
+          <td class="num"><%= money(line.total) %></td>
+        </tr>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>
+<div class="print-totals"><%= render "work_orders/totals", work_order: @work_order, print: true %></div>
+<p class="amount-words"><%= t("documents.total_words", count: index, amount: money(@work_order.total)) %><br>
+  <strong><%= I18n.locale == :ru ? AmountInWords.rubles(@work_order.total) : money(@work_order.total) %></strong></p>

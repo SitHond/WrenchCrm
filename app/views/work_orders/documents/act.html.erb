@@ -1,0 +1,22 @@
+<% date = (@work_order.closed_at || @work_order.completed_at || Time.current).to_date %>
+<% content_for :title, t("documents.act.title", number: @work_order.number) %>
+<article class="print-doc">
+  <%= render "work_orders/documents/head", title: t("documents.act.title", number: @work_order.number), date: date %>
+  <table class="print-info">
+    <tr><th><%= t("documents.contractor") %></th><td><%= @shop.requisites_line.presence || @shop.display_name %></td></tr>
+  </table>
+  <%= render "work_orders/documents/customer" %>
+  <p><%= t("documents.act.basis", number: @work_order.number, date: l(@work_order.created_at.to_date, format: :long)) %></p>
+
+  <%= render "work_orders/documents/lines" %>
+
+  <p><%= t("documents.act.no_claims") %></p>
+  <% if @work_order.recommendations.present? %>
+    <h2><%= WorkOrder.human_attribute_name(:recommendations) %></h2>
+    <p><%= @work_order.recommendations %></p>
+  <% end %>
+  <div class="signatures">
+    <div><%= t("documents.contractor") %> ____________________<br><span class="muted"><%= @shop.director %></span></div>
+    <div><%= t("documents.customer") %> ____________________<br><span class="muted"><%= @work_order.client.display_name %></span></div>
+  </div>
+</article>

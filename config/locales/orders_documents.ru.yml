@@ -2,6 +2,10 @@ ru:
   nav:
     settings: "Настройки"
   work_orders:
+    intake_condition_placeholder: "Царапина на заднем бампере, скол на лобовом стекле"
+    intake_items_placeholder: "Запасное колесо, домкрат, коврики, видеорегистратор"
+    sections:
+      intake: "Приёмка автомобиля"
     add_performer: "+ исполнитель"
     assign_performer: "назначить"
     save_to_catalog: "в справочник"
@@ -9,6 +13,39 @@ ru:
       labor_discount: "Скидка на работы %{percent}%"
       parts_discount: "Скидка на запчасти %{percent}%"
       discount_amount: "Скидка"
+  documents:
+    names:
+      work_order: "Заказ-наряд"
+      acceptance: "Акт приёма автомобиля"
+      act: "Акт выполненных работ"
+      invoice: "Счёт на оплату"
+    customer: "Заказчик"
+    contractor: "Исполнитель"
+    total_words:
+      one: "Всего %{count} наименование на сумму %{amount}"
+      few: "Всего %{count} наименования на сумму %{amount}"
+      many: "Всего %{count} наименований на сумму %{amount}"
+      other: "Всего %{count} наименования на сумму %{amount}"
+    acceptance:
+      title: "Акт приёма автомобиля к заказ-наряду № %{number}"
+      intro: "%{client} передаёт, а %{shop} принимает автомобиль для выполнения работ."
+      note: "Заказчик подтверждает, что указанные повреждения и комплектность соответствуют действительности. Ценные вещи, не указанные в акте, исполнитель на хранение не принимает."
+      handed_over: "Сдал"
+      accepted: "Принял"
+    act:
+      title: "Акт выполненных работ № %{number}"
+      basis: "Основание: заказ-наряд № %{number} от %{date}."
+      no_claims: "Работы выполнены полностью и в срок. Заказчик претензий по объёму, качеству и срокам не имеет."
+    invoice:
+      title: "Счёт на оплату № %{number}"
+      payee_bank: "Банк получателя"
+      payee: "Получатель"
+      account_short: "Сч. №"
+      supplier: "Поставщик"
+      buyer: "Покупатель"
+      basis: "Основание"
+      vat: "Без НДС."
+      no_bank_html: "Банковские реквизиты не заполнены. Укажите их в разделе %{link}."
   services:
     prices_by_level: "Цены по сложности"
     prices_by_level_hint: "Пустое поле — действует основная цена."
@@ -35,6 +72,9 @@ ru:
       work_order_labor_performer: "Исполнитель"
     attributes:
       work_order:
+        fuel_level: "Топливо, %"
+        intake_condition: "Внешнее состояние и повреждения"
+        intake_items: "Комплектность и вещи в салоне"
         labor_discount_percent: "Скидка на работы, %"
         parts_discount_percent: "Скидка на запчасти, %"
         discount_amount: "Скидка, ₽"

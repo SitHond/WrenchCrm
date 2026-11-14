@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_210000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -439,6 +439,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_210000) do
     t.decimal "parts_discount_percent", precision: 5, scale: 2, default: "0.0", null: false
     t.decimal "discount_amount", precision: 12, scale: 2, default: "0.0", null: false
     t.bigint "complexity_level_id"
+    t.integer "fuel_level"
+    t.text "intake_condition"
+    t.text "intake_items"
     t.index ["advisor_id"], name: "index_work_orders_on_advisor_id"
     t.index ["client_id"], name: "index_work_orders_on_client_id"
     t.index ["complexity_level_id"], name: "index_work_orders_on_complexity_level_id"

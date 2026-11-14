@@ -1,0 +1,8 @@
+<% client = @work_order.client %>
+<table class="print-info">
+  <tr><th><%= t("documents.customer") %></th><td><%= client.display_name %><%= ", ИНН #{client.inn}" if client.inn.present? %><%= ", #{client.address}" if client.address.present? %>, <%= client.phone %></td></tr>
+  <tr><th><%= Vehicle.model_name.human %></th><td><%= @work_order.vehicle.title %><%= ", #{@work_order.vehicle.color}" if @work_order.vehicle.color.present? %></td></tr>
+  <tr><th><%= Vehicle.human_attribute_name(:plate_number) %></th><td><%= @work_order.vehicle.plate_number %></td></tr>
+  <tr><th><%= Vehicle.human_attribute_name(:vin) %></th><td><%= @work_order.vehicle.vin %></td></tr>
+  <tr><th><%= WorkOrder.human_attribute_name(:mileage) %></th><td><%= t("vehicles.km", count: number_with_delimiter(@work_order.mileage)) if @work_order.mileage %></td></tr>
+</table>

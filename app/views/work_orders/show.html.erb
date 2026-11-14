@@ -1,6 +1,13 @@
 <% editable = @work_order.editable? && can?(:manage_orders) %>
 <%= page_header t("work_orders.title", number: @work_order.number) do %>
-  <%= link_to t("work_orders.print"), print_work_order_path(@work_order), class: "btn" %>
+  <details class="dropdown">
+    <summary class="btn"><%= t("work_orders.print") %> ▾</summary>
+    <div class="dropdown-menu">
+      <% WorkOrdersController::DOCUMENTS.each do |doc| %>
+        <%= link_to t("documents.names.#{doc}"), print_work_order_path(@work_order, doc: doc), target: "_blank" %>
+      <% end %>
+    </div>
+  </details>
   <%= link_to t("edit"), edit_work_order_path(@work_order), class: "btn" if editable %>
   <%= button_to t("delete"), @work_order, method: :delete, class: "btn btn-danger",
         form: { data: { turbo_confirm: t("confirm") } } if can?(:delete_records) %>
@@ -44,6 +51,17 @@
     </dl>
   </section>
 </div>
+
+<% if @work_order.fuel_level || @work_order.intake_condition.present? || @work_order.intake_items.present? %>
+  <section class="card">
+    <h2><%= t("work_orders.sections.intake") %></h2>
+    <dl class="details">
+      <%= detail_row WorkOrder.human_attribute_name(:fuel_level), ("#{@work_order.fuel_level}%" if @work_order.fuel_level) %>
+      <%= detail_row WorkOrder.human_attribute_name(:intake_condition), (simple_format(@work_order.intake_condition) if @work_order.intake_condition.present?) %>
+      <%= detail_row WorkOrder.human_attribute_name(:intake_items), (simple_format(@work_order.intake_items) if @work_order.intake_items.present?) %>
+    </dl>
+  </section>
+<% end %>
 
 <% if @work_order.complaint.present? || @work_order.diagnosis.present? || @work_order.recommendations.present? %>
   <section class="card">

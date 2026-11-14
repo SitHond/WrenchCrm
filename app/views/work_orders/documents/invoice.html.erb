@@ -1,0 +1,27 @@
+<% content_for :title, t("documents.invoice.title", number: @work_order.number) %>
+<article class="print-doc">
+  <% if @shop.bank_details? %>
+    <table class="bank-table">
+      <tr><td colspan="2" rowspan="2"><%= @shop.bank_name %><br><span class="small muted"><%= t("documents.invoice.payee_bank") %></span></td><td><%= ShopSetting.human_attribute_name(:bik) %></td><td><%= @shop.bik %></td></tr>
+      <tr><td><%= t("documents.invoice.account_short") %></td><td><%= @shop.correspondent_account %></td></tr>
+      <tr><td><%= ShopSetting.human_attribute_name(:inn) %> <%= @shop.inn %></td><td><%= ShopSetting.human_attribute_name(:kpp) %> <%= @shop.kpp %></td><td rowspan="2"><%= t("documents.invoice.account_short") %></td><td rowspan="2"><%= @shop.bank_account %></td></tr>
+      <tr><td colspan="2"><%= @shop.legal_name.presence || @shop.display_name %><br><span class="small muted"><%= t("documents.invoice.payee") %></span></td></tr>
+    </table>
+  <% else %>
+    <p class="no-print danger"><%= t("documents.invoice.no_bank_html", link: link_to(t("shop_settings.title"), edit_shop_settings_path)) %></p>
+  <% end %>
+
+  <h1 class="invoice-title"><%= t("documents.invoice.title", number: @work_order.number) %> <%= t("work_orders.print_dated", date: l(Date.current, format: :long)) %></h1>
+  <table class="print-info">
+    <tr><th><%= t("documents.invoice.supplier") %></th><td><%= @shop.requisites_line.presence || @shop.display_name %></td></tr>
+    <tr><th><%= t("documents.invoice.buyer") %></th><td><%= @work_order.client.display_name %><%= ", ИНН #{@work_order.client.inn}" if @work_order.client.inn.present? %><%= ", #{@work_order.client.address}" if @work_order.client.address.present? %></td></tr>
+    <tr><th><%= t("documents.invoice.basis") %></th><td><%= t("work_orders.title", number: @work_order.number) %>, <%= @work_order.vehicle.label %></td></tr>
+  </table>
+
+  <%= render "work_orders/documents/lines" %>
+  <p class="small"><%= t("documents.invoice.vat") %></p>
+
+  <div class="signatures">
+    <div><%= ShopSetting.human_attribute_name(:director) %> ____________________ <%= @shop.director %></div>
+  </div>
+</article>

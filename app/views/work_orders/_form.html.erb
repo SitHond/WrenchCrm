@@ -30,6 +30,15 @@
   </fieldset>
 
   <fieldset>
+    <legend><%= t("work_orders.sections.intake") %></legend>
+    <div class="row">
+      <div class="field small"><%= form.label :fuel_level %><%= form.number_field :fuel_level, min: 0, max: 100, step: 5 %></div>
+      <div class="field wide"><%= form.label :intake_condition %><%= form.text_area :intake_condition, rows: 2, placeholder: t("work_orders.intake_condition_placeholder") %></div>
+    </div>
+    <div class="field"><%= form.label :intake_items %><%= form.text_area :intake_items, rows: 2, placeholder: t("work_orders.intake_items_placeholder") %></div>
+  </fieldset>
+
+  <fieldset>
     <div class="field"><%= form.label :complaint %><%= form.text_area :complaint, rows: 3 %></div>
     <div class="field"><%= form.label :diagnosis %><%= form.text_area :diagnosis, rows: 3 %></div>
     <div class="field"><%= form.label :recommendations %><%= form.text_area :recommendations, rows: 3 %></div>

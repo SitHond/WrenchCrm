@@ -2,6 +2,10 @@ en:
   nav:
     settings: "Settings"
   work_orders:
+    intake_condition_placeholder: "Scratch on rear bumper, chipped windshield"
+    intake_items_placeholder: "Spare wheel, jack, floor mats, dashcam"
+    sections:
+      intake: "Vehicle intake"
     add_performer: "+ employee"
     assign_performer: "assign"
     save_to_catalog: "save to catalog"
@@ -9,6 +13,37 @@ en:
       labor_discount: "Labor discount %{percent}%"
       parts_discount: "Parts discount %{percent}%"
       discount_amount: "Discount"
+  documents:
+    names:
+      work_order: "Work order"
+      acceptance: "Vehicle intake form"
+      act: "Certificate of completion"
+      invoice: "Invoice"
+    customer: "Customer"
+    contractor: "Contractor"
+    total_words:
+      one: "%{count} item, total %{amount}"
+      other: "%{count} items, total %{amount}"
+    acceptance:
+      title: "Vehicle intake form for work order #%{number}"
+      intro: "%{client} hands over and %{shop} accepts the vehicle for service."
+      note: "The customer confirms the listed damage and contents. Valuables not listed are not accepted for safekeeping."
+      handed_over: "Handed over"
+      accepted: "Accepted"
+    act:
+      title: "Certificate of completion #%{number}"
+      basis: "Based on work order #%{number} dated %{date}."
+      no_claims: "The work is complete. The customer has no claims regarding scope, quality or timing."
+    invoice:
+      title: "Invoice #%{number}"
+      payee_bank: "Payee's bank"
+      payee: "Payee"
+      account_short: "Acc. no."
+      supplier: "Supplier"
+      buyer: "Buyer"
+      basis: "Reference"
+      vat: "VAT not applicable."
+      no_bank_html: "Bank details are missing. Fill them in under %{link}."
   services:
     prices_by_level: "Prices by complexity"
     prices_by_level_hint: "Leave empty to use the base price."
@@ -35,6 +70,9 @@ en:
       work_order_labor_performer: "Employee"
     attributes:
       work_order:
+        fuel_level: "Fuel, %"
+        intake_condition: "Condition and damage"
+        intake_items: "Items left in the vehicle"
         labor_discount_percent: "Labor discount, %"
         parts_discount_percent: "Parts discount, %"
         discount_amount: "Discount, amount"

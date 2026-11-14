@@ -25,6 +25,7 @@ class WorkOrder < ApplicationRecord
 
   validates :labor_discount_percent, :parts_discount_percent, numericality: { in: 0..100 }
   validates :discount_amount, numericality: { greater_than_or_equal_to: 0 }
+  validates :fuel_level, numericality: { in: 0..100, only_integer: true }, allow_nil: true
   validates :mileage, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
   validate :vehicle_belongs_to_client
 

@@ -1,0 +1,25 @@
+<% content_for :title, t("work_orders.title", number: @work_order.number) %>
+<article class="print-doc">
+  <%= render "work_orders/documents/head", title: t("work_orders.title", number: @work_order.number) %>
+  <%= render "work_orders/documents/customer" %>
+
+  <% if @work_order.complaint.present? %>
+    <h2><%= WorkOrder.human_attribute_name(:complaint) %></h2>
+    <p><%= @work_order.complaint %></p>
+  <% end %>
+
+  <%= render "work_orders/documents/lines" %>
+
+  <% if @work_order.recommendations.present? %>
+    <h2><%= WorkOrder.human_attribute_name(:recommendations) %></h2>
+    <p><%= @work_order.recommendations %></p>
+  <% end %>
+  <% if @shop.work_order_terms.present? %>
+    <div class="terms"><%= simple_format(@shop.work_order_terms) %></div>
+  <% end %>
+
+  <div class="signatures">
+    <div><%= t("work_orders.signature_shop") %> ____________________<% if @work_order.advisor %><br><span class="muted"><%= @work_order.advisor.name %></span><% end %></div>
+    <div><%= t("work_orders.signature_client") %> ____________________</div>
+  </div>
+</article>
