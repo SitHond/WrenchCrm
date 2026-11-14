@@ -1,0 +1,34 @@
+<%= page_header t("calendar.title", month: MonthLabel.call(@month)) do %>
+  <%= link_to t("appointments.new"), new_appointment_path, class: "btn btn-primary" if can?(:manage_orders) %>
+<% end %>
+
+<div class="filters">
+  <%= link_to "←", calendar_path(month: @month.prev_month.strftime("%Y-%m")), class: "btn", title: t("payroll.prev_month") %>
+  <%= link_to t("calendar.this_month"), calendar_path, class: "btn" %>
+  <%= link_to "→", calendar_path(month: @month.next_month.strftime("%Y-%m")), class: "btn", title: t("payroll.next_month") %>
+  <span class="legend"><span class="dot dot-appointment"></span><%= t("calendar.legend.appointments") %></span>
+  <span class="legend"><span class="dot dot-due"></span><%= t("calendar.legend.due") %></span>
+</div>
+
+<div class="month-wrap">
+  <div class="month">
+    <% @days.first(7).each do |day| %>
+      <div class="month-weekday"><%= t("date.abbr_day_names")[day.wday] %></div>
+    <% end %>
+    <% @days.each do |day| %>
+      <% appointments = @appointments[day] || [] %>
+      <% due = @due_orders[day] || [] %>
+      <%= link_to appointments_path(date: day), class: [ "month-day", ("other-month" if day.month != @month.month), ("today" if day == Date.current), ("weekend" if day.saturday? || day.sunday?) ] do %>
+        <span class="month-date"><%= day.day %></span>
+        <% appointments.first(4).each do |appointment| %>
+          <span class="month-item appointment"><%= l(appointment.starts_at, format: :time) %> <%= appointment.vehicle.plate_number || appointment.vehicle.model %></span>
+        <% end %>
+        <% if appointments.size > 4 %><span class="month-more"><%= t("calendar.more", count: appointments.size - 4) %></span><% end %>
+        <% due.first(2).each do |order| %>
+          <span class="month-item due">№ <%= order.number %> <%= order.vehicle.plate_number %></span>
+        <% end %>
+        <% if (closed = @closed_orders[day].to_i).positive? %><span class="month-more"><%= t("calendar.closed", count: closed) %></span><% end %>
+      <% end %>
+    <% end %>
+  </div>
+</div>

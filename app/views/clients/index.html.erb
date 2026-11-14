@@ -1,4 +1,5 @@
 <%= page_header t("nav.clients") do %>
+  <%= csv_export_link %>
   <%= link_to t("clients.new"), new_client_path(with_vehicle: 1), class: "btn btn-primary" if can?(:manage_clients) %>
 <% end %>
 

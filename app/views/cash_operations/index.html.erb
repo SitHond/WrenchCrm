@@ -3,6 +3,7 @@
   <%= link_to t("finance.new_income"), new_cash_operation_path(kind: "other_income"), class: "btn" %>
   <%= link_to t("finance.new_supplier_payment"), new_cash_operation_path(kind: "supplier_payment"), class: "btn" %>
   <%= link_to t("finance.accounts_settings"), cash_accounts_path, class: "btn" %>
+  <%= csv_export_link %>
 <% end %>
 
 <div class="stats">

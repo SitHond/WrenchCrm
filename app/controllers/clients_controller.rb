@@ -7,7 +7,18 @@ class ClientsController < ApplicationController
     scope = Client.search(params[:q])
     scope = scope.where(ad_source_id: params[:ad_source_id]) if params[:ad_source_id].present?
     scope = params[:status] == "inactive" ? scope.inactive : scope.active
-    @pagy, @clients = pagy(scope.ordered.includes(:vehicles), limit: 25)
+    respond_to do |format|
+      format.html { @pagy, @clients = pagy(scope.ordered.includes(:vehicles), limit: 25) }
+      format.csv do
+        attr = ->(name) { Client.human_attribute_name(name) }
+        send_csv("clients", [ attr[:name], attr[:kind], attr[:phone], attr[:phone2], attr[:email], attr[:inn], attr[:address],
+                              attr[:ad_source], attr[:vehicles], attr[:created_at] ],
+                 scope.ordered.includes(:vehicles, :ad_source).map { |c|
+                   [ c.display_name, helpers.enum_label(Client, :kind, c.kind), c.phone, c.phone2, c.email, c.inn, c.address,
+                     c.ad_source&.name, c.vehicles.map(&:label).join("; "), c.created_at.to_date ]
+                 })
+      end
+    end
   end
 
   def show

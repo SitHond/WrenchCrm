@@ -5,6 +5,7 @@
 <div class="filters">
   <%= link_to "←", appointments_path(date: @date - 1), class: "btn", title: t("appointments.prev_day") %>
   <%= link_to t("appointments.today"), appointments_path, class: "btn" %>
+  <%= link_to t("nav.calendar"), calendar_path(month: @date.strftime("%Y-%m")), class: "btn" %>
   <%= link_to "→", appointments_path(date: @date + 1), class: "btn", title: t("appointments.next_day") %>
   <%= form_with url: appointments_path, method: :get, class: "inline-form compact" do |form| %>
     <%= form.date_field :date, value: @date, data: { controller: "auto-submit", action: "change->auto-submit#submit" }, aria: { label: t("appointments.pick_date") } %>

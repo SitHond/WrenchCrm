@@ -1,0 +1,31 @@
+<%= page_header t("work_orders.board") do %>
+  <%= link_to t("nav.work_orders"), work_orders_path, class: "btn" %>
+  <%= link_to t("work_orders.new"), new_work_order_path, class: "btn btn-primary" if can?(:manage_orders) %>
+<% end %>
+
+<p class="hint"><%= can?(:manage_orders) ? t("work_orders.board_hint") : t("work_orders.board_readonly") %></p>
+
+<div class="board" data-controller="board" data-board-url-value="<%= work_orders_path %>" data-board-enabled-value="<%= can?(:manage_orders) %>">
+  <% @columns.each do |status, orders| %>
+    <section class="board-column" data-board-target="column" data-status="<%= status %>"
+             data-action="dragover->board#over dragleave->board#leave drop->board#drop">
+      <header class="board-head">
+        <%= status_badge(WorkOrder.new(status: status)) %>
+        <span class="muted"><%= orders.size %></span>
+      </header>
+      <% orders.each do |order| %>
+        <article class="board-card" draggable="<%= can?(:manage_orders) %>" data-id="<%= order.id %>"
+                 data-allowed="<%= order.next_statuses.join(" ") %>" data-action="dragstart->board#start dragend->board#end">
+          <div class="board-card-head">
+            <%= link_to "№ #{order.number}", order %>
+            <% if order.promised_at %>
+              <span class="small <%= order.promised_at.past? ? "danger" : "muted" %>"><%= l(order.promised_at, format: :short) %></span>
+            <% end %>
+          </div>
+          <div><%= order.vehicle.title %> <% if order.vehicle.plate_number %><span class="plate"><%= order.vehicle.plate_number %></span><% end %></div>
+          <div class="muted small"><%= order.client.display_name %><%= " · #{order.mechanic.name}" if order.mechanic %></div>
+        </article>
+      <% end %>
+    </section>
+  <% end %>
+</div>

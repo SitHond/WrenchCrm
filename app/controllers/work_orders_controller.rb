@@ -11,7 +11,25 @@ class WorkOrdersController < ApplicationController
     when *WorkOrder.statuses.keys then scope.where(status: params[:status])
     else scope.unfinished
     end
-    @pagy, @work_orders = pagy(scope.recent_first, limit: 25)
+    respond_to do |format|
+      format.html { @pagy, @work_orders = pagy(scope.recent_first, limit: 25) }
+      format.csv do
+        attr = ->(name) { WorkOrder.human_attribute_name(name) }
+        send_csv("work-orders", [ "№", attr[:created_at], attr[:status], Client.model_name.human, Client.human_attribute_name(:phone),
+                                  Vehicle.model_name.human, Vehicle.human_attribute_name(:plate_number), attr[:mechanic],
+                                  t("work_orders.totals.labor"), t("work_orders.totals.parts"), attr[:total], t("work_orders.totals.paid") ],
+                 scope.recent_first.includes(:payments).map { |o|
+                   [ o.number, o.created_at, helpers.enum_label(WorkOrder, :status, o.status), o.client.display_name, o.client.phone,
+                     o.vehicle.title, o.vehicle.plate_number, o.mechanic&.name, o.labor_total, o.parts_total, o.total, o.paid_total ]
+                 })
+      end
+    end
+  end
+
+  def board
+    @columns = WorkOrder::OPEN_STATUSES.index_with do |status|
+      WorkOrder.where(status: status).includes(:client, :vehicle, :mechanic).order(:promised_at, :created_at)
+    end
   end
 
   def show

@@ -1,4 +1,6 @@
-<%= page_header t("nav.payroll") %>
+<%= page_header t("nav.payroll") do %>
+  <%= link_to t("export.csv"), payroll_index_path(month: @month.strftime("%Y-%m"), format: :csv), class: "btn", data: { turbo: false } %>
+<% end %>
 <%= render "month_nav", month: @month %>
 
 <% if @payrolls.any? %>

@@ -1,0 +1,21 @@
+en:
+  nav:
+    calendar: "Calendar"
+  export:
+    csv: "To Excel"
+  calendar:
+    title: "Calendar: %{month}"
+    this_month: "This month"
+    more:
+      one: "%{count} more"
+      other: "%{count} more"
+    closed:
+      one: "%{count} order handed over"
+      other: "%{count} orders handed over"
+    legend:
+      appointments: "appointments"
+      due: "order due"
+  work_orders:
+    board: "Order board"
+    board_hint: "Drag a card to another column to change its status. Allowed columns light up."
+    board_readonly: "Users with work order permission can change statuses."

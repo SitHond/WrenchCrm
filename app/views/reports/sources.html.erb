@@ -1,4 +1,6 @@
-<%= page_header t("nav.reports") %>
+<%= page_header t("nav.reports") do %>
+  <%= csv_export_link %>
+<% end %>
 <%= render "tabs" %>
 <%= render "shared/period_filter", url: sources_reports_path %>
 

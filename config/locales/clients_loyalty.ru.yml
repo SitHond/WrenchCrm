@@ -33,6 +33,7 @@ ru:
       loyalty_tier: "Ступень скидки"
     attributes:
       client:
+        created_at: "Добавлен"
         ad_source: "Откуда узнал"
         ad_source_id: "Откуда узнал"
         discount_mode: "Скидка"

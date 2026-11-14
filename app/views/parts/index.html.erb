@@ -1,4 +1,5 @@
 <%= page_header t("nav.parts") do %>
+  <%= csv_export_link %>
   <% if can?(:manage_catalog) %>
     <%= link_to t("reports.reorder_title"), reorder_reports_path, class: "btn" if can?(:view_reports) %>
     <%= link_to t("purchase_receipts.new"), new_purchase_receipt_path, class: "btn" %>

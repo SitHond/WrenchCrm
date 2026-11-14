@@ -11,7 +11,16 @@ class CashOperationsController < ApplicationController
     @income = scope.incoming.where.not(kind: :transfer).sum(:amount)
     @expense = -scope.outgoing.where.not(kind: :transfer).sum(:amount)
     @by_category = scope.expense.group(:expense_category_id).sum(:amount)
-    @pagy, @operations = pagy(scope.recent_first, limit: 50)
+    respond_to do |format|
+      format.html { @pagy, @operations = pagy(scope.recent_first, limit: 50) }
+      format.csv do
+        attr = ->(name) { CashOperation.human_attribute_name(name) }
+        send_csv("cash", [ attr[:occurred_at], attr[:kind], CashAccount.model_name.human, attr[:amount], attr[:expense_category_id], attr[:supplier], attr[:comment] ],
+                 scope.recent_first.map { |o|
+                   [ o.occurred_at, helpers.enum_label(CashOperation, :kind, o.kind), o.cash_account.name, o.amount, o.expense_category&.name, o.supplier&.name, o.comment ]
+                 })
+      end
+    end
   end
 
   def new

@@ -31,6 +31,7 @@ en:
       loyalty_tier: "Discount step"
     attributes:
       client:
+        created_at: "Added"
         ad_source: "Lead source"
         ad_source_id: "Lead source"
         discount_mode: "Discount"

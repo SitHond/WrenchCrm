@@ -1,0 +1,25 @@
+ru:
+  nav:
+    calendar: "Календарь"
+  export:
+    csv: "В Excel"
+  calendar:
+    title: "Календарь: %{month}"
+    this_month: "Текущий месяц"
+    more:
+      one: "ещё %{count}"
+      few: "ещё %{count}"
+      many: "ещё %{count}"
+      other: "ещё %{count}"
+    closed:
+      one: "выдан %{count} наряд"
+      few: "выдано %{count} наряда"
+      many: "выдано %{count} нарядов"
+      other: "выдано %{count} наряда"
+    legend:
+      appointments: "записи"
+      due: "срок по наряду"
+  work_orders:
+    board: "Доска нарядов"
+    board_hint: "Перетащите карточку в другую колонку, чтобы сменить статус. Подсвечиваются колонки, куда можно перейти."
+    board_readonly: "Менять статусы могут пользователи с правом на заказ-наряды."

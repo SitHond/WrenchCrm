@@ -12,7 +12,9 @@ Rails.application.routes.draw do
   resources :vehicles do
     resources :notes, only: :create
   end
+  get "calendar" => "calendar#show", as: :calendar
   resources :work_orders do
+    get :board, on: :collection
     member do
       get :print
       patch :status

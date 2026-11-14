@@ -1,4 +1,6 @@
 <%= page_header t("nav.work_orders") do %>
+  <%= link_to t("work_orders.board"), board_work_orders_path, class: "btn" %>
+  <%= csv_export_link %>
   <%= link_to t("work_orders.new"), new_work_order_path, class: "btn btn-primary" if can?(:manage_orders) %>
 <% end %>
 

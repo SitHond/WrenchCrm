@@ -10,7 +10,17 @@ class PartsController < ApplicationController
     when "all" then scope
     else scope.active
     end
-    @pagy, @parts = pagy(scope.ordered, limit: 50)
+    respond_to do |format|
+      format.html { @pagy, @parts = pagy(scope.ordered, limit: 50) }
+      format.csv do
+        attr = ->(name) { Part.human_attribute_name(name) }
+        send_csv("parts", [ attr[:sku], attr[:oem], attr[:name], attr[:brand], attr[:category_id], attr[:location], attr[:unit],
+                            attr[:quantity], attr[:min_quantity], attr[:cost], attr[:price] ],
+                 scope.ordered.map { |p|
+                   [ p.sku, p.oem, p.name, p.brand, p.category&.name, p.location, t("parts.units.#{p.unit}"), p.quantity, p.min_quantity, p.cost, p.price ]
+                 })
+      end
+    end
   end
 
   def show
