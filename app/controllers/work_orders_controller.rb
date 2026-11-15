@@ -44,6 +44,7 @@ class WorkOrdersController < ApplicationController
   def print
     @shop = ShopSetting.current
     document = params[:doc].presence_in(DOCUMENTS) || (@work_order.estimate? ? "estimate" : "work_order")
+    audit(:print, @work_order, document: document)
     render "work_orders/documents/#{document}", layout: "print"
   end
 

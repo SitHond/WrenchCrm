@@ -98,6 +98,7 @@ Rails.application.routes.draw do
     end
   end
   get "exports/full" => "exports#full", as: :full_export
+  resources :audit_events, only: :index
 
   namespace :admin do
     resources :users, except: :show

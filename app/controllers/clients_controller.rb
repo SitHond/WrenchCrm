@@ -22,6 +22,7 @@ class ClientsController < ApplicationController
   end
 
   def show
+    audit(:view, @client)
     @work_orders = @client.work_orders.includes(:vehicle).limit(20)
     @notes = @client.notes.visible_to(current_user).recent_first.includes(:author)
   end
@@ -36,6 +37,7 @@ class ClientsController < ApplicationController
   def create
     @client = Client.new(client_params)
     if @client.save
+      audit(:create, @client)
       Lead.where(id: params[:lead_id], client_id: nil).update_all(client_id: @client.id)
       redirect_to params[:with_vehicle] ? new_vehicle_path(client_id: @client.id) : @client,
                   notice: t("flash.created", model: Client.model_name.human)
@@ -49,6 +51,7 @@ class ClientsController < ApplicationController
 
   def update
     if @client.update(client_params)
+      audit(:update, @client, fields: audit_changes(@client))
       redirect_to @client, notice: t("flash.updated", model: Client.model_name.human)
     else
       render :edit, status: :unprocessable_entity
@@ -57,6 +60,7 @@ class ClientsController < ApplicationController
 
   def destroy
     if @client.destroy
+      audit(:destroy, nil, client: @client.display_name)
       redirect_to clients_path, notice: t("flash.destroyed", model: Client.model_name.human), status: :see_other
     else
       redirect_to @client, alert: @client.errors.full_messages.to_sentence, status: :see_other

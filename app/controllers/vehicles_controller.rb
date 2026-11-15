@@ -8,6 +8,7 @@ class VehiclesController < ApplicationController
   end
 
   def show
+    audit(:view, @vehicle)
     @work_orders = @vehicle.work_orders.includes(:mechanic, :labor_lines, :part_lines)
     @appointments = @vehicle.appointments.upcoming.includes(:bay)
     @reminders = @vehicle.service_reminders.active.order(:due_on)
@@ -32,6 +33,7 @@ class VehiclesController < ApplicationController
 
   def update
     if @vehicle.update(vehicle_params.except(:client_id))
+      audit(:update, @vehicle, fields: audit_changes(@vehicle))
       redirect_to @vehicle, notice: t("flash.updated", model: Vehicle.model_name.human)
     else
       render :edit, status: :unprocessable_entity

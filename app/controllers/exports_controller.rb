@@ -5,6 +5,7 @@ class ExportsController < ApplicationController
 
   # Whole database as a ZIP of CSV files. Clients, parts, services and suppliers use the import template columns.
   def full
+    audit(:export, nil, file: "full-zip")
     data = Zip::OutputStream.write_buffer do |zip|
       FullExport.files.each do |name, csv|
         zip.put_next_entry(name)

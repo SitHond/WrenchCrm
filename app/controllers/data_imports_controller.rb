@@ -29,6 +29,7 @@ class DataImportsController < ApplicationController
         redirect_to data_import_path(@import), alert: t("imports.required_missing", fields: @import.missing_required.map(&:label).join(", "))
       else
         @import.run!
+        audit(:import, nil, kind: @import.kind, counts: @import.counts)
         redirect_to data_import_path(@import), notice: t("imports.done")
       end
     else
@@ -49,6 +50,7 @@ class DataImportsController < ApplicationController
     files = Array(params[:files]).compact_blank.to_h { |file| [ file.original_filename, file.read ] }
     tables = Imports::Splus.detect(files)
     result = Imports::Splus.new(tables).run!
+    audit(:import, nil, kind: "splus", counts: result["counts"])
     import = DataImport.create!(kind: "splus", filename: files.keys.join(", "), status: "done", result: result.merge("detected" => tables.keys.map(&:to_s)))
     redirect_to data_import_path(import), notice: t("imports.done")
   rescue ArgumentError, ActiveRecord::ActiveRecordError, CSV::MalformedCSVError => e

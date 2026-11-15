@@ -25,8 +25,20 @@ module Authentication
       Current.session ||= find_session_by_cookie
     end
 
+    IDLE_TIMEOUT = 14.days
+
+    # Sessions end after two weeks without activity; activity is recorded at most every few minutes.
     def find_session_by_cookie
-      Session.find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      session = Session.includes(:user).find_by(id: cookies.signed[:session_id]) if cookies.signed[:session_id]
+      return unless session
+
+      if session.updated_at < IDLE_TIMEOUT.ago || !session.user.active?
+        session.destroy
+        cookies.delete(:session_id)
+        return
+      end
+      session.touch if session.updated_at < 5.minutes.ago
+      session
     end
 
     def request_authentication

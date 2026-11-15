@@ -14,6 +14,7 @@ module Admin
     def create
       @user = User.new(user_params)
       if @user.save
+        audit(:create, @user)
         redirect_to admin_users_path, notice: t("flash.created", model: User.model_name.human)
       else
         render :new, status: :unprocessable_entity
@@ -29,6 +30,7 @@ module Admin
       attrs = attrs.except(:admin, :active) if @user == current_user
 
       if @user.update(attrs)
+        audit(:user_update, @user, fields: audit_changes(@user) - %w[password_digest] + (@user.saved_change_to_password_digest? ? [ "password" ] : []))
         @user.sessions.where.not(id: Current.session.id).destroy_all if @user.saved_change_to_password_digest? || !@user.active?
         redirect_to admin_users_path, notice: t("flash.updated", model: User.model_name.human)
       else

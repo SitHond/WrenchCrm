@@ -53,6 +53,14 @@ module ApplicationHelper
     permission == :admin ? current_user&.admin? : current_user&.public_send(:"can_#{permission}?")
   end
 
+  def audit_subject_link(event)
+    case event.subject
+    when User then link_to(event.subject_label, edit_admin_user_path(event.subject))
+    when Client, Vehicle, WorkOrder, Lead then link_to(event.subject_label, event.subject)
+    else event.subject_label
+    end
+  end
+
   def task_subject_label(subject)
     case subject
     when Client then subject.display_name

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_234000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_235000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -42,6 +42,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_234000) do
     t.index ["starts_at", "ends_at"], name: "index_appointments_on_starts_at_and_ends_at"
     t.index ["vehicle_id"], name: "index_appointments_on_vehicle_id"
     t.index ["work_order_id"], name: "index_appointments_on_work_order_id", unique: true
+  end
+
+  create_table "audit_events", force: :cascade do |t|
+    t.bigint "user_id"
+    t.string "action", null: false
+    t.string "subject_type"
+    t.bigint "subject_id"
+    t.string "subject_label"
+    t.string "ip_address"
+    t.jsonb "details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.index ["action"], name: "index_audit_events_on_action"
+    t.index ["created_at"], name: "index_audit_events_on_created_at"
+    t.index ["subject_type", "subject_id"], name: "index_audit_events_on_subject"
+    t.index ["user_id"], name: "index_audit_events_on_user_id"
   end
 
   create_table "bays", force: :cascade do |t|
@@ -578,6 +593,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_234000) do
   add_foreign_key "appointments", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "appointments", "vehicles"
   add_foreign_key "appointments", "work_orders", on_delete: :nullify
+  add_foreign_key "audit_events", "users", on_delete: :nullify
   add_foreign_key "cash_operations", "cash_accounts"
   add_foreign_key "cash_operations", "cash_operations", column: "counterpart_id", on_delete: :nullify
   add_foreign_key "cash_operations", "employees", on_delete: :nullify

@@ -1,0 +1,35 @@
+<%= page_header t("nav.audit") do %>
+  <%= csv_export_link %>
+<% end %>
+<p class="hint"><%= t("audit.hint") %></p>
+
+<%= form_with url: audit_events_path, method: :get, class: "filters" do |form| %>
+  <%= form.search_field :q, value: params[:q], placeholder: t("audit.search_placeholder"), aria: { label: t("search") } %>
+  <%= form.collection_select :user_id, User.ordered, :id, :name, { include_blank: t("audit.all_users"), selected: params[:user_id] }, aria: { label: t("audit.user") } %>
+  <%= form.select :event, AuditEvent::ACTIONS.map { |a| [ t("audit.actions.#{a}"), a ] }, { include_blank: t("audit.all_actions"), selected: params[:event] }, aria: { label: t("audit.action") } %>
+  <%= form.date_field :from, value: params[:from], aria: { label: t("period.from") } %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<% if @events.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th><%= t("audit.time") %></th><th><%= t("audit.user") %></th><th><%= t("audit.action") %></th><th><%= t("audit.subject") %></th><th><%= t("audit.details") %></th><th>IP</th></tr></thead>
+      <tbody>
+        <% @events.each do |event| %>
+          <tr class="<%= "danger" if event.action == "login_failed" %>">
+            <td><%= l(event.created_at, format: :short) %></td>
+            <td><%= event.user&.name || "—" %></td>
+            <td><%= t("audit.actions.#{event.action}") %></td>
+            <td><%= audit_subject_link(event) %></td>
+            <td class="muted small"><%= event.details.map { |k, v| "#{k}: #{Array(v).join(", ")}" }.join("; ") %></td>
+            <td class="muted small"><%= event.ip_address %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= pagination(@pagy) %>
+<% else %>
+  <p class="empty"><%= t("audit.empty") %></p>
+<% end %>

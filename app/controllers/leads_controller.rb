@@ -17,6 +17,7 @@ class LeadsController < ApplicationController
   end
 
   def show
+    audit(:view, @lead)
     @notes = @lead.notes.visible_to(current_user).recent_first.includes(:author)
   end
 

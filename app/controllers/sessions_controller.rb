@@ -12,13 +12,16 @@ class SessionsController < ApplicationController
     if user
       user.record_login!
       start_new_session_for user
+      audit(:login, user)
       redirect_to after_authentication_url
     else
+      AuditEvent.record!(:login_failed, user: nil, ip: request.remote_ip, email: params[:email_address].to_s.strip.downcase.first(100))
       redirect_to new_session_path, alert: t("sessions.invalid")
     end
   end
 
   def destroy
+    audit(:logout, Current.user)
     terminate_session
     redirect_to new_session_path, status: :see_other
   end
