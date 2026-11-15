@@ -1,5 +1,6 @@
 <%= form_with model: appointment, class: "form" do |form| %>
   <%= render "shared/errors", record: appointment %>
+  <%= hidden_field_tag :service_reminder_id, params[:service_reminder_id] if params[:service_reminder_id].present? %>
 
   <fieldset>
     <div class="field">

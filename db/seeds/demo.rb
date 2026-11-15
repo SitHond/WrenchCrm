@@ -122,3 +122,14 @@ unless Supplier.exists?
   end
   puts "Loaded demo finance and stock"
 end
+
+unless ServiceReminder.exists?
+  oil = Service.find_by(code: "M01")
+  oil&.update!(reminder_months: 12, reminder_km: 10_000)
+  Service.find_by(code: "B01")&.update!(reminder_km: 30_000)
+  solaris = Vehicle.find_by(plate_number: "А123ВС 777")
+  rio = Vehicle.find_by(plate_number: "М456ОР 799")
+  solaris&.service_reminders&.create!(service: oil, title: oil&.name || "Замена масла", due_on: Date.current + 5, due_mileage: (solaris.mileage || 0) + 500)
+  rio&.service_reminders&.create!(title: "Замена тормозной жидкости", due_on: Date.current - 3, comment: "Рекомендовано при прошлом визите")
+  puts "Loaded demo reminders"
+end

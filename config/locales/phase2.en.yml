@@ -1,5 +1,6 @@
 en:
   dashboard:
+    reminders: "service reminders due"
     my_tasks: "My tasks"
     estimates: "estimates awaiting approval"
   work_orders:
@@ -18,11 +19,23 @@ en:
       note: "This estimate is valid for %{days} days, until %{date}. The final price may change if hidden faults are found; extra work is done only with the customer's consent."
       agreed: "Approved by customer"
   activerecord:
+    errors:
+      messages:
+        due_date_or_mileage: "Set a due date or mileage"
     models:
+      service_reminder: "Reminder"
       task:
         one: "Task"
         other: "Tasks"
     attributes:
+      service_reminder:
+        title: "Job"
+        due_on: "Due date"
+        due_mileage: "Due mileage"
+        comment: "Comment"
+      service:
+        reminder_months: "Remind after, months"
+        reminder_km: "Remind after, km"
       task:
         title: "Task"
         description: "Details"
@@ -31,10 +44,18 @@ en:
         due_on: "Due"
         subject: "About"
     enums:
+      service_reminder:
+        status:
+          pending: "To call"
+          contacted: "Called"
+          booked: "Booked"
+          done: "Done"
+          dismissed: "Declined"
       work_order:
         status:
           estimate: "Estimate"
   nav:
+    reminders: "Who to call"
     tasks: "Tasks"
   tasks:
     placeholder: "New task: call back, order, check…"
@@ -48,3 +69,34 @@ en:
       all: "All"
       open: "Open"
       done: "Done"
+  reminders:
+    hint: "Reminders due by date or expected mileage within %{days} days. Mileage is estimated from the vehicle's visit history."
+    nobody: "Nobody to call right now."
+    empty: "No reminders."
+    views:
+      due: "Call now"
+      active: "All active"
+      closed: "Closed"
+    due_on: "by %{date}"
+    due_mileage: "· at %{km} km"
+    estimated: "(about %{km} km now)"
+    expected: "expected %{date}"
+    contacted_at: "called %{date}"
+    book: "Book"
+    called: "Called"
+    more: "More"
+    comment_placeholder: "What the client said"
+    contacted_saved: "Call recorded."
+    snoozed: "Snoozed until %{date}."
+    snooze:
+      one: "Snooze %{count} day"
+      other: "Snooze %{count} days"
+    mark_done: "Already done"
+    dismiss: "Client declined"
+    vehicle_title: "Service reminders"
+    none_for_vehicle: "No reminders. They are created when a work order is handed over if a service has an interval."
+    title_placeholder: "Timing belt replacement"
+    km_placeholder: "at km"
+    vehicle_estimate: "About %{km} km now, roughly %{per_year} km a year."
+  services:
+    reminder_hint: "With an interval set, handing over a work order with this service creates a reminder for the client."

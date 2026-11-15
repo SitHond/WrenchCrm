@@ -33,6 +33,12 @@ Rails.application.routes.draw do
     end
   end
   resources :notes, only: %i[ edit update destroy ]
+  resources :service_reminders, only: %i[ index create update destroy ] do
+    member do
+      patch :contacted
+      patch :snooze
+    end
+  end
   resources :tasks, only: %i[ index create edit update destroy ] do
     patch :toggle, on: :member
   end

@@ -4,6 +4,11 @@
 <% end %>
 
 <div class="stats">
+  <% if @due_reminders_count.positive? %>
+    <%= link_to service_reminders_path, class: "stat" do %>
+      <span class="stat-value"><%= @due_reminders_count %></span><span class="stat-label"><%= t("dashboard.reminders") %></span>
+    <% end %>
+  <% end %>
   <% if @estimates_count.positive? %>
     <%= link_to work_orders_path(status: "estimate"), class: "stat" do %>
       <span class="stat-value"><%= @estimates_count %></span><span class="stat-label"><%= t("dashboard.estimates") %></span>

@@ -1,0 +1,16 @@
+<%= page_header t("nav.reminders") %>
+
+<div class="filters">
+  <% [ [ t("reminders.views.due"), nil ], [ t("reminders.views.active"), "active" ], [ t("reminders.views.closed"), "closed" ] ].each do |label, view| %>
+    <%= link_to label, service_reminders_path(view: view), class: [ "btn", ("btn-primary" if params[:view] == view) ] %>
+  <% end %>
+</div>
+<p class="hint"><%= t("reminders.hint", days: ServiceReminder::LEAD_DAYS) %></p>
+
+<% if @reminders.any? %>
+  <div class="reminders">
+    <%= render partial: "service_reminders/reminder", collection: @reminders %>
+  </div>
+<% else %>
+  <p class="empty"><%= params[:view] ? t("reminders.empty") : t("reminders.nobody") %></p>
+<% end %>

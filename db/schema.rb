@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_230000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_231000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -315,6 +315,27 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_230000) do
     t.index ["service_id"], name: "index_service_prices_on_service_id"
   end
 
+  create_table "service_reminders", force: :cascade do |t|
+    t.bigint "vehicle_id", null: false
+    t.bigint "service_id"
+    t.bigint "source_work_order_id"
+    t.bigint "created_by_id"
+    t.string "title", null: false
+    t.date "due_on"
+    t.integer "due_mileage"
+    t.integer "status", default: 0, null: false
+    t.date "snoozed_until"
+    t.datetime "contacted_at"
+    t.string "comment"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_service_reminders_on_created_by_id"
+    t.index ["service_id"], name: "index_service_reminders_on_service_id"
+    t.index ["source_work_order_id"], name: "index_service_reminders_on_source_work_order_id"
+    t.index ["status", "due_on"], name: "index_service_reminders_on_status_and_due_on"
+    t.index ["vehicle_id"], name: "index_service_reminders_on_vehicle_id"
+  end
+
   create_table "services", force: :cascade do |t|
     t.string "name", null: false
     t.string "code"
@@ -324,6 +345,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_230000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id"
+    t.integer "reminder_months"
+    t.integer "reminder_km"
     t.index ["category_id"], name: "index_services_on_category_id"
     t.index ["name"], name: "index_services_on_name"
   end
@@ -547,6 +570,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_230000) do
   add_foreign_key "sales", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "service_prices", "complexity_levels", on_delete: :cascade
   add_foreign_key "service_prices", "services", on_delete: :cascade
+  add_foreign_key "service_reminders", "services", on_delete: :nullify
+  add_foreign_key "service_reminders", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "service_reminders", "vehicles", on_delete: :cascade
+  add_foreign_key "service_reminders", "work_orders", column: "source_work_order_id", on_delete: :nullify
   add_foreign_key "services", "catalog_categories", column: "category_id", on_delete: :nullify
   add_foreign_key "sessions", "users"
   add_foreign_key "stock_movements", "parts", on_delete: :cascade

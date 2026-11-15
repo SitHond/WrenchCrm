@@ -486,3 +486,24 @@ select, input, textarea { max-width: 100%; }
 .task-meta { display: flex; flex-wrap: wrap; gap: .25rem .75rem; font-size: .8rem; color: var(--muted); }
 .task-actions { display: flex; gap: .5rem; align-items: center; }
 .task-form input[type=text] { flex: 2 1 220px; }
+
+.reminders { display: flex; flex-direction: column; gap: .6rem; }
+.reminder { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem; display: flex; gap: 1rem; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+.reminders.compact .reminder { border: 0; border-bottom: 1px solid var(--border); border-radius: 0; padding: .5rem 0; }
+.reminder.overdue { border-left: 3px solid var(--danger); }
+.reminder-main { flex: 1 1 320px; min-width: 0; display: flex; flex-direction: column; gap: .15rem; }
+.reminder-actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.reminder-pending { background: #e0e7ff; color: #3730a3; }
+.reminder-contacted { background: #fef3c7; color: #92400e; }
+.reminder-booked { background: #dcfce7; color: #166534; }
+.dropdown-menu.wide { min-width: 300px; }
+.dropdown-menu .pad { padding: .5rem; margin: 0; }
+.menu-button { background: none; border: 0; padding: .45rem .9rem; font: inherit; color: var(--text); text-align: left; width: 100%; cursor: pointer; }
+.menu-button:hover { background: var(--bg); }
+.menu-button.danger { color: var(--danger); }
+.dropdown-menu form.button_to { display: block; }
+@media (prefers-color-scheme: dark) {
+  .reminder-pending { background: #312e81; color: #c7d2fe; }
+  .reminder-contacted { background: #78350f; color: #fde68a; }
+  .reminder-booked { background: #14532d; color: #bbf7d0; }
+}

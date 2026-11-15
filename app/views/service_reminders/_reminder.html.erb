@@ -1,0 +1,43 @@
+<% vehicle = reminder.vehicle %>
+<article class="reminder <%= "overdue" if reminder.overdue? %>">
+  <div class="reminder-main">
+    <div class="reminder-title"><strong><%= reminder.title %></strong> <span class="badge reminder-<%= reminder.status %>"><%= enum_label(ServiceReminder, :status, reminder.status) %></span></div>
+    <div><%= link_to vehicle.label, vehicle %> · <%= link_to vehicle.client.display_name, vehicle.client %> · <%= link_to vehicle.client.phone, "tel:#{vehicle.client.phone}" %></div>
+    <div class="muted small">
+      <% if reminder.due_on %><%= t("reminders.due_on", date: l(reminder.due_on)) %><% end %>
+      <% if reminder.due_mileage %>
+        <%= t("reminders.due_mileage", km: number_with_delimiter(reminder.due_mileage)) %>
+        <% if (estimate = vehicle.estimated_mileage) %><%= t("reminders.estimated", km: number_with_delimiter(estimate)) %><% end %>
+      <% end %>
+      <% if reminder.expected_on %> · <span class="<%= "danger" if reminder.overdue? %>"><%= t("reminders.expected", date: l(reminder.expected_on)) %></span><% end %>
+      <% if reminder.contacted_at %> · <%= t("reminders.contacted_at", date: l(reminder.contacted_at, format: :short)) %><% end %>
+      <% if reminder.comment.present? %> · <%= reminder.comment %><% end %>
+    </div>
+  </div>
+  <% if can?(:manage_clients) && reminder.status.in?(ServiceReminder::ACTIVE_STATUSES) %>
+    <div class="reminder-actions">
+      <% if can?(:manage_orders) %>
+        <%= link_to t("reminders.book"), new_appointment_path(vehicle_id: vehicle.id, service_reminder_id: reminder.id), class: "btn btn-primary" %>
+      <% end %>
+      <details class="dropdown">
+        <summary class="btn"><%= t("reminders.called") %> ▾</summary>
+        <div class="dropdown-menu wide">
+          <%= form_with url: contacted_service_reminder_path(reminder), method: :patch, class: "inline-form compact pad" do |form| %>
+            <%= form.text_field :comment, placeholder: t("reminders.comment_placeholder"), aria: { label: ServiceReminder.human_attribute_name(:comment) } %>
+            <%= form.submit t("save"), class: "btn" %>
+          <% end %>
+        </div>
+      </details>
+      <details class="dropdown">
+        <summary class="btn"><%= t("reminders.more") %> ▾</summary>
+        <div class="dropdown-menu">
+          <% [ 14, 30, 90 ].each do |days| %>
+            <%= button_to t("reminders.snooze", count: days), snooze_service_reminder_path(reminder, days: days), method: :patch, class: "menu-button" %>
+          <% end %>
+          <%= button_to t("reminders.mark_done"), service_reminder_path(reminder, status: "done"), method: :patch, class: "menu-button" %>
+          <%= button_to t("reminders.dismiss"), service_reminder_path(reminder, status: "dismissed"), method: :patch, class: "menu-button danger" %>
+        </div>
+      </details>
+    </div>
+  <% end %>
+</article>

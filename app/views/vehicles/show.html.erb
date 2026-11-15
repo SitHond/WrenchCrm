@@ -36,6 +36,27 @@
     </section>
   <% end %>
 
+  <section class="card">
+    <h2><%= t("reminders.vehicle_title") %></h2>
+    <% if @reminders.any? %>
+      <div class="reminders compact"><%= render partial: "service_reminders/reminder", collection: @reminders %></div>
+    <% else %>
+      <p class="muted"><%= t("reminders.none_for_vehicle") %></p>
+    <% end %>
+    <% if can?(:manage_clients) %>
+      <%= form_with model: ServiceReminder.new, class: "inline-form" do |form| %>
+        <%= form.hidden_field :vehicle_id, value: @vehicle.id %>
+        <%= form.text_field :title, required: true, placeholder: t("reminders.title_placeholder"), aria: { label: ServiceReminder.human_attribute_name(:title) } %>
+        <%= form.date_field :due_on, aria: { label: ServiceReminder.human_attribute_name(:due_on) } %>
+        <%= form.number_field :due_mileage, min: 1, step: 1, class: "price", placeholder: t("reminders.km_placeholder"), aria: { label: ServiceReminder.human_attribute_name(:due_mileage) } %>
+        <%= form.submit t("add"), class: "btn" %>
+      <% end %>
+      <% if (estimate = @vehicle.estimated_mileage) %>
+        <p class="hint"><%= t("reminders.vehicle_estimate", km: number_with_delimiter(estimate), per_year: number_with_delimiter((@vehicle.km_per_day * 365).round(-2))) %></p>
+      <% end %>
+    <% end %>
+  </section>
+
   <%= render "tasks/section", subject: @vehicle %>
   <%= render "notes/section", notable: @vehicle, notes: @notes %>
 </div>

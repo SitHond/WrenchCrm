@@ -1,5 +1,6 @@
 ru:
   dashboard:
+    reminders: "пора позвонить по ТО"
     my_tasks: "Мои задачи"
     estimates: "смет на согласовании"
   work_orders:
@@ -18,13 +19,25 @@ ru:
       note: "Смета предварительная и действует %{days} дней, до %{date}. Окончательная стоимость может измениться, если при ремонте обнаружатся скрытые неисправности; дополнительные работы выполняются только с согласия заказчика."
       agreed: "Согласовано заказчиком"
   activerecord:
+    errors:
+      messages:
+        due_date_or_mileage: "Укажите срок или пробег"
     models:
+      service_reminder: "Напоминание"
       task:
         one: "Задача"
         few: "Задачи"
         many: "Задачи"
         other: "Задачи"
     attributes:
+      service_reminder:
+        title: "Что сделать"
+        due_on: "Срок"
+        due_mileage: "Пробег"
+        comment: "Комментарий"
+      service:
+        reminder_months: "Напомнить через, мес."
+        reminder_km: "Напомнить через, км"
       task:
         title: "Задача"
         description: "Подробности"
@@ -33,10 +46,18 @@ ru:
         due_on: "Срок"
         subject: "По"
     enums:
+      service_reminder:
+        status:
+          pending: "Ждёт звонка"
+          contacted: "Звонили"
+          booked: "Записан"
+          done: "Выполнено"
+          dismissed: "Отказ"
       work_order:
         status:
           estimate: "Смета"
   nav:
+    reminders: "Кому позвонить"
     tasks: "Задачи"
   tasks:
     placeholder: "Новая задача: перезвонить, заказать, проверить…"
@@ -50,3 +71,36 @@ ru:
       all: "Все"
       open: "Открытые"
       done: "Выполненные"
+  reminders:
+    hint: "Здесь напоминания, срок которых по дате или по ожидаемому пробегу наступает в ближайшие %{days} дней. Пробег оценивается по истории визитов машины."
+    nobody: "Сейчас звонить некому."
+    empty: "Напоминаний нет."
+    views:
+      due: "Пора звонить"
+      active: "Все активные"
+      closed: "Закрытые"
+    due_on: "до %{date}"
+    due_mileage: "· на %{km} км"
+    estimated: "(сейчас примерно %{km} км)"
+    expected: "ожидается %{date}"
+    contacted_at: "звонили %{date}"
+    book: "Записать"
+    called: "Позвонил"
+    more: "Ещё"
+    comment_placeholder: "Что ответил клиент"
+    contacted_saved: "Звонок отмечен."
+    snoozed: "Отложено до %{date}."
+    snooze:
+      one: "Отложить на %{count} день"
+      few: "Отложить на %{count} дня"
+      many: "Отложить на %{count} дней"
+      other: "Отложить на %{count} дня"
+    mark_done: "Уже сделано"
+    dismiss: "Клиент отказался"
+    vehicle_title: "Напоминания о ТО"
+    none_for_vehicle: "Напоминаний нет. Они создаются сами при выдаче заказ-наряда, если у работы задан интервал."
+    title_placeholder: "Замена ремня ГРМ"
+    km_placeholder: "на км"
+    vehicle_estimate: "Сейчас примерно %{km} км, около %{per_year} км в год."
+  services:
+    reminder_hint: "Если задать интервал, при выдаче заказ-наряда с этой работой создастся напоминание клиенту."

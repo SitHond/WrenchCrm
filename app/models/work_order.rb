@@ -86,6 +86,7 @@ class WorkOrder < ApplicationRecord
       self.completed_at = Time.current if new_status == "ready"
       self.closed_at = Time.current if new_status == "closed"
       update!(status: new_status)
+      ServiceReminder.create_from_work_order!(self) if closed?
     end
   end
 

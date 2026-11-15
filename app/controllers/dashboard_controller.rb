@@ -9,6 +9,7 @@ class DashboardController < ApplicationController
     @orders_month = WorkOrder.where(created_at: Date.current.all_month).count
     @appointments_today = Appointment.on_day(Date.current).busy.includes(:client, :vehicle, :bay).chronological
     @my_tasks = Task.for_user(current_user).open.where(due_on: [ nil, ..Date.current ]).includes(:subject).by_due.limit(8)
+    @due_reminders_count = ServiceReminder.due.size
     @low_stock = Part.low_stock.ordered.limit(10)
   end
 end

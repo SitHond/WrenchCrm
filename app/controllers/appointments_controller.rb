@@ -19,13 +19,15 @@ class AppointmentsController < ApplicationController
       bay_id: params[:bay_id],
       mechanic_id: params[:mechanic_id],
       starts_at: parse_time(params[:starts_at]) || next_slot,
-      duration_minutes: 60
+      duration_minutes: 60,
+      description: ServiceReminder.find_by(id: params[:service_reminder_id])&.title
     )
   end
 
   def create
     @appointment = Appointment.new(appointment_params)
     if @appointment.save
+      ServiceReminder.where(id: params[:service_reminder_id], vehicle_id: @appointment.vehicle_id).update_all(status: ServiceReminder.statuses[:booked])
       redirect_to appointments_path(date: @appointment.starts_at.to_date), notice: t("flash.created", model: Appointment.model_name.human)
     else
       render :new, status: :unprocessable_entity

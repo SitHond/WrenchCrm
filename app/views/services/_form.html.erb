@@ -7,6 +7,11 @@
     <div class="field"><%= form.label :norm_hours %><%= form.number_field :norm_hours, step: 0.1, min: 0 %></div>
     <div class="field"><%= form.label :price %><%= form.number_field :price, step: 0.01, min: 0, required: true %></div>
   </div>
+  <div class="row">
+    <div class="field"><%= form.label :reminder_months %><%= form.number_field :reminder_months, min: 1, step: 1 %></div>
+    <div class="field"><%= form.label :reminder_km %><%= form.number_field :reminder_km, min: 100, step: 500 %></div>
+  </div>
+  <p class="hint"><%= t("services.reminder_hint") %></p>
   <% levels = ComplexityLevel.ordered %>
   <% if levels.any? %>
     <fieldset>
