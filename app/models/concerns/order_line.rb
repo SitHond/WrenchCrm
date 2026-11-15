@@ -16,6 +16,6 @@ module OrderLine
 
   private
     def work_order_must_be_editable
-      errors.add(:base, :order_locked) if work_order && !work_order.editable?
+      errors.add(:base, :order_locked) if work_order && !work_order.editable? && !Current.importing
     end
 end

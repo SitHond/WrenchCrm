@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_232000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_234000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -101,7 +101,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_232000) do
     t.string "middle_name"
     t.string "company_name"
     t.string "inn"
-    t.string "phone", null: false
+    t.string "phone"
     t.string "phone2"
     t.string "email"
     t.string "address"
@@ -124,6 +124,20 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_232000) do
     t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "data_imports", force: :cascade do |t|
+    t.string "kind", null: false
+    t.string "filename"
+    t.binary "content"
+    t.jsonb "mapping", default: {}, null: false
+    t.string "mode", default: "skip", null: false
+    t.string "status", default: "uploaded", null: false
+    t.jsonb "result", default: {}, null: false
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_by_id"], name: "index_data_imports_on_created_by_id"
   end
 
   create_table "employees", force: :cascade do |t|
@@ -572,6 +586,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_232000) do
   add_foreign_key "cash_operations", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "clients", "ad_sources", on_delete: :nullify
   add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "data_imports", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "employees", "users", on_delete: :nullify
   add_foreign_key "leads", "ad_sources", on_delete: :nullify
   add_foreign_key "leads", "appointments", on_delete: :nullify

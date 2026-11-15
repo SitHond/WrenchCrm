@@ -27,7 +27,7 @@
     <dl class="details">
       <%= detail_row Vehicle.model_name.human, link_to(@appointment.vehicle.label, @appointment.vehicle) %>
       <%= detail_row Client.model_name.human, link_to(@appointment.client.display_name, @appointment.client) %>
-      <%= detail_row Client.human_attribute_name(:phone), link_to(@appointment.client.phone, "tel:#{@appointment.client.phone}") %>
+      <%= detail_row Client.human_attribute_name(:phone), phone_link(@appointment.client.phone) %>
     </dl>
   </section>
 

@@ -1,0 +1,79 @@
+<%= page_header "#{t("imports.kinds.#{@import.kind}")}: #{@import.filename.to_s.truncate(60)}" %>
+
+<% if @import.status == "done" %>
+  <% counts = @import.counts %>
+  <div class="stats">
+    <% counts.sort.each do |key, count| %>
+      <div class="stat"><span class="stat-value"><%= count %></span><span class="stat-label"><%= t("imports.counts.#{key}", default: key.to_s.humanize) %></span></div>
+    <% end %>
+  </div>
+  <% if @import.result["detected"] %>
+    <p class="muted"><%= t("imports.splus.detected", reports: @import.result["detected"].map { |k| t("imports.splus.reports.#{k}") }.join(", ")) %></p>
+  <% end %>
+  <% warnings = Array(@import.result["warnings"]) %>
+  <% if warnings.any? %>
+    <section class="card"><h2><%= t("imports.warnings") %></h2><ul><% warnings.each do |w| %><li><%= w %></li><% end %></ul></section>
+  <% end %>
+  <% errors = Array(@import.result["errors"]) %>
+  <% if errors.any? %>
+    <section class="card">
+      <h2><%= t("imports.failed_rows", count: errors.size) %></h2>
+      <%= link_to t("imports.download_errors"), errors_data_import_path(@import), class: "btn", data: { turbo: false } %>
+      <ul class="list">
+        <% errors.first(20).each do |error| %>
+          <li><strong><%= t("imports.row", number: error["row"]) %></strong> <span class="danger"><%= error["messages"].join("; ") %></span></li>
+        <% end %>
+      </ul>
+    </section>
+  <% end %>
+  <%= link_to t("back"), data_imports_path, class: "btn" %>
+<% else %>
+  <% mapping = @import.effective_mapping %>
+  <% table = @import.table %>
+  <p class="hint"><%= t("imports.mapping_hint", rows: table.rows.size) %></p>
+  <%= form_with url: data_import_path(@import), method: :patch, class: "form" do |form| %>
+    <fieldset>
+      <legend><%= t("imports.mapping") %></legend>
+      <div class="mapping">
+        <% @import.definition.fields.each do |field| %>
+          <div class="field">
+            <label for="mapping_<%= field.key %>"><%= field.label %><%= " *" if field.required %></label>
+            <%= select_tag "mapping[#{field.key}]", options_for_select(table.headers.each_with_index.map { |h, i| [ h, i.to_s ] }, mapping[field.key.to_s].to_s),
+                  include_blank: t("imports.skip_field"), id: "mapping_#{field.key}" %>
+          </div>
+        <% end %>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend><%= t("imports.duplicates") %></legend>
+      <% DataImport::MODES.each do |mode| %>
+        <div class="field checkbox"><%= radio_button_tag :mode, mode, @import.mode == mode %><%= label_tag "mode_#{mode}", t("imports.modes.#{mode}") %></div>
+      <% end %>
+      <p class="hint"><%= t("imports.keys.#{@import.kind}") %></p>
+    </fieldset>
+    <div class="form-actions">
+      <%= form.submit t("imports.preview"), class: "btn", name: "preview" %>
+      <%= form.submit t("imports.run", count: table.rows.size), class: "btn btn-primary", name: "run", data: { turbo_confirm: t("imports.run_confirm", count: table.rows.size) } %>
+    </div>
+  <% end %>
+
+  <section class="card">
+    <h2><%= t("imports.preview_title") %></h2>
+    <% mapped = @import.definition.fields.select { |f| mapping[f.key.to_s].present? } %>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th>#</th><% mapped.each do |field| %><th><%= field.label %></th><% end %></tr></thead>
+        <tbody>
+          <% table.rows.first(10).each_with_index do |row, index| %>
+            <% values = @import.values_for(row) %>
+            <% missing = @import.definition.fields.select { |f| f.required && values[f.key.to_s].blank? } %>
+            <tr class="<%= "inactive" if missing.any? %>">
+              <td><%= index + 2 %><% if missing.any? %> <span class="danger small"><%= t("imports.missing", fields: missing.map(&:label).join(", ")) %></span><% end %></td>
+              <% mapped.each do |field| %><td><%= values[field.key.to_s] %></td><% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>

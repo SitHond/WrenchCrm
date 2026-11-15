@@ -42,3 +42,4 @@ end
 gem "rails-i18n", "~> 8.0"
 gem "pagy", "~> 9.3"
 gem "csv", "~> 3.3"
+gem "roo", "~> 2.10"

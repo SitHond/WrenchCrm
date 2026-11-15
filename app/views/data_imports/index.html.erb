@@ -1,0 +1,64 @@
+<%= page_header t("nav.imports") %>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("imports.import_title") %></h2>
+    <%= form_with url: data_imports_path, multipart: true, class: "form" do |form| %>
+      <div class="field">
+        <%= form.label :kind, t("imports.what") %>
+        <%= form.select :kind, DataImport::DEFINITIONS.map { |kind, definition| [ definition.label, kind ] } %>
+      </div>
+      <div class="field">
+        <%= form.label :file, t("imports.file") %>
+        <%= form.file_field :file, accept: ".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", required: true %>
+      </div>
+      <p class="hint"><%= t("imports.file_hint") %></p>
+      <%= form.submit t("imports.upload"), class: "btn btn-primary" %>
+    <% end %>
+    <h3><%= t("imports.templates") %></h3>
+    <ul class="list">
+      <% DataImport::DEFINITIONS.each do |kind, definition| %>
+        <li><%= definition.label %> <%= link_to t("imports.download_template"), template_data_imports_path(kind), data: { turbo: false } %></li>
+      <% end %>
+    </ul>
+    <p class="hint"><%= t("imports.order_hint") %></p>
+  </section>
+
+  <section class="card">
+    <h2><%= t("imports.splus.title") %></h2>
+    <p><%= t("imports.splus.description") %></p>
+    <%= form_with url: splus_data_imports_path, multipart: true, class: "form", data: { turbo_confirm: t("imports.splus.confirm") } do |form| %>
+      <div class="field">
+        <%= form.label :files, t("imports.splus.files") %>
+        <%= form.file_field :files, multiple: true, accept: ".csv,.xlsx", required: true %>
+      </div>
+      <p class="hint"><%= t("imports.splus.hint") %></p>
+      <%= form.submit t("imports.splus.run"), class: "btn btn-primary" %>
+    <% end %>
+
+    <h2 class="spaced"><%= t("imports.export_title") %></h2>
+    <p><%= t("imports.export_description") %></p>
+    <%= link_to t("imports.export_full"), full_export_path, class: "btn", data: { turbo: false } %>
+  </section>
+</div>
+
+<% if @imports.any? %>
+  <section class="card">
+    <h2><%= t("imports.history") %></h2>
+    <div class="table-wrap">
+      <table class="table">
+        <thead><tr><th><%= t("imports.date") %></th><th><%= t("imports.what") %></th><th><%= t("imports.file") %></th><th><%= t("imports.status") %></th></tr></thead>
+        <tbody>
+          <% @imports.each do |import| %>
+            <tr>
+              <td><%= link_to l(import.created_at, format: :short), data_import_path(import) %></td>
+              <td><%= t("imports.kinds.#{import.kind}") %></td>
+              <td class="muted"><%= truncate(import.filename, length: 60) %></td>
+              <td><%= t("imports.statuses.#{import.status}") %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </section>
+<% end %>

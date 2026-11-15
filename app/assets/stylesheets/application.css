@@ -519,3 +519,4 @@ select, input, textarea { max-width: 100%; }
   .lead-in_progress { background: #78350f; color: #fde68a; }
   .lead-booked, .lead-won { background: #14532d; color: #bbf7d0; }
 }
+.mapping { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0 1rem; }

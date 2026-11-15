@@ -229,6 +229,10 @@ GEM
       tsort
     reline (0.7.0)
       io-console (~> 0.5)
+    roo (2.10.1)
+      nokogiri (~> 1)
+      rubyzip (>= 1.3.0, < 3.0.0)
+    rubyzip (2.4.1)
     securerandom (0.4.1)
     stimulus-rails (1.3.4)
       railties (>= 6.0.0)
@@ -281,6 +285,7 @@ DEPENDENCIES
   puma (>= 5.0)
   rails (~> 8.1.4, >= 8.1.4.1)
   rails-i18n (~> 8.0)
+  roo (~> 2.10)
   stimulus-rails
   thruster
   turbo-rails

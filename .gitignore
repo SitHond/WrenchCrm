@@ -12,3 +12,8 @@
 /config/master.key
 /config/credentials/*.key
 /vendor/bundle
+# Client data files dropped in for import must never be committed
+/*.csv
+/*.xlsx
+/*.xls
+/import/

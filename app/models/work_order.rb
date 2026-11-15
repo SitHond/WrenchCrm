@@ -45,6 +45,11 @@ class WorkOrder < ApplicationRecord
   before_create { self.advisor ||= Current.user&.employee }
   after_save { vehicle.record_mileage!(mileage) if saved_change_to_mileage? }
 
+  # Next number after imported history that kept its original numbers.
+  def self.reset_number_sequence!
+    connection.execute("SELECT setval(pg_get_serial_sequence('work_orders', 'id'), GREATEST((SELECT MAX(id) FROM work_orders), 1))")
+  end
+
   scope :unfinished, -> { where(status: OPEN_STATUSES) }
   scope :recent_first, -> { order(created_at: :desc) }
   scope :search, ->(query) {

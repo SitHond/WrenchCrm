@@ -19,6 +19,7 @@ class SaleLine < ApplicationRecord
 
   private
     def enough_stock
+      return if Current.importing
       return unless part && !ShopSetting.current.allow_negative_stock && quantity
 
       errors.add(:quantity, :not_enough_stock, available: part.quantity.to_s("F").sub(/\.0\z/, "")) if quantity > part.quantity

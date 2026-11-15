@@ -2,7 +2,7 @@
 <article class="reminder <%= "overdue" if reminder.overdue? %>">
   <div class="reminder-main">
     <div class="reminder-title"><strong><%= reminder.title %></strong> <span class="badge reminder-<%= reminder.status %>"><%= enum_label(ServiceReminder, :status, reminder.status) %></span></div>
-    <div><%= link_to vehicle.label, vehicle %> · <%= link_to vehicle.client.display_name, vehicle.client %> · <%= link_to vehicle.client.phone, "tel:#{vehicle.client.phone}" %></div>
+    <div><%= link_to vehicle.label, vehicle %> · <%= link_to vehicle.client.display_name, vehicle.client %><% if vehicle.client.phone.present? %> · <%= phone_link(vehicle.client.phone) %><% end %></div>
     <div class="muted small">
       <% if reminder.due_on %><%= t("reminders.due_on", date: l(reminder.due_on)) %><% end %>
       <% if reminder.due_mileage %>

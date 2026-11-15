@@ -29,6 +29,10 @@ module ApplicationHelper
     safe_join([ tag.dt(label), tag.dd(value) ])
   end
 
+  def phone_link(phone)
+    link_to(phone, "tel:#{phone.gsub(/[^\d+]/, "")}") if phone.present?
+  end
+
   def money(amount)
     number_to_currency(amount || 0, unit: Rails.configuration.x.currency_unit, format: "%n %u", precision: 2)
   end

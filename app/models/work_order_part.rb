@@ -22,9 +22,9 @@ class WorkOrderPart < ApplicationRecord
     part&.adjust_stock!(-quantity, kind: :work_order, source: work_order) unless client_supplied?
   end
 
-  # Client-supplied parts and lines of an estimate never touch our stock.
+  # Client-supplied parts, lines of an estimate and imported history never touch our stock.
   def stock_part
-    part unless client_supplied? || work_order&.estimate?
+    part unless client_supplied? || work_order&.estimate? || Current.importing
   end
 
   def margin

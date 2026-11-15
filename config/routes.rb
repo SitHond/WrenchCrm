@@ -90,6 +90,15 @@ Rails.application.routes.draw do
   resources :markup_rules, only: %i[ create destroy ]
   resources :catalog_categories, only: %i[ create destroy ]
 
+  resources :data_imports, path: "imports", only: %i[ index create show update ] do
+    member { get :errors }
+    collection do
+      get "template/:kind", action: :template, as: :template
+      post :splus
+    end
+  end
+  get "exports/full" => "exports#full", as: :full_export
+
   namespace :admin do
     resources :users, except: :show
     resources :employees, except: :show

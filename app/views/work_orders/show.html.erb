@@ -37,7 +37,7 @@
       <%= detail_row Vehicle.human_attribute_name(:vin), (tag.span(@work_order.vehicle.vin, class: "mono") if @work_order.vehicle.vin) %>
       <%= detail_row WorkOrder.human_attribute_name(:mileage), (t("vehicles.km", count: number_with_delimiter(@work_order.mileage)) if @work_order.mileage) %>
       <%= detail_row Client.model_name.human, link_to(@work_order.client.display_name, @work_order.client) %>
-      <%= detail_row Client.human_attribute_name(:phone), link_to(@work_order.client.phone, "tel:#{@work_order.client.phone}") %>
+      <%= detail_row Client.human_attribute_name(:phone), phone_link(@work_order.client.phone) %>
     </dl>
   </section>
 

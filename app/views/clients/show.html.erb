@@ -16,8 +16,8 @@
   <section class="card">
     <h2><%= t("clients.sections.contacts") %></h2>
     <dl class="details">
-      <%= detail_row Client.human_attribute_name(:phone), link_to(@client.phone, "tel:#{@client.phone}") %>
-      <%= detail_row Client.human_attribute_name(:phone2), (link_to(@client.phone2, "tel:#{@client.phone2}") if @client.phone2.present?) %>
+      <%= detail_row Client.human_attribute_name(:phone), phone_link(@client.phone) %>
+      <%= detail_row Client.human_attribute_name(:phone2), phone_link(@client.phone2) %>
       <%= detail_row Client.human_attribute_name(:email), (mail_to(@client.email) if @client.email.present?) %>
       <%= detail_row Client.human_attribute_name(:address), @client.address %>
       <%= detail_row Client.human_attribute_name(:inn), @client.inn %>

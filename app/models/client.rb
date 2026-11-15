@@ -17,7 +17,7 @@ class Client < ApplicationRecord
   normalizes :phone, :phone2, with: ->(phone) { phone.strip }
   normalizes :email, with: ->(email) { email.strip.downcase }
 
-  validates :phone, presence: true
+  validates :phone, presence: true, unless: -> { Current.importing }
   validates :last_name, presence: true, if: :individual?
   validates :company_name, presence: true, if: :company?
   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
