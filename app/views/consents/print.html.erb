@@ -15,5 +15,5 @@
     <div>«____» ______________ 20___ г.</div>
     <div>____________________ / ____________________</div>
   </div>
-  <p class="muted small"><%= t("consents.version_note", version: Consent.version_for(@kind)) %></p>
+  <p class="muted small"><%= t("consents.version_note", version: Consent.version_for(@kind)) %> · <%= t("consents.policy_note", url: privacy_policy_url) %></p>
 </article>

@@ -15,6 +15,7 @@
       <%= render "shared/flash" %>
       <%= yield %>
       <%= render "shared/locale_switcher" %>
+      <p class="center small"><%= link_to t("privacy_policy.title"), privacy_policy_path %></p>
     </main>
   </body>
 </html>

@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+  <head>
+    <title><%= content_for(:title) %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <%= stylesheet_link_tag :app %>
+  </head>
+  <body class="public-page">
+    <main class="public-doc"><%= yield %></main>
+  </body>
+</html>

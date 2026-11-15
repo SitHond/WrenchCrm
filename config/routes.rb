@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
+  get "privacy" => "privacy#show", as: :privacy_policy
 
   resource :session, only: %i[ new create destroy ] do
     get :two_factor

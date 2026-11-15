@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_235900) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_16_000500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -459,6 +459,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235900) do
     t.text "marketing_consent_text"
     t.integer "pd_retention_years"
     t.boolean "require_two_factor", default: false, null: false
+    t.text "privacy_policy_text"
   end
 
   create_table "stock_movements", force: :cascade do |t|

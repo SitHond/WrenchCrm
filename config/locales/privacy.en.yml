@@ -54,6 +54,7 @@ en:
     filter_all: "All clients"
     filter_missing: "Without data consent"
     order_warning_html: "Client %{client} has no separate consent to personal data processing — %{link}, have it signed and record it on the client card."
+    policy_note: "Privacy policy: %{url}"
     version_note: "Consent text version: %{version}"
     settings_hint: "Leave empty to use the standard text. Changing the text gives new consents a new version; signed consents keep theirs."
     subject_line: "I,"
@@ -69,6 +70,7 @@ en:
       consent:
         channel: "Channel"
       shop_setting:
+        privacy_policy_text: "Privacy policy text"
         require_two_factor: "Require two-factor sign-in"
         pd_retention_years: "Retention, years"
         pd_consent_text: "Personal data consent text"
@@ -134,3 +136,7 @@ en:
     reset: "Reset two-factor sign-in"
     reset_confirm: "Reset? The user signs in with the password and sets it up again."
     reset_done: "Two-factor sign-in reset and the user's sessions ended."
+  privacy_policy:
+    title: "Personal data processing policy"
+    settings_placeholder: "Empty publishes the standard text with your requisites"
+    settings_hint_html: "The policy is published at %{link}. Link to it from the shop website. Have a lawyer review the standard text."

@@ -37,6 +37,7 @@ if [ ! -f .env ]; then
 
   sed -e "s|^POSTGRES_PASSWORD=.*|POSTGRES_PASSWORD=$(random_hex 24)|" \
       -e "s|^SECRET_KEY_BASE=.*|SECRET_KEY_BASE=$(random_hex 64)|" \
+      -e "s|^BACKUP_PASSPHRASE=.*|BACKUP_PASSPHRASE=$(random_hex 32)|" \
       -e "s|^ADMIN_EMAIL=.*|ADMIN_EMAIL=$(sed_value "$admin_email")|" \
       -e "s|^ADMIN_PASSWORD=.*|ADMIN_PASSWORD=$(sed_value "$admin_password")|" \
       -e "s|^SHOP_NAME=.*|SHOP_NAME=$(sed_value "$shop_name")|" \

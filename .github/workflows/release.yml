@@ -72,11 +72,11 @@ jobs:
           image="${{ needs.image.outputs.image }}"
           dir="wrenchcrm-${version}"
           mkdir -p "dist/${dir}"
-          cp deploy/install.sh deploy/install.ps1 deploy/README.md LICENSE "dist/${dir}/"
+          cp deploy/install.sh deploy/install.ps1 deploy/backup.sh deploy/README.md LICENSE "dist/${dir}/"
           sed "s|ghcr.io/sithond/wrenchcrm|${image}|" deploy/compose.yaml > "dist/${dir}/compose.yaml"
           sed "s|__VERSION__|${version}|" deploy/env.example > "dist/${dir}/env.example"
           echo "${version}" > "dist/${dir}/VERSION"
-          chmod +x "dist/${dir}/install.sh"
+          chmod +x "dist/${dir}/install.sh" "dist/${dir}/backup.sh"
           cd dist
           tar -czf "${dir}.tar.gz" "${dir}"
           zip -qr "${dir}.zip" "${dir}"

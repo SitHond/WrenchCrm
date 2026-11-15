@@ -56,6 +56,34 @@ docker compose up -d
 
 ## Резервная копия
 
+### Автоматически, с шифрованием
+
+`backup.sh` делает зашифрованную копию базы (AES-256) в папку `backups` и удаляет копии старше `BACKUP_KEEP_DAYS` дней (по умолчанию 14). Добавьте в `.env` длинную случайную фразу и сохраните её отдельно — без неё копию не расшифровать:
+
+```bash
+echo "BACKUP_PASSPHRASE=$(openssl rand -base64 32)" >> .env
+./backup.sh
+```
+
+Ежедневный запуск в 03:30 (Linux, от root):
+
+```bash
+echo "30 3 * * * root cd $(pwd) && ./backup.sh >> backups/backup.log 2>&1" > /etc/cron.d/wrenchcrm-backup
+```
+
+Восстановить из зашифрованной копии (текущие данные будут заменены):
+
+```bash
+docker compose stop web
+openssl enc -d -aes-256-cbc -pbkdf2 -iter 200000 -pass env:BACKUP_PASSPHRASE -in backups/wrenchcrm-2026-01-31-0330.dump.enc |
+  docker compose exec -T db pg_restore -U wrench_crm -d wrench_crm_production --clean --if-exists
+docker compose start web
+```
+
+Перед командой выполните `export BACKUP_PASSPHRASE=...` с фразой из `.env`. Храните копии ещё и на другом носителе или сервере в РФ (требование локализации персональных данных).
+
+### Вручную
+
 Создать:
 
 ```bash
