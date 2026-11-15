@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   resources :clients do
     resources :notes, only: :create
+    resource :anonymization, only: :create
     resources :consents, only: :create do
       collection { get :print }
       member { patch :withdraw }
@@ -88,6 +89,7 @@ Rails.application.routes.draw do
   end
 
   resource :shop_settings, only: %i[ edit update ]
+  post "anonymizations/inactive" => "anonymizations#inactive", as: :anonymize_inactive
   resources :complexity_levels, only: %i[ create destroy ]
   resources :ad_sources, only: %i[ create update ]
   resources :loyalty_tiers, only: %i[ create destroy ]

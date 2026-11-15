@@ -25,7 +25,8 @@ class ConsentsController < ApplicationController
     else
       consent.withdraw!(params[:reason])
       audit(:consent_withdrawn, @client, kind: consent.kind, reason: params[:reason])
-      redirect_to client_path(@client, anchor: "consents"), notice: t("consents.withdrawn")
+      notice = consent.personal_data? ? t("privacy.withdrawn_anonymize_hint") : t("consents.withdrawn")
+      redirect_to client_path(@client, anchor: "consents"), notice: notice
     end
   end
 

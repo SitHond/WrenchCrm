@@ -7,6 +7,10 @@
         form: { data: { turbo_confirm: t("confirm") } } if can?(:delete_records) %>
 <% end %>
 
+<% if @client.anonymized? %>
+  <p class="flash flash-notice"><%= t("privacy.anonymized_banner", date: l(@client.anonymized_at, format: :short), user: @client.anonymized_by&.name || "—") %></p>
+<% end %>
+
 <p class="subtitle">
   <%= enum_label(Client, :kind, @client.kind) %>
   <% unless @client.active? %>· <span class="badge"><%= t("status.inactive") %></span><% end %>
@@ -84,6 +88,16 @@
       </div>
     <% end %>
   </div>
+  <% if can?(:delete_records) && !@client.anonymized? %>
+    <details class="anonymize">
+      <summary class="link-button danger"><%= t("privacy.anonymize") %></summary>
+      <%= form_with url: client_anonymization_path(@client), class: "inline-form", data: { turbo_confirm: t("privacy.confirm") } do |form| %>
+        <%= form.text_field :reason, required: true, placeholder: t("privacy.reason_placeholder"), aria: { label: t("privacy.reason_placeholder") } %>
+        <%= form.submit t("privacy.anonymize"), class: "btn btn-danger" %>
+      <% end %>
+      <p class="hint"><%= t("privacy.anonymize_hint") %></p>
+    </details>
+  <% end %>
   <% if @consents.reject(&:active?).any? %>
     <details class="small muted"><summary><%= t("consents.history") %></summary>
       <ul>

@@ -69,6 +69,7 @@ en:
       consent:
         channel: "Channel"
       shop_setting:
+        pd_retention_years: "Retention, years"
         pd_consent_text: "Personal data consent text"
         marketing_consent_text: "Advertising consent text"
     enums:
@@ -76,3 +77,29 @@ en:
         channel:
           paper: "on paper"
           electronic: "electronically"
+  privacy:
+    anonymize: "Anonymize client"
+    anonymize_hint: "Names, phones, email, address, tax ID, plates and VINs are removed, notes and open tasks deleted, consents withdrawn. Work orders and payments stay without personal data. This cannot be undone."
+    confirm: "Anonymize the data? This cannot be undone."
+    reason_placeholder: "Basis: consent withdrawn, request of …"
+    reason_needed: "Give the basis for anonymization."
+    anonymized: "The client's personal data was anonymized."
+    anonymized_label: "Anonymized #%{id}"
+    anonymized_banner: "Client anonymized on %{date} (%{user}). Personal data removed, documents kept."
+    withdrawn_anonymize_hint: "Withdrawal recorded. The data must be destroyed or anonymized within 30 days — use “Anonymize client” unless another legal basis applies."
+    retention_hint: "Years without visits after which a client's data is anonymized. Empty means never automatically."
+    retention_title: "Personal data retention"
+    retention_status:
+      zero: "No clients without visits for more than %{years} years."
+      one: "%{count} client without visits for more than %{years} years."
+      other: "%{count} clients without visits for more than %{years} years."
+    retention_run:
+      one: "Anonymize %{count} client"
+      other: "Anonymize %{count} clients"
+    retention_done:
+      zero: "Nobody to anonymize."
+      one: "%{count} client anonymized."
+      other: "%{count} clients anonymized."
+    retention_reason: "Retention period ended: no visits for more than %{years} years"
+    retention_off: "Set the retention period first."
+    retention_cron: "On the server this can run on a schedule: bin/rails privacy:anonymize_inactive"

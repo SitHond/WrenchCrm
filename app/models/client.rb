@@ -6,6 +6,7 @@ class Client < ApplicationRecord
 
   belongs_to :created_by, class_name: "User", optional: true
   belongs_to :ad_source, optional: true
+  belongs_to :anonymized_by, class_name: "User", optional: true
   has_many :vehicles, -> { order(:make, :model) }, dependent: :restrict_with_error
   has_many :work_orders, -> { order(created_at: :desc) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
@@ -74,6 +75,12 @@ class Client < ApplicationRecord
   end
 
   def personal_data_consent? = consent(:personal_data).present?
+
+  def anonymized? = anonymized_at.present?
+
+  def anonymize!(reason:)
+    ClientAnonymizer.new(self, reason: reason).run!
+  end
 
   def marketing_consent? = consent(:marketing).present?
 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_235500) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_235800) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -127,7 +127,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235500) do
     t.datetime "updated_at", null: false
     t.bigint "ad_source_id"
     t.integer "discount_mode", default: 0, null: false
+    t.datetime "anonymized_at"
+    t.bigint "anonymized_by_id"
     t.index ["ad_source_id"], name: "index_clients_on_ad_source_id"
+    t.index ["anonymized_by_id"], name: "index_clients_on_anonymized_by_id"
     t.index ["company_name"], name: "index_clients_on_company_name"
     t.index ["created_by_id"], name: "index_clients_on_created_by_id"
     t.index ["last_name", "first_name"], name: "index_clients_on_last_name_and_first_name"
@@ -454,6 +457,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235500) do
     t.datetime "updated_at", null: false
     t.text "pd_consent_text"
     t.text "marketing_consent_text"
+    t.integer "pd_retention_years"
   end
 
   create_table "stock_movements", force: :cascade do |t|
@@ -621,6 +625,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235500) do
   add_foreign_key "cash_operations", "suppliers", on_delete: :nullify
   add_foreign_key "cash_operations", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "clients", "ad_sources", on_delete: :nullify
+  add_foreign_key "clients", "users", column: "anonymized_by_id", on_delete: :nullify
   add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "consents", "clients", on_delete: :cascade
   add_foreign_key "consents", "users", column: "recorded_by_id", on_delete: :nullify

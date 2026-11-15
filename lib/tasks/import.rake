@@ -11,3 +11,13 @@ namespace :import do
     result["warnings"].each { |warning| puts "  warning: #{warning}" }
   end
 end
+
+namespace :privacy do
+  desc "Anonymize clients inactive longer than the retention period set in shop settings (for cron)"
+  task anonymize_inactive: :environment do
+    years = ShopSetting.current.pd_retention_years or abort "Retention period is not set in shop settings"
+    clients = ClientAnonymizer.inactive_clients(years).to_a
+    clients.each { |client| client.anonymize!(reason: I18n.t("privacy.retention_reason", years: years, locale: :ru)) }
+    puts "Anonymized #{clients.size} clients inactive for more than #{years} years"
+  end
+end
