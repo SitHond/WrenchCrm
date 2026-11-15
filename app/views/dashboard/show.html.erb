@@ -31,6 +31,12 @@
 
 <div class="grid-2">
   <section class="card">
+    <h2><%= link_to t("dashboard.my_tasks"), tasks_path %></h2>
+    <%= render "tasks/list", tasks: @my_tasks, show_subject: true %>
+    <%= render "tasks/form_inline" %>
+  </section>
+
+  <section class="card">
     <h2><%= link_to t("dashboard.appointments_today"), appointments_path %></h2>
     <% if @appointments_today.any? %>
       <ul class="list">

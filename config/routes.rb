@@ -33,6 +33,9 @@ Rails.application.routes.draw do
     end
   end
   resources :notes, only: %i[ edit update destroy ]
+  resources :tasks, only: %i[ index create edit update destroy ] do
+    patch :toggle, on: :member
+  end
   resources :services, except: :show
   resources :parts do
     member do

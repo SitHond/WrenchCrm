@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_224000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_230000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -385,6 +385,23 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_224000) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "tasks", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "description"
+    t.bigint "assignee_id"
+    t.bigint "created_by_id"
+    t.string "subject_type"
+    t.bigint "subject_id"
+    t.date "due_on"
+    t.datetime "done_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assignee_id", "done_at", "due_on"], name: "index_tasks_on_assignee_id_and_done_at_and_due_on"
+    t.index ["assignee_id"], name: "index_tasks_on_assignee_id"
+    t.index ["created_by_id"], name: "index_tasks_on_created_by_id"
+    t.index ["subject_type", "subject_id"], name: "index_tasks_on_subject"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email_address", null: false
     t.string "password_digest", null: false
@@ -534,6 +551,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_224000) do
   add_foreign_key "sessions", "users"
   add_foreign_key "stock_movements", "parts", on_delete: :cascade
   add_foreign_key "stock_movements", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "tasks", "users", column: "assignee_id", on_delete: :nullify
+  add_foreign_key "tasks", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "vehicles", "clients"
   add_foreign_key "work_order_labor_performers", "employees", on_delete: :cascade
   add_foreign_key "work_order_labor_performers", "work_order_labors", on_delete: :cascade

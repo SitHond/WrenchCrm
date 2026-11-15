@@ -1,5 +1,6 @@
 ru:
   dashboard:
+    my_tasks: "Мои задачи"
     estimates: "смет на согласовании"
   work_orders:
     new_estimate: "Новая смета"
@@ -17,7 +18,35 @@ ru:
       note: "Смета предварительная и действует %{days} дней, до %{date}. Окончательная стоимость может измениться, если при ремонте обнаружатся скрытые неисправности; дополнительные работы выполняются только с согласия заказчика."
       agreed: "Согласовано заказчиком"
   activerecord:
+    models:
+      task:
+        one: "Задача"
+        few: "Задачи"
+        many: "Задачи"
+        other: "Задачи"
+    attributes:
+      task:
+        title: "Задача"
+        description: "Подробности"
+        assignee: "Исполнитель"
+        assignee_id: "Исполнитель"
+        due_on: "Срок"
+        subject: "По"
     enums:
       work_order:
         status:
           estimate: "Смета"
+  nav:
+    tasks: "Задачи"
+  tasks:
+    placeholder: "Новая задача: перезвонить, заказать, проверить…"
+    created: "Задача добавлена."
+    empty: "Задач нет."
+    edit: "Изменение задачи"
+    complete: "Выполнено"
+    reopen: "Вернуть в работу"
+    filter:
+      mine: "Мои"
+      all: "Все"
+      open: "Открытые"
+      done: "Выполненные"

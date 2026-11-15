@@ -49,6 +49,15 @@ module ApplicationHelper
     permission == :admin ? current_user&.admin? : current_user&.public_send(:"can_#{permission}?")
   end
 
+  def task_subject_label(subject)
+    case subject
+    when Client then subject.display_name
+    when Vehicle then subject.label
+    when WorkOrder then t("work_orders.title", number: subject.number)
+    else subject.try(:display_name) || subject.to_s
+    end
+  end
+
   def pagination(pagy)
     render "shared/pagination", pagy: pagy if pagy.pages > 1
   end

@@ -1,0 +1,5 @@
+<section class="card">
+  <h2><%= Task.model_name.human(count: 2) %></h2>
+  <%= render "tasks/list", tasks: subject.tasks.includes(:assignee).order(Arel.sql("done_at IS NOT NULL"), :due_on), show_assignee: true %>
+  <%= render "tasks/form_inline", subject: subject %>
+</section>

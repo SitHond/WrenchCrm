@@ -1,0 +1,16 @@
+<%= page_header t("nav.tasks") %>
+
+<div class="filters">
+  <% [ [ t("tasks.filter.mine"), nil ], [ t("tasks.filter.all"), "all" ] ].each do |label, who| %>
+    <%= link_to label, tasks_path(who: who, state: params[:state]), class: [ "btn", ("btn-primary" if params[:who] == who) ] %>
+  <% end %>
+  <% [ [ t("tasks.filter.open"), nil ], [ t("tasks.filter.done"), "done" ] ].each do |label, state| %>
+    <%= link_to label, tasks_path(who: params[:who], state: state), class: [ "btn", ("btn-primary" if params[:state] == state) ] %>
+  <% end %>
+</div>
+
+<section class="card">
+  <%= render "tasks/form_inline" %>
+  <%= render "tasks/list", tasks: @tasks, show_subject: true, show_assignee: params[:who] == "all" %>
+</section>
+<%= pagination(@pagy) %>

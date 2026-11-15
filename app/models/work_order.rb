@@ -31,6 +31,7 @@ class WorkOrder < ApplicationRecord
   has_many :part_lines, class_name: "WorkOrderPart", dependent: :destroy
   has_many :payments, -> { order(:paid_at) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
+  has_many :tasks, as: :subject, dependent: :destroy
   has_one :appointment, dependent: :nullify
 
   validates :labor_discount_percent, :parts_discount_percent, numericality: { in: 0..100 }

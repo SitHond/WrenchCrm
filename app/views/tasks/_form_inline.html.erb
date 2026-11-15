@@ -1,0 +1,12 @@
+<%# Quick task form; pass subject: to attach the task to a record. %>
+<% subject = local_assigns[:subject] %>
+<%= form_with model: Task.new, class: "inline-form task-form" do |form| %>
+  <% if subject %>
+    <%= form.hidden_field :subject_type, value: subject.class.name %>
+    <%= form.hidden_field :subject_id, value: subject.id %>
+  <% end %>
+  <%= form.text_field :title, required: true, placeholder: t("tasks.placeholder"), aria: { label: Task.human_attribute_name(:title) } %>
+  <%= form.date_field :due_on, value: Date.current, aria: { label: Task.human_attribute_name(:due_on) } %>
+  <%= form.collection_select :assignee_id, User.active.ordered, :id, :name, { selected: current_user.id }, aria: { label: Task.human_attribute_name(:assignee) } %>
+  <%= form.submit t("add"), class: "btn" %>
+<% end %>

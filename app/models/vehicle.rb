@@ -4,6 +4,7 @@ class Vehicle < ApplicationRecord
   belongs_to :client
   has_many :work_orders, -> { order(created_at: :desc) }, dependent: :restrict_with_error
   has_many :notes, as: :notable, dependent: :destroy
+  has_many :tasks, as: :subject, dependent: :destroy
   has_many :appointments, dependent: :destroy
 
   normalizes :vin, with: ->(vin) { vin.strip.upcase.presence }

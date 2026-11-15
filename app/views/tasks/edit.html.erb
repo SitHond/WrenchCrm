@@ -1,0 +1,15 @@
+<%= page_header t("tasks.edit") %>
+<%= form_with model: @task, class: "form narrow" do |form| %>
+  <%= render "shared/errors", record: @task %>
+  <div class="field"><%= form.label :title %><%= form.text_field :title, required: true %></div>
+  <div class="field"><%= form.label :description %><%= form.text_area :description, rows: 3 %></div>
+  <div class="row">
+    <div class="field"><%= form.label :due_on %><%= form.date_field :due_on %></div>
+    <div class="field"><%= form.label :assignee_id %><%= form.collection_select :assignee_id, User.active.ordered, :id, :name, include_blank: "—" %></div>
+  </div>
+  <% if @task.subject %><p class="muted"><%= Task.human_attribute_name(:subject) %>: <%= link_to task_subject_label(@task.subject), @task.subject %></p><% end %>
+  <div class="form-actions">
+    <%= form.submit t("save"), class: "btn btn-primary" %>
+    <%= link_to t("cancel"), tasks_path, class: "btn" %>
+  </div>
+<% end %>

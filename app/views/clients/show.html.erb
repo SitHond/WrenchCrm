@@ -64,4 +64,5 @@
   <%= render "work_orders/table", work_orders: @work_orders, show_client: false %>
 </section>
 
+<%= render "tasks/section", subject: @client %>
 <%= render "notes/section", notable: @client, notes: @notes %>

@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   around_action :switch_locale
-  helper_method :current_user
+  helper_method :current_user, :my_due_tasks_count
 
   rescue_from ActiveRecord::RecordNotFound do
     redirect_to root_path, alert: t("flash.not_found")
@@ -16,6 +16,10 @@ class ApplicationController < ActionController::Base
   private
     def current_user
       Current.user
+    end
+
+    def my_due_tasks_count
+      @my_due_tasks_count ||= current_user ? Task.for_user(current_user).due_by(Date.current).count : 0
     end
 
     def switch_locale(&action)
