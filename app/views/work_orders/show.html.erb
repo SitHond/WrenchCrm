@@ -1,5 +1,5 @@
 <% editable = @work_order.editable? && can?(:manage_orders) %>
-<%= page_header t("work_orders.title", number: @work_order.number) do %>
+<%= page_header t(@work_order.estimate? ? "work_orders.estimate_title" : "work_orders.title", number: @work_order.number) do %>
   <details class="dropdown">
     <summary class="btn"><%= t("work_orders.print") %> ▾</summary>
     <div class="dropdown-menu">
@@ -18,11 +18,15 @@
   <% if can?(:manage_orders) %>
     <% @work_order.next_statuses.each do |status| %>
       <%= button_to t("work_orders.transition.#{status}"), status_work_order_path(@work_order, status: status), method: :patch,
-            class: [ "btn", ("btn-primary" if status.in?(%w[ready closed])), ("btn-danger" if status == "cancelled") ],
-            form: (status == "cancelled" ? { data: { turbo_confirm: t("work_orders.confirm_cancel") } } : {}) %>
+            class: [ "btn", ("btn-primary" if status.in?(%w[ready closed accepted])), ("btn-danger" if status == "cancelled") ],
+            form: (status == "cancelled" ? { data: { turbo_confirm: t(@work_order.estimate? ? "work_orders.confirm_decline" : "work_orders.confirm_cancel") } } : {}) %>
     <% end %>
   <% end %>
 </div>
+
+<% if @work_order.estimate? %>
+  <p class="flash flash-notice"><%= t("work_orders.estimate_hint") %></p>
+<% end %>
 
 <div class="grid-2">
   <section class="card">
@@ -135,7 +139,7 @@
     <% else %>
       <p class="muted"><%= t("payments.empty") %></p>
     <% end %>
-    <% if can?(:manage_payments) && !@work_order.cancelled? && @work_order.balance.positive? %>
+    <% if can?(:manage_payments) && !@work_order.cancelled? && !@work_order.estimate? && @work_order.balance.positive? %>
       <%= form_with model: [ @work_order, Payment.new ], class: "inline-form" do |form| %>
         <%= form.number_field :amount, value: @work_order.balance, step: 0.01, class: "price", aria: { label: Payment.human_attribute_name(:amount) } %>
         <%= form.select :payment_method, enum_options(Payment, :payment_method), {}, aria: { label: Payment.human_attribute_name(:payment_method) } %>

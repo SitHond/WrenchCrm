@@ -39,21 +39,23 @@ class WorkOrdersController < ApplicationController
     @notes = @work_order.notes.visible_to(current_user).recent_first.includes(:author)
   end
 
-  DOCUMENTS = %w[work_order acceptance act invoice].freeze
+  DOCUMENTS = %w[estimate work_order acceptance act invoice].freeze
 
   def print
     @shop = ShopSetting.current
-    document = params[:doc].presence_in(DOCUMENTS) || "work_order"
+    document = params[:doc].presence_in(DOCUMENTS) || (@work_order.estimate? ? "estimate" : "work_order")
     render "work_orders/documents/#{document}", layout: "print"
   end
 
   def new
     vehicle = Vehicle.find_by(id: params[:vehicle_id])
-    @work_order = WorkOrder.new(vehicle: vehicle, client: vehicle&.client, mileage: vehicle&.mileage)
+    @work_order = WorkOrder.new(vehicle: vehicle, client: vehicle&.client, mileage: vehicle&.mileage,
+                                status: params[:estimate] ? :estimate : :accepted)
   end
 
   def create
     @work_order = WorkOrder.new(work_order_params)
+    @work_order.status = :estimate if params.dig(:work_order, :status) == "estimate"
     if @work_order.save
       redirect_to @work_order, notice: t("flash.created", model: WorkOrder.model_name.human)
     else
@@ -75,6 +77,8 @@ class WorkOrdersController < ApplicationController
   def status
     @work_order.change_status!(params.expect(:status))
     redirect_to @work_order, notice: t("work_orders.status_changed", status: helpers.enum_label(WorkOrder, :status, @work_order.status))
+  rescue WorkOrder::StockShortage => e
+    redirect_to @work_order, alert: t("work_orders.stock_shortage", parts: e.lines.map(&:name).join(", "))
   rescue ArgumentError
     redirect_to @work_order, alert: t("work_orders.invalid_transition")
   end

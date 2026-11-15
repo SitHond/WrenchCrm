@@ -1,6 +1,7 @@
 class DashboardController < ApplicationController
   def show
     @status_counts = WorkOrder.unfinished.group(:status).count
+    @estimates_count = WorkOrder.estimate.count
     @ready_orders = WorkOrder.ready.includes(:client, :vehicle).order(:completed_at).limit(10)
     @due_orders = WorkOrder.unfinished.where(promised_at: ..Date.current.end_of_day).includes(:client, :vehicle).order(:promised_at).limit(10)
     @revenue_month = Payment.in_period(Date.current.all_month).sum(:amount)

@@ -1,5 +1,6 @@
 <%= form_with model: work_order, class: "form" do |form| %>
   <%= render "shared/errors", record: work_order %>
+  <%= form.hidden_field :status if work_order.new_record? && work_order.estimate? %>
 
   <fieldset>
     <legend><%= t("work_orders.sections.vehicle") %></legend>

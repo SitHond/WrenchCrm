@@ -4,6 +4,11 @@
 <% end %>
 
 <div class="stats">
+  <% if @estimates_count.positive? %>
+    <%= link_to work_orders_path(status: "estimate"), class: "stat" do %>
+      <span class="stat-value"><%= @estimates_count %></span><span class="stat-label"><%= t("dashboard.estimates") %></span>
+    <% end %>
+  <% end %>
   <% WorkOrder::OPEN_STATUSES.each do |status| %>
     <%= link_to work_orders_path(status: status), class: "stat" do %>
       <span class="stat-value"><%= @status_counts[status].to_i %></span>

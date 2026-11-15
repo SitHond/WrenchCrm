@@ -469,3 +469,5 @@ select, input, textarea { max-width: 100%; }
   .only-touch { display: inline; }
   .only-pointer { display: none; }
 }
+.status-estimate { background: #f3e8ff; color: #6b21a8; }
+@media (prefers-color-scheme: dark) { .status-estimate { background: #3b0764; color: #e9d5ff; } }

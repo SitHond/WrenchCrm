@@ -1,7 +1,10 @@
 <%= page_header t("nav.work_orders") do %>
   <%= link_to t("work_orders.board"), board_work_orders_path, class: "btn" %>
   <%= csv_export_link %>
-  <%= link_to t("work_orders.new"), new_work_order_path, class: "btn btn-primary" if can?(:manage_orders) %>
+  <% if can?(:manage_orders) %>
+    <%= link_to t("work_orders.new_estimate"), new_work_order_path(estimate: 1), class: "btn" %>
+    <%= link_to t("work_orders.new"), new_work_order_path, class: "btn btn-primary" %>
+  <% end %>
 <% end %>
 
 <%= form_with url: work_orders_path, method: :get, class: "filters" do |form| %>

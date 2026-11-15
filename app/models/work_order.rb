@@ -1,6 +1,16 @@
 class WorkOrder < ApplicationRecord
+  class StockShortage < StandardError
+    attr_reader :lines
+
+    def initialize(lines)
+      @lines = lines
+      super("not enough stock for #{lines.map(&:name).join(', ')}")
+    end
+  end
+
   OPEN_STATUSES = %w[accepted in_progress waiting_parts ready].freeze
   TRANSITIONS = {
+    "estimate" => %w[accepted cancelled],
     "accepted" => %w[in_progress waiting_parts cancelled],
     "in_progress" => %w[waiting_parts ready cancelled],
     "waiting_parts" => %w[in_progress cancelled],
@@ -9,7 +19,7 @@ class WorkOrder < ApplicationRecord
     "cancelled" => []
   }.freeze
 
-  enum :status, { accepted: 0, in_progress: 1, waiting_parts: 2, ready: 3, closed: 4, cancelled: 5 }
+  enum :status, { estimate: 6, accepted: 0, in_progress: 1, waiting_parts: 2, ready: 3, closed: 4, cancelled: 5 }
 
   belongs_to :client
   belongs_to :vehicle
@@ -70,7 +80,8 @@ class WorkOrder < ApplicationRecord
     raise ArgumentError, "invalid transition #{status} -> #{new_status}" unless next_statuses.include?(new_status)
 
     transaction do
-      part_lines.each(&:return_to_stock!) if new_status == "cancelled"
+      approve_estimate! if estimate? && new_status == "accepted"
+      part_lines.each(&:return_to_stock!) if new_status == "cancelled" && !estimate?
       self.completed_at = Time.current if new_status == "ready"
       self.closed_at = Time.current if new_status == "closed"
       update!(status: new_status)
@@ -119,6 +130,16 @@ class WorkOrder < ApplicationRecord
   end
 
   private
+    # The client agreed: parts leave stock now, not while the estimate was being discussed.
+    def approve_estimate!
+      unless ShopSetting.current.allow_negative_stock
+        short = part_lines.includes(:part).select { |line| line.part && !line.client_supplied? && line.quantity > line.part.quantity }
+        raise StockShortage, short if short.any?
+      end
+      update_column(:status, self.class.statuses[:accepted])
+      part_lines.includes(:part).each(&:take_from_stock!)
+    end
+
     def inherit_client_defaults
       self.client ||= vehicle&.client
       if client && labor_discount_percent.to_d.zero? && parts_discount_percent.to_d.zero?
