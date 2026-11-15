@@ -1,5 +1,7 @@
 ru:
   dashboard:
+    new_leads: "новых заявок"
+    leads_to_contact: "Перезвонить по заявкам"
     reminders: "пора позвонить по ТО"
     my_tasks: "Мои задачи"
     estimates: "смет на согласовании"
@@ -23,6 +25,11 @@ ru:
       messages:
         due_date_or_mileage: "Укажите срок или пробег"
     models:
+      lead:
+        one: "Заявка"
+        few: "Заявки"
+        many: "Заявки"
+        other: "Заявки"
       service_reminder: "Напоминание"
       task:
         one: "Задача"
@@ -30,6 +37,19 @@ ru:
         many: "Задачи"
         other: "Задачи"
     attributes:
+      lead:
+        name: "Имя"
+        phone: "Телефон"
+        client: "Клиент"
+        request: "Что нужно"
+        vehicle_info: "Автомобиль"
+        channel: "Канал"
+        ad_source_id: "Откуда узнал"
+        status: "Статус"
+        lost_reason: "Причина отказа"
+        assignee_id: "Ответственный"
+        next_contact_on: "Следующий контакт"
+        created_at: "Создана"
       service_reminder:
         title: "Что сделать"
         due_on: "Срок"
@@ -46,6 +66,20 @@ ru:
         due_on: "Срок"
         subject: "По"
     enums:
+      lead:
+        status:
+          fresh: "Новая"
+          in_progress: "В работе"
+          booked: "Записан"
+          won: "Пришёл"
+          lost: "Отказ"
+        channel:
+          call: "Звонок"
+          walk_in: "Пришёл сам"
+          website: "Сайт"
+          messenger: "Мессенджер"
+          referral: "По рекомендации"
+          other: "Другое"
       service_reminder:
         status:
           pending: "Ждёт звонка"
@@ -57,6 +91,7 @@ ru:
         status:
           estimate: "Смета"
   nav:
+    leads: "Заявки"
     reminders: "Кому позвонить"
     tasks: "Задачи"
   tasks:
@@ -104,3 +139,31 @@ ru:
     vehicle_estimate: "Сейчас примерно %{km} км, около %{per_year} км в год."
   services:
     reminder_hint: "Если задать интервал, при выдаче заказ-наряда с этой работой создастся напоминание клиенту."
+  leads:
+    new: "Новая заявка"
+    edit: "Заявка: %{name}"
+    board: "Воронка"
+    empty: "Заявок нет."
+    filter_open: "Открытые"
+    search_placeholder: "Имя, телефон или текст"
+    request_placeholder: "Что нужно клиенту: стук спереди, ТО, шиномонтаж…"
+    vehicle_placeholder: "Kia Rio 2018"
+    board_hint: "Перетащите карточку в другую колонку. В «Отказ» — кнопкой на карточке, нужно указать причину."
+    created_with_client: "Заявка создана и привязана к клиенту %{client} по номеру телефона."
+    moved: "Статус заявки: %{status}."
+    lost_reason_needed: "Укажите причину отказа."
+    take: "Взять в работу"
+    create_client: "Создать клиента"
+    book: "Записать на приём"
+    mark_lost: "Отказ"
+    details: "Заявка"
+    lost_reasons: ["Дорого", "Нет времени / сроки", "Выбрал другой сервис", "Не дозвонились", "Сделал сам", "Не наш профиль"]
+  reports:
+    tabs:
+      funnel: "Воронка"
+    leads_total: "Заявок"
+    leads_booked: "Записались"
+    leads_won: "Приехали"
+    leads_lost: "Отказ"
+    conversion: "Конверсия"
+    lost_reasons: "Причины отказов"

@@ -1,0 +1,42 @@
+<%= page_header t("nav.leads") do %>
+  <%= link_to t("leads.board"), board_leads_path, class: "btn" %>
+  <%= link_to t("leads.new"), new_lead_path, class: "btn btn-primary" if can?(:manage_clients) %>
+<% end %>
+
+<%= form_with url: leads_path, method: :get, class: "filters" do |form| %>
+  <%= form.search_field :q, value: params[:q], placeholder: t("leads.search_placeholder"), aria: { label: t("search") } %>
+  <%= form.select :status, [ [ t("leads.filter_open"), "" ], *enum_options(Lead, :status) ], selected: params[:status], aria: { label: Lead.human_attribute_name(:status) } %>
+  <%= form.submit t("search"), class: "btn", name: nil %>
+<% end %>
+
+<% if @leads.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= Lead.human_attribute_name(:name) %></th>
+          <th><%= Lead.human_attribute_name(:phone) %></th>
+          <th><%= Lead.human_attribute_name(:request) %></th>
+          <th><%= Lead.human_attribute_name(:status) %></th>
+          <th><%= Lead.human_attribute_name(:next_contact_on) %></th>
+          <th><%= Lead.human_attribute_name(:created_at) %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @leads.each do |lead| %>
+          <tr>
+            <td><%= link_to lead.display_name, lead %></td>
+            <td><%= link_to lead.phone, "tel:#{lead.phone}" %></td>
+            <td class="muted"><%= truncate(lead.request, length: 60) %></td>
+            <td><%= render "leads/status_badge", lead: lead %></td>
+            <td class="<%= "danger" if lead.next_contact_on && lead.next_contact_on < Date.current && lead.status.in?(Lead::OPEN_STATUSES) %>"><%= l(lead.next_contact_on) if lead.next_contact_on %></td>
+            <td><%= l(lead.created_at, format: :short) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <%= pagination(@pagy) %>
+<% else %>
+  <p class="empty"><%= t("leads.empty") %></p>
+<% end %>

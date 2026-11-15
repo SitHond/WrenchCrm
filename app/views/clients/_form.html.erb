@@ -47,6 +47,7 @@
     <p class="hint"><%= t("clients.discount_hint") %></p>
   </fieldset>
 
+  <%= hidden_field_tag :lead_id, params[:lead_id] if client.new_record? && params[:lead_id].present? %>
   <% if client.new_record? && params[:with_vehicle] %>
     <p class="hint"><%= t("clients.vehicle_next_hint") %></p>
     <%= hidden_field_tag :with_vehicle, 1 %>

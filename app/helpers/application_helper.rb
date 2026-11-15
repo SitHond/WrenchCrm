@@ -54,6 +54,7 @@ module ApplicationHelper
     when Client then subject.display_name
     when Vehicle then subject.label
     when WorkOrder then t("work_orders.title", number: subject.number)
+    when Lead then "#{Lead.model_name.human}: #{subject.display_name}"
     else subject.try(:display_name) || subject.to_s
     end
   end

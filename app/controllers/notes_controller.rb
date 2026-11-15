@@ -32,6 +32,7 @@ class NotesController < ApplicationController
       @notable =
         if params[:client_id] then Client.find(params[:client_id])
         elsif params[:vehicle_id] then Vehicle.find(params[:vehicle_id])
+        elsif params[:lead_id] then Lead.find(params[:lead_id])
         else WorkOrder.find(params[:work_order_id])
         end
     end

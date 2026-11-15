@@ -1,0 +1,32 @@
+<%= form_with model: lead, class: "form" do |form| %>
+  <%= render "shared/errors", record: lead %>
+  <fieldset>
+    <div class="row">
+      <div class="field"><%= form.label :phone %><%= form.telephone_field :phone, required: true, autofocus: lead.new_record? %></div>
+      <div class="field"><%= form.label :name %><%= form.text_field :name %></div>
+    </div>
+    <div class="field"><%= form.label :request %><%= form.text_area :request, rows: 3, placeholder: t("leads.request_placeholder") %></div>
+    <div class="row">
+      <div class="field wide"><%= form.label :vehicle_info %><%= form.text_field :vehicle_info, placeholder: t("leads.vehicle_placeholder") %></div>
+      <div class="field"><%= form.label :channel %><%= form.select :channel, enum_options(Lead, :channel) %></div>
+      <div class="field"><%= form.label :ad_source_id %><%= form.collection_select :ad_source_id, AdSource.active.ordered, :id, :name, include_blank: "—" %></div>
+    </div>
+    <div class="row">
+      <div class="field"><%= form.label :assignee_id %><%= form.collection_select :assignee_id, User.active.ordered, :id, :name, include_blank: "—", selected: lead.assignee_id || current_user.id %></div>
+      <div class="field"><%= form.label :next_contact_on %><%= form.date_field :next_contact_on %></div>
+      <% if lead.persisted? %>
+        <div class="field"><%= form.label :status %><%= form.select :status, enum_options(Lead, :status), selected: params[:lost] ? "lost" : lead.status %></div>
+      <% end %>
+    </div>
+    <% if lead.persisted? %>
+      <div class="field"><%= form.label :lost_reason %><%= form.text_field :lost_reason, list: "lost-reasons", autofocus: params[:lost].present? %></div>
+      <datalist id="lost-reasons">
+        <% t("leads.lost_reasons").each do |reason| %><option value="<%= reason %>"><% end %>
+      </datalist>
+    <% end %>
+  </fieldset>
+  <div class="form-actions">
+    <%= form.submit class: "btn btn-primary" %>
+    <%= link_to t("cancel"), lead.persisted? ? lead : leads_path, class: "btn" %>
+  </div>
+<% end %>

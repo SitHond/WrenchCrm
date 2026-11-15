@@ -64,5 +64,16 @@
   <%= render "work_orders/table", work_orders: @work_orders, show_client: false %>
 </section>
 
+<% if @client.leads.any? %>
+  <section class="card">
+    <h2><%= t("nav.leads") %></h2>
+    <ul class="list">
+      <% @client.leads.order(created_at: :desc).each do |lead| %>
+        <li><%= link_to l(lead.created_at.to_date), lead %> <%= render "leads/status_badge", lead: lead %> <span class="muted"><%= truncate(lead.request, length: 80) %></span></li>
+      <% end %>
+    </ul>
+  </section>
+<% end %>
+
 <%= render "tasks/section", subject: @client %>
 <%= render "notes/section", notable: @client, notes: @notes %>

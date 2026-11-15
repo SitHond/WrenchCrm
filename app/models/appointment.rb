@@ -62,6 +62,7 @@ class Appointment < ApplicationRecord
     transaction do
       order = WorkOrder.create!(vehicle: vehicle, mechanic: mechanic, complaint: description)
       update!(status: :arrived, work_order: order)
+      Lead.mark_won!(self, order)
       order
     end
   end

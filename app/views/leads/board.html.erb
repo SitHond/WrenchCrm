@@ -1,0 +1,41 @@
+<%= page_header t("leads.board") do %>
+  <%= link_to t("nav.leads"), leads_path, class: "btn" %>
+  <%= link_to t("leads.new"), new_lead_path, class: "btn btn-primary" if can?(:manage_clients) %>
+<% end %>
+
+<p class="hint">
+  <span class="only-pointer"><%= t("leads.board_hint") %></span>
+  <span class="only-touch"><%= t("work_orders.board_hint_touch") %></span>
+</p>
+
+<div class="board lead-board" data-controller="board" data-board-url-value="<%= leads_path %>" data-board-action-value="move" data-board-enabled-value="<%= can?(:manage_clients) %>">
+  <% @columns.each do |status, leads| %>
+    <section class="board-column" data-board-target="column" data-status="<%= status %>"
+             data-action="dragover->board#over dragleave->board#leave drop->board#drop">
+      <header class="board-head"><%= render "leads/status_badge", lead: Lead.new(status: status) %><span class="muted"><%= leads.size %></span></header>
+      <% leads.each do |lead| %>
+        <% targets = (Lead.statuses.keys - [ lead.status, "lost" ]) %>
+        <article class="board-card" draggable="<%= can?(:manage_clients) %>" data-id="<%= lead.id %>" data-allowed="<%= targets.join(" ") %>"
+                 data-action="dragstart->board#start dragend->board#end">
+          <div class="board-card-head">
+            <%= link_to lead.display_name, lead %>
+            <% if lead.next_contact_on && lead.status.in?(Lead::OPEN_STATUSES) %>
+              <span class="small <%= lead.next_contact_on < Date.current ? "danger" : "muted" %>"><%= l(lead.next_contact_on, format: :short) %></span>
+            <% end %>
+          </div>
+          <div class="small"><%= truncate(lead.request, length: 80) %></div>
+          <div class="muted small"><%= lead.phone %><%= " · #{lead.vehicle_info}" if lead.vehicle_info.present? %></div>
+          <% if lead.lost? && lead.lost_reason.present? %><div class="small danger"><%= lead.lost_reason %></div><% end %>
+          <% if can?(:manage_clients) && lead.status.in?(Lead::OPEN_STATUSES) %>
+            <div class="board-card-actions">
+              <% (targets - [ "fresh" ]).each do |target| %>
+                <%= button_to "→ #{enum_label(Lead, :status, target)}", move_lead_path(lead, status: target), method: :patch, class: "link-button" %>
+              <% end %>
+              <%= link_to "→ #{enum_label(Lead, :status, :lost)}", edit_lead_path(lead, lost: 1), class: "link-button danger" %>
+            </div>
+          <% end %>
+        </article>
+      <% end %>
+    </section>
+  <% end %>
+</div>

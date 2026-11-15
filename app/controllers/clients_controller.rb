@@ -28,11 +28,15 @@ class ClientsController < ApplicationController
 
   def new
     @client = Client.new(kind: params[:kind].presence_in(Client.kinds.keys) || "individual")
+    if (lead = Lead.find_by(id: params[:lead_id]))
+      @client.assign_attributes(last_name: lead.name, phone: lead.phone, ad_source: lead.ad_source)
+    end
   end
 
   def create
     @client = Client.new(client_params)
     if @client.save
+      Lead.where(id: params[:lead_id], client_id: nil).update_all(client_id: @client.id)
       redirect_to params[:with_vehicle] ? new_vehicle_path(client_id: @client.id) : @client,
                   notice: t("flash.created", model: Client.model_name.human)
     else

@@ -12,6 +12,7 @@ class Client < ApplicationRecord
   has_many :tasks, as: :subject, dependent: :destroy
   has_many :appointments, dependent: :destroy
   has_many :sales, dependent: :nullify
+  has_many :leads, dependent: :nullify
 
   normalizes :phone, :phone2, with: ->(phone) { phone.strip }
   normalizes :email, with: ->(email) { email.strip.downcase }

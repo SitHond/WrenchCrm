@@ -49,6 +49,10 @@ class ReportsController < ApplicationController
     end
   end
 
+  def funnel
+    @report = Report::Funnel.new(period_range)
+  end
+
   def reorder
     @rows = Report::Reorder.new.rows
     respond_to do |format|

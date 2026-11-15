@@ -10,6 +10,8 @@ class DashboardController < ApplicationController
     @appointments_today = Appointment.on_day(Date.current).busy.includes(:client, :vehicle, :bay).chronological
     @my_tasks = Task.for_user(current_user).open.where(due_on: [ nil, ..Date.current ]).includes(:subject).by_due.limit(8)
     @due_reminders_count = ServiceReminder.due.size
+    @new_leads_count = Lead.fresh.count
+    @leads_to_contact = Lead.to_contact.includes(:client).order(:next_contact_on).limit(8)
     @low_stock = Part.low_stock.ordered.limit(10)
   end
 end

@@ -507,3 +507,15 @@ select, input, textarea { max-width: 100%; }
   .reminder-contacted { background: #78350f; color: #fde68a; }
   .reminder-booked { background: #14532d; color: #bbf7d0; }
 }
+.lead-board { grid-template-columns: repeat(5, minmax(220px, 1fr)); }
+@media (max-width: 900px) { .lead-board { grid-template-columns: repeat(5, 82vw); } }
+.lead-fresh { background: #e0e7ff; color: #3730a3; }
+.lead-in_progress { background: #fef3c7; color: #92400e; }
+.lead-booked { background: #dcfce7; color: #166534; }
+.lead-won { background: #d1fae5; color: #065f46; font-weight: 600; }
+.lead-lost { background: var(--border); color: var(--muted); }
+@media (prefers-color-scheme: dark) {
+  .lead-fresh { background: #312e81; color: #c7d2fe; }
+  .lead-in_progress { background: #78350f; color: #fde68a; }
+  .lead-booked, .lead-won { background: #14532d; color: #bbf7d0; }
+}

@@ -1,0 +1,50 @@
+<%= page_header @lead.display_name do %>
+  <% if can?(:manage_clients) %>
+    <%= link_to t("edit"), edit_lead_path(@lead), class: "btn" %>
+  <% end %>
+  <%= button_to t("delete"), @lead, method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } if can?(:delete_records) %>
+<% end %>
+
+<div class="order-status">
+  <%= render "leads/status_badge", lead: @lead %>
+  <% if can?(:manage_clients) && @lead.status.in?(Lead::OPEN_STATUSES) %>
+    <% if @lead.fresh? %>
+      <%= button_to t("leads.take"), move_lead_path(@lead, status: "in_progress"), method: :patch, class: "btn" %>
+    <% end %>
+    <% if @lead.client.nil? %>
+      <%= link_to t("leads.create_client"), new_client_path(lead_id: @lead.id, with_vehicle: 1), class: "btn btn-primary" %>
+    <% elsif can?(:manage_orders) %>
+      <% vehicle = @lead.client.vehicles.first %>
+      <% if vehicle %>
+        <%= link_to t("leads.book"), new_appointment_path(vehicle_id: vehicle.id, lead_id: @lead.id), class: "btn btn-primary" %>
+      <% else %>
+        <%= link_to t("vehicles.new"), new_vehicle_path(client_id: @lead.client.id), class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+    <%= link_to t("leads.mark_lost"), edit_lead_path(@lead, lost: 1), class: "btn btn-danger" %>
+  <% end %>
+</div>
+
+<div class="grid-2">
+  <section class="card">
+    <h2><%= t("leads.details") %></h2>
+    <dl class="details">
+      <%= detail_row Lead.human_attribute_name(:phone), link_to(@lead.phone, "tel:#{@lead.phone}") %>
+      <%= detail_row Lead.human_attribute_name(:client), (link_to(@lead.client.display_name, @lead.client) if @lead.client) %>
+      <%= detail_row Lead.human_attribute_name(:request), (simple_format(@lead.request) if @lead.request.present?) %>
+      <%= detail_row Lead.human_attribute_name(:vehicle_info), @lead.vehicle_info %>
+      <%= detail_row Lead.human_attribute_name(:channel), enum_label(Lead, :channel, @lead.channel) %>
+      <%= detail_row Lead.human_attribute_name(:ad_source_id), @lead.ad_source&.name %>
+      <%= detail_row Lead.human_attribute_name(:assignee_id), @lead.assignee&.name %>
+      <%= detail_row Lead.human_attribute_name(:next_contact_on), (l(@lead.next_contact_on) if @lead.next_contact_on) %>
+      <%= detail_row Lead.human_attribute_name(:lost_reason), @lead.lost_reason %>
+      <%= detail_row Appointment.model_name.human, (link_to(l(@lead.appointment.starts_at, format: :short), @lead.appointment) if @lead.appointment) %>
+      <%= detail_row WorkOrder.model_name.human, (link_to(t("work_orders.title", number: @lead.work_order.number), @lead.work_order) if @lead.work_order) %>
+      <%= detail_row Lead.human_attribute_name(:created_at), l(@lead.created_at, format: :short) %>
+    </dl>
+  </section>
+
+  <%= render "tasks/section", subject: @lead %>
+</div>
+
+<%= render "notes/section", notable: @lead, notes: @notes %>

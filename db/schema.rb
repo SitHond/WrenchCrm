@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_231000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_232000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -146,6 +146,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_231000) do
     t.boolean "active", default: true, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "leads", force: :cascade do |t|
+    t.string "name"
+    t.string "phone", null: false
+    t.bigint "client_id"
+    t.string "vehicle_info"
+    t.text "request"
+    t.integer "channel", default: 0, null: false
+    t.bigint "ad_source_id"
+    t.integer "status", default: 0, null: false
+    t.string "lost_reason"
+    t.bigint "assignee_id"
+    t.date "next_contact_on"
+    t.bigint "appointment_id"
+    t.bigint "work_order_id"
+    t.bigint "created_by_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["ad_source_id"], name: "index_leads_on_ad_source_id"
+    t.index ["appointment_id"], name: "index_leads_on_appointment_id"
+    t.index ["assignee_id"], name: "index_leads_on_assignee_id"
+    t.index ["client_id"], name: "index_leads_on_client_id"
+    t.index ["created_by_id"], name: "index_leads_on_created_by_id"
+    t.index ["status"], name: "index_leads_on_status"
+    t.index ["work_order_id"], name: "index_leads_on_work_order_id"
   end
 
   create_table "loyalty_tiers", force: :cascade do |t|
@@ -547,6 +573,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_231000) do
   add_foreign_key "clients", "ad_sources", on_delete: :nullify
   add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "employees", "users", on_delete: :nullify
+  add_foreign_key "leads", "ad_sources", on_delete: :nullify
+  add_foreign_key "leads", "appointments", on_delete: :nullify
+  add_foreign_key "leads", "clients", on_delete: :nullify
+  add_foreign_key "leads", "users", column: "assignee_id", on_delete: :nullify
+  add_foreign_key "leads", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "leads", "work_orders", on_delete: :nullify
   add_foreign_key "notes", "users", column: "author_id", on_delete: :nullify
   add_foreign_key "part_analogs", "parts", column: "analog_id", on_delete: :cascade
   add_foreign_key "part_analogs", "parts", on_delete: :cascade

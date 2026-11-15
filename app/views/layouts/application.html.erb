@@ -32,6 +32,9 @@
           <%= link_to tasks_path, class: [ "nav-link", ("active" if request.path.start_with?(tasks_path)) ] do %>
             <%= t("nav.tasks") %><% if my_due_tasks_count.positive? %> <span class="nav-badge"><%= my_due_tasks_count %></span><% end %>
           <% end %>
+          <%= link_to leads_path, class: [ "nav-link", ("active" if request.path.start_with?(leads_path)) ] do %>
+            <%= t("nav.leads") %><% if (fresh_leads = Lead.fresh.count).positive? %> <span class="nav-badge"><%= fresh_leads %></span><% end %>
+          <% end %>
           <%= nav_link t("nav.work_orders"), work_orders_path %>
           <%= nav_link t("nav.appointments"), appointments_path %>
           <%= nav_link t("nav.calendar"), calendar_path %>

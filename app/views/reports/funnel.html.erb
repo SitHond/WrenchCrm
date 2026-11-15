@@ -1,0 +1,44 @@
+<%= page_header t("nav.reports") %>
+<%= render "tabs" %>
+<%= render "shared/period_filter", url: funnel_reports_path %>
+
+<% rows = @report.rows %>
+<% if rows.any? %>
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th><%= AdSource.model_name.human %></th>
+          <th class="num"><%= t("reports.leads_total") %></th>
+          <th class="num"><%= t("reports.leads_booked") %></th>
+          <th class="num"><%= t("reports.leads_won") %></th>
+          <th class="num"><%= t("reports.leads_lost") %></th>
+          <th class="num"><%= t("reports.conversion") %></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% rows.each do |row| %>
+          <tr>
+            <td><%= row.name || t("reports.no_source") %></td>
+            <td class="num"><%= row.total %></td>
+            <td class="num"><%= row.booked %></td>
+            <td class="num"><%= row.won %></td>
+            <td class="num"><%= row.lost %></td>
+            <td class="num"><%= row.conversion %>%</td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <% reasons = @report.lost_reasons %>
+  <% if reasons.any? %>
+    <section class="card">
+      <h2><%= t("reports.lost_reasons") %></h2>
+      <dl class="totals">
+        <% reasons.each do |reason, count| %><dt><%= reason %></dt><dd><%= count %></dd><% end %>
+      </dl>
+    </section>
+  <% end %>
+<% else %>
+  <p class="empty"><%= t("reports.no_data") %></p>
+<% end %>

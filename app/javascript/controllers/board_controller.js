@@ -4,7 +4,7 @@ import { Turbo } from "@hotwired/turbo-rails"
 // Drag a work order card to another column to change its status.
 export default class extends Controller {
   static targets = ["column"]
-  static values = { url: String, enabled: Boolean }
+  static values = { url: String, enabled: Boolean, action: { type: String, default: "status" } }
 
   start(event) {
     if (!this.enabledValue) return event.preventDefault()
@@ -39,7 +39,7 @@ export default class extends Controller {
 
     const token = document.querySelector("meta[name=csrf-token]")?.content
     const body = new URLSearchParams({ status })
-    await fetch(`${this.urlValue}/${id}/status`, {
+    await fetch(`${this.urlValue}/${id}/${this.actionValue}`, {
       method: "PATCH",
       headers: { "X-CSRF-Token": token, "Content-Type": "application/x-www-form-urlencoded" },
       body,

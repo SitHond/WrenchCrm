@@ -1,5 +1,7 @@
 en:
   dashboard:
+    new_leads: "new leads"
+    leads_to_contact: "Leads to call back"
     reminders: "service reminders due"
     my_tasks: "My tasks"
     estimates: "estimates awaiting approval"
@@ -23,11 +25,27 @@ en:
       messages:
         due_date_or_mileage: "Set a due date or mileage"
     models:
+      lead:
+        one: "Lead"
+        other: "Leads"
       service_reminder: "Reminder"
       task:
         one: "Task"
         other: "Tasks"
     attributes:
+      lead:
+        name: "Name"
+        phone: "Phone"
+        client: "Client"
+        request: "Request"
+        vehicle_info: "Vehicle"
+        channel: "Channel"
+        ad_source_id: "Lead source"
+        status: "Status"
+        lost_reason: "Reason lost"
+        assignee_id: "Owner"
+        next_contact_on: "Next contact"
+        created_at: "Created"
       service_reminder:
         title: "Job"
         due_on: "Due date"
@@ -44,6 +62,20 @@ en:
         due_on: "Due"
         subject: "About"
     enums:
+      lead:
+        status:
+          fresh: "New"
+          in_progress: "In progress"
+          booked: "Booked"
+          won: "Came in"
+          lost: "Lost"
+        channel:
+          call: "Call"
+          walk_in: "Walk-in"
+          website: "Website"
+          messenger: "Messenger"
+          referral: "Referral"
+          other: "Other"
       service_reminder:
         status:
           pending: "To call"
@@ -55,6 +87,7 @@ en:
         status:
           estimate: "Estimate"
   nav:
+    leads: "Leads"
     reminders: "Who to call"
     tasks: "Tasks"
   tasks:
@@ -100,3 +133,31 @@ en:
     vehicle_estimate: "About %{km} km now, roughly %{per_year} km a year."
   services:
     reminder_hint: "With an interval set, handing over a work order with this service creates a reminder for the client."
+  leads:
+    new: "New lead"
+    edit: "Lead: %{name}"
+    board: "Pipeline"
+    empty: "No leads."
+    filter_open: "Open"
+    search_placeholder: "Name, phone or text"
+    request_placeholder: "What the client needs: knocking noise, service, tyre change…"
+    vehicle_placeholder: "Kia Rio 2018"
+    board_hint: "Drag a card to another column. Mark a lead lost with the card button; a reason is required."
+    created_with_client: "Lead created and linked to client %{client} by phone number."
+    moved: "Lead status: %{status}."
+    lost_reason_needed: "Give a reason for losing the lead."
+    take: "Take it"
+    create_client: "Create client"
+    book: "Book appointment"
+    mark_lost: "Lost"
+    details: "Lead"
+    lost_reasons: ["Too expensive", "No time / dates", "Went elsewhere", "Could not reach", "Did it themselves", "Not our work"]
+  reports:
+    tabs:
+      funnel: "Pipeline"
+    leads_total: "Leads"
+    leads_booked: "Booked"
+    leads_won: "Came in"
+    leads_lost: "Lost"
+    conversion: "Conversion"
+    lost_reasons: "Reasons for losing"

@@ -133,3 +133,13 @@ unless ServiceReminder.exists?
   rio&.service_reminders&.create!(title: "Замена тормозной жидкости", due_on: Date.current - 3, comment: "Рекомендовано при прошлом визите")
   puts "Loaded demo reminders"
 end
+
+unless Lead.exists?
+  avito = AdSource.find_or_create_by!(name: "Авито")
+  maps = AdSource.find_or_create_by!(name: "Яндекс Карты")
+  Lead.create!(name: "Михаил", phone: "+7 903 222-11-00", request: "Гул при разгоне, подшипник?", vehicle_info: "Toyota Camry 2016", channel: :call, ad_source: maps, next_contact_on: Date.current)
+  Lead.create!(name: "Светлана", phone: "+7 915 444-55-66", request: "Сезонная смена шин на 4 колеса", channel: :messenger, ad_source: avito, status: :in_progress, next_contact_on: Date.yesterday)
+  Lead.create!(phone: "+7 916 555-12-34", request: "Повторное ТО", channel: :call)
+  Lead.create!(name: "Артём", phone: "+7 926 777-88-99", request: "Замена сцепления", vehicle_info: "Ford Focus 2012", channel: :website, ad_source: avito, status: :lost, lost_reason: "Дорого")
+  puts "Loaded demo leads"
+end

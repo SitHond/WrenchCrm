@@ -33,6 +33,11 @@ Rails.application.routes.draw do
     end
   end
   resources :notes, only: %i[ edit update destroy ]
+  resources :leads do
+    get :board, on: :collection
+    patch :move, on: :member
+    resources :notes, only: :create
+  end
   resources :service_reminders, only: %i[ index create update destroy ] do
     member do
       patch :contacted
@@ -74,6 +79,7 @@ Rails.application.routes.draw do
       get :stock
       get :sources
       get :reorder
+      get :funnel
     end
   end
 
