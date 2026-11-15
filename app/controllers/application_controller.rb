@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   stale_when_importmap_changes
 
   around_action :switch_locale
+  before_action :require_two_factor_setup
   helper_method :current_user, :my_due_tasks_count
 
   rescue_from ActiveRecord::RecordNotFound do
@@ -17,6 +18,13 @@ class ApplicationController < ActionController::Base
   private
     def current_user
       Current.user
+    end
+
+    # When the shop requires it, users without two-factor sign-in can only set it up.
+    def require_two_factor_setup
+      return unless current_user && !current_user.two_factor_enabled? && ShopSetting.current.require_two_factor
+
+      redirect_to new_two_factor_path, alert: t("two_factor.required")
     end
 
     def my_due_tasks_count

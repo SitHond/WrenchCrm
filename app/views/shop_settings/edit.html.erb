@@ -45,6 +45,8 @@
     <div class="field"><%= form.label :pd_consent_text %><%= form.text_area :pd_consent_text, rows: 8, placeholder: t("consents.default_text.personal_data", locale: :ru) %></div>
     <div class="field"><%= form.label :marketing_consent_text %><%= form.text_area :marketing_consent_text, rows: 4, placeholder: t("consents.default_text.marketing", locale: :ru) %></div>
     <p class="hint"><%= t("consents.settings_hint") %></p>
+    <div class="field checkbox"><%= form.check_box :require_two_factor %><%= form.label :require_two_factor %></div>
+    <p class="hint"><%= t("two_factor.require_hint") %></p>
     <div class="field small" id="retention"><%= form.label :pd_retention_years %><%= form.number_field :pd_retention_years, min: 1, max: 50 %></div>
     <p class="hint"><%= t("privacy.retention_hint") %></p>
   </fieldset>

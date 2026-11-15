@@ -529,3 +529,9 @@ select, input, textarea { max-width: 100%; }
 .consent-doc p { margin: .35rem 0; }
 .consent-text { margin: 1rem 0; text-align: justify; }
 .center { text-align: center; }
+
+.narrow-card { max-width: 560px; }
+.steps { padding-left: 1.2rem; display: flex; flex-direction: column; gap: 1rem; margin: 0; }
+.qr { background: #fff; display: inline-block; padding: .5rem; border-radius: 6px; margin: .5rem 0; }
+.qr svg { display: block; width: 180px; height: 180px; }
+.backup-codes { display: grid; grid-template-columns: repeat(2, max-content); gap: .3rem 2rem; font-size: 1.05rem; padding-left: 1.2rem; }

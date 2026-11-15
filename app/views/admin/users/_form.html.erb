@@ -27,6 +27,11 @@
   </div>
 <% end %>
 
+<% if user.persisted? && user.two_factor_enabled? %>
+  <p><%= t("two_factor.admin_status", date: l(user.otp_enabled_at.to_date)) %></p>
+  <%= button_to t("two_factor.reset"), two_factor_admin_user_path(user), method: :delete, class: "btn", form: { data: { turbo_confirm: t("two_factor.reset_confirm") } } %>
+<% end %>
+
 <% if user.persisted? && user != current_user %>
   <%= button_to t("delete"), admin_user_path(user), method: :delete, class: "btn btn-danger", form: { data: { turbo_confirm: t("confirm") } } %>
 <% end %>

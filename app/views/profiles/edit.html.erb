@@ -12,3 +12,18 @@
   </fieldset>
   <div class="form-actions"><%= form.submit t("save"), class: "btn btn-primary" %></div>
 <% end %>
+
+<section class="card form narrow">
+  <h2><%= t("two_factor.title") %></h2>
+  <% if current_user.two_factor_enabled? %>
+    <p><%= t("two_factor.status_on", date: l(current_user.otp_enabled_at.to_date), codes: current_user.backup_codes_left) %></p>
+    <%= form_with url: two_factor_path, method: :delete, class: "inline-form" do |form| %>
+      <%= form.password_field :password, required: true, placeholder: User.human_attribute_name(:password_challenge), autocomplete: "current-password", aria: { label: User.human_attribute_name(:password_challenge) } %>
+      <%= form.text_field :code, required: true, placeholder: t("two_factor.code"), autocomplete: "one-time-code", class: "qty", aria: { label: t("two_factor.code") } %>
+      <%= form.submit t("two_factor.disable"), class: "btn btn-danger" %>
+    <% end %>
+  <% else %>
+    <p class="muted"><%= t("two_factor.status_off") %></p>
+    <%= link_to t("two_factor.setup"), new_two_factor_path, class: "btn btn-primary" %>
+  <% end %>
+</section>

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_235800) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_235900) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -458,6 +458,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235800) do
     t.text "pd_consent_text"
     t.text "marketing_consent_text"
     t.integer "pd_retention_years"
+    t.boolean "require_two_factor", default: false, null: false
   end
 
   create_table "stock_movements", force: :cascade do |t|
@@ -522,6 +523,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235800) do
     t.datetime "updated_at", null: false
     t.boolean "manage_finance", default: false, null: false
     t.boolean "view_reports", default: false, null: false
+    t.text "otp_secret"
+    t.datetime "otp_enabled_at"
+    t.integer "otp_last_timestep"
+    t.jsonb "otp_backup_codes", default: [], null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 

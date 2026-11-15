@@ -1,0 +1,9 @@
+<%= page_header t("two_factor.backup_title") %>
+<section class="card narrow-card">
+  <p class="flash flash-notice"><%= t("two_factor.enabled") %></p>
+  <p><%= t("two_factor.backup_text") %></p>
+  <ul class="backup-codes mono">
+    <% @codes.each do |code| %><li><%= code %></li><% end %>
+  </ul>
+  <%= link_to t("two_factor.done"), edit_profile_path, class: "btn btn-primary" %>
+</section>

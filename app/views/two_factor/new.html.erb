@@ -1,0 +1,16 @@
+<%= page_header t("two_factor.setup_title") %>
+<section class="card narrow-card">
+  <ol class="steps">
+    <li><%= t("two_factor.step_app") %></li>
+    <li><%= t("two_factor.step_scan") %>
+      <div class="qr"><%= raw @qr %></div>
+      <p class="small muted"><%= t("two_factor.manual_key") %> <code class="mono"><%= @secret.scan(/.{1,4}/).join(" ") %></code></p>
+    </li>
+    <li><%= t("two_factor.step_code") %>
+      <%= form_with url: two_factor_path, class: "inline-form" do |form| %>
+        <%= form.text_field :code, required: true, autocomplete: "one-time-code", inputmode: "numeric", maxlength: 6, class: "qty", aria: { label: t("two_factor.code") } %>
+        <%= form.submit t("two_factor.enable"), class: "btn btn-primary" %>
+      <% end %>
+    </li>
+  </ol>
+</section>

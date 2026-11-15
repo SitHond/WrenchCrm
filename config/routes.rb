@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
-  resource :session, only: %i[ new create destroy ]
+  resource :session, only: %i[ new create destroy ] do
+    get :two_factor
+    post :verify
+  end
+  resource :two_factor, only: %i[ new create destroy ], controller: "two_factor"
   resource :locale, only: :update
   resource :profile, only: %i[ edit update ]
 
@@ -107,7 +111,9 @@ Rails.application.routes.draw do
   resources :audit_events, only: :index
 
   namespace :admin do
-    resources :users, except: :show
+    resources :users, except: :show do
+      delete :two_factor, on: :member, action: :reset_two_factor
+    end
     resources :employees, except: :show
     resources :bays, except: :show
   end

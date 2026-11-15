@@ -1,7 +1,7 @@
 module Admin
   class UsersController < ApplicationController
     require_permission :admin
-    before_action :set_user, only: %i[ edit update destroy ]
+    before_action :set_user, only: %i[ edit update destroy reset_two_factor ]
 
     def index
       @users = User.ordered
@@ -36,6 +36,13 @@ module Admin
       else
         render :edit, status: :unprocessable_entity
       end
+    end
+
+    def reset_two_factor
+      @user.disable_two_factor!
+      @user.sessions.destroy_all
+      audit(:two_factor, @user, change: "reset by admin")
+      redirect_to edit_admin_user_path(@user), notice: t("two_factor.reset_done")
     end
 
     def destroy

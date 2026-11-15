@@ -1,0 +1,11 @@
+<h1><%= t("two_factor.title") %></h1>
+<p class="muted"><%= t("two_factor.prompt") %></p>
+<%= form_with url: verify_session_path, class: "form" do |form| %>
+  <div class="field">
+    <%= form.label :code, t("two_factor.code") %>
+    <%= form.text_field :code, required: true, autofocus: true, autocomplete: "one-time-code", inputmode: "numeric", maxlength: 12 %>
+  </div>
+  <%= form.submit t("two_factor.verify"), class: "btn btn-primary btn-block" %>
+<% end %>
+<p class="hint"><%= t("two_factor.backup_hint") %></p>
+<p><%= link_to t("cancel"), new_session_path %></p>

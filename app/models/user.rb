@@ -2,6 +2,8 @@ class User < ApplicationRecord
   PERMISSIONS = %i[manage_clients manage_orders manage_catalog manage_payments manage_finance view_reports delete_records].freeze
   LOCALES = %w[ru en].freeze
 
+  include TwoFactor
+
   has_secure_password
   has_many :sessions, dependent: :destroy
   has_one :employee, dependent: :nullify

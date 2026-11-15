@@ -1,4 +1,5 @@
 class LocalesController < ApplicationController
+  skip_before_action :require_two_factor_setup
   allow_unauthenticated_access
 
   def update
