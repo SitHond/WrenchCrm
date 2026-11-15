@@ -2,3 +2,4 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "responsive_tables"
+import "sidebar_scroll"
