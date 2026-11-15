@@ -7,6 +7,10 @@ Rails.application.routes.draw do
 
   resources :clients do
     resources :notes, only: :create
+    resources :consents, only: :create do
+      collection { get :print }
+      member { patch :withdraw }
+    end
   end
   resource :vin_decode, only: :show
   resources :vehicles do

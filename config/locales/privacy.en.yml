@@ -28,3 +28,51 @@ en:
       anonymize: "Anonymization"
       user_update: "User changed"
       two_factor: "Two-factor sign-in"
+  consents:
+    title: "Consents"
+    kinds:
+      personal_data: "Personal data processing"
+      marketing: "Advertising messages"
+    titles:
+      personal_data: "Consent to personal data processing"
+      marketing: "Consent to receive advertising"
+    missing:
+      personal_data: "No consent yet. Print the form, have the client sign it and record it."
+      marketing: "No consent: do not send advertising to this client."
+    given: "Given %{date}, %{channel}, recorded by %{user}"
+    version: "Text version %{version}"
+    print: "Print form"
+    print_short: "print the consent form"
+    record: "Record consent"
+    recorded: "Consent recorded."
+    withdraw: "Withdraw"
+    withdrawn: "Withdrawal recorded."
+    reason_needed: "Give the basis for withdrawal."
+    reason_placeholder: "Client's request of …"
+    history: "Consent history"
+    withdrawn_line: "withdrawn %{date} (%{reason})"
+    filter_all: "All clients"
+    filter_missing: "Without data consent"
+    order_warning_html: "Client %{client} has no separate consent to personal data processing — %{link}, have it signed and record it on the client card."
+    version_note: "Consent text version: %{version}"
+    settings_hint: "Leave empty to use the standard text. Changing the text gives new consents a new version; signed consents keep theirs."
+    subject_line: "I,"
+    address_line: "registered at:"
+    passport_line: "passport (series, number, issued by and on):"
+    contacts_line: "contact details:"
+    operator_line: "freely and in my own interest give consent to the operator"
+    operator_suffix: "on the terms below."
+  activerecord:
+    models:
+      consent: "Consent"
+    attributes:
+      consent:
+        channel: "Channel"
+      shop_setting:
+        pd_consent_text: "Personal data consent text"
+        marketing_consent_text: "Advertising consent text"
+    enums:
+      consent:
+        channel:
+          paper: "on paper"
+          electronic: "electronically"

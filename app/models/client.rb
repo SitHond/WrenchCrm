@@ -13,6 +13,7 @@ class Client < ApplicationRecord
   has_many :appointments, dependent: :destroy
   has_many :sales, dependent: :nullify
   has_many :leads, dependent: :nullify
+  has_many :consents, dependent: :destroy
 
   normalizes :phone, :phone2, with: ->(phone) { phone.strip }
   normalizes :email, with: ->(email) { email.strip.downcase }
@@ -67,6 +68,18 @@ class Client < ApplicationRecord
   def parts_discount
     discount_accumulative? ? loyalty_tier&.parts_percent.to_d : discount_percent
   end
+
+  def consent(kind)
+    consents.select { |c| c.kind == kind.to_s && c.active? }.max_by(&:given_at)
+  end
+
+  def personal_data_consent? = consent(:personal_data).present?
+
+  def marketing_consent? = consent(:marketing).present?
+
+  scope :without_personal_data_consent, -> {
+    where.not(id: Consent.active.personal_data.select(:client_id))
+  }
 
   def active?
     deactivated_on.nil?

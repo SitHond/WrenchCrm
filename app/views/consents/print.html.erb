@@ -1,0 +1,19 @@
+<% content_for :title, t("consents.titles.#{@kind}") %>
+<% address = [ @shop.legal_name.presence || @shop.display_name, @shop.address, ("ИНН #{@shop.inn}" if @shop.inn.present?), ("ОГРН #{@shop.ogrn}" if @shop.ogrn.present?) ].compact_blank.join(", ") %>
+<article class="print-doc consent-doc">
+  <h1 class="center"><%= t("consents.titles.#{@kind}") %></h1>
+
+  <p><%= t("consents.subject_line") %> <strong><%= @client.individual? ? @client.display_name : "____________________________________" %></strong>,</p>
+  <p><%= t("consents.address_line") %> <%= @client.address.presence || "_______________________________________________________________" %>,</p>
+  <p><%= t("consents.passport_line") %> ______________________________________________________________</p>
+  <p><%= t("consents.contacts_line") %> <%= [ @client.phone, @client.email ].compact_blank.join(", ").presence || "_______________________" %></p>
+  <p><%= t("consents.operator_line") %> <strong><%= address.presence || "_______________________________________________" %></strong> <%= t("consents.operator_suffix") %></p>
+
+  <div class="consent-text"><%= simple_format(@text) %></div>
+
+  <div class="signatures">
+    <div>«____» ______________ 20___ г.</div>
+    <div>____________________ / ____________________</div>
+  </div>
+  <p class="muted small"><%= t("consents.version_note", version: Consent.version_for(@kind)) %></p>
+</article>

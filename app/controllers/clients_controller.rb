@@ -5,6 +5,7 @@ class ClientsController < ApplicationController
 
   def index
     scope = Client.search(params[:q])
+    scope = scope.without_personal_data_consent if params[:consent] == "missing"
     scope = scope.where(ad_source_id: params[:ad_source_id]) if params[:ad_source_id].present?
     scope = params[:status] == "inactive" ? scope.inactive : scope.active
     respond_to do |format|
@@ -24,6 +25,7 @@ class ClientsController < ApplicationController
   def show
     audit(:view, @client)
     @work_orders = @client.work_orders.includes(:vehicle).limit(20)
+    @consents = @client.consents.includes(:recorded_by, :withdrawn_by).order(given_at: :desc)
     @notes = @client.notes.visible_to(current_user).recent_first.includes(:author)
   end
 

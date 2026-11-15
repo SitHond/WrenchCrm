@@ -46,6 +46,55 @@
   </section>
 </div>
 
+<section class="card" id="consents">
+  <h2><%= t("consents.title") %></h2>
+  <div class="consent-grid">
+    <% Consent.kinds.each_key do |kind| %>
+      <% current = @client.consent(kind) %>
+      <div class="consent-box <%= current ? "ok-box" : "warn-box" %>">
+        <div><strong><%= t("consents.kinds.#{kind}") %></strong></div>
+        <% if current %>
+          <div class="small"><%= t("consents.given", date: l(current.given_at, format: :short), channel: enum_label(Consent, :channel, current.channel), user: current.recorded_by&.name || "—") %></div>
+          <div class="small muted"><%= t("consents.version", version: current.text_version) %></div>
+        <% else %>
+          <div class="small"><%= t("consents.missing.#{kind}") %></div>
+        <% end %>
+        <div class="consent-actions">
+          <%= link_to t("consents.print"), print_client_consents_path(@client, kind: kind), class: "btn", target: "_blank" %>
+          <% if can?(:manage_clients) %>
+            <% if current %>
+              <details class="dropdown">
+                <summary class="btn btn-danger"><%= t("consents.withdraw") %> ▾</summary>
+                <div class="dropdown-menu wide">
+                  <%= form_with url: withdraw_client_consent_path(@client, current), method: :patch, class: "inline-form compact pad" do |form| %>
+                    <%= form.text_field :reason, required: true, placeholder: t("consents.reason_placeholder"), aria: { label: t("consents.reason_placeholder") } %>
+                    <%= form.submit t("consents.withdraw"), class: "btn btn-danger" %>
+                  <% end %>
+                </div>
+              </details>
+            <% else %>
+              <%= form_with model: Consent.new(kind: kind), url: client_consents_path(@client), class: "inline-form compact" do |form| %>
+                <%= form.hidden_field :kind %>
+                <%= form.select :channel, enum_options(Consent, :channel), {}, aria: { label: Consent.human_attribute_name(:channel) } %>
+                <%= form.submit t("consents.record"), class: "btn btn-primary" %>
+              <% end %>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <% if @consents.reject(&:active?).any? %>
+    <details class="small muted"><summary><%= t("consents.history") %></summary>
+      <ul>
+        <% @consents.reject(&:active?).each do |c| %>
+          <li><%= t("consents.kinds.#{c.kind}") %>: <%= l(c.given_at.to_date) %> — <%= t("consents.withdrawn_line", date: l(c.withdrawn_at.to_date), reason: c.withdrawal_reason) %></li>
+        <% end %>
+      </ul>
+    </details>
+  <% end %>
+</section>
+
 <% spent = @client.total_spent %>
 <section class="card loyalty">
   <h2><%= t("clients.sections.discount") %>: <%= enum_label(Client, :discount_mode, @client.discount_mode) %></h2>

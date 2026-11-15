@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_15_235000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_15_235500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -139,6 +139,24 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235000) do
     t.integer "position", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "consents", force: :cascade do |t|
+    t.bigint "client_id", null: false
+    t.integer "kind", null: false
+    t.integer "channel", default: 0, null: false
+    t.datetime "given_at", null: false
+    t.string "text_version"
+    t.bigint "recorded_by_id"
+    t.datetime "withdrawn_at"
+    t.bigint "withdrawn_by_id"
+    t.string "withdrawal_reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["client_id", "kind", "withdrawn_at"], name: "index_consents_on_client_id_and_kind_and_withdrawn_at"
+    t.index ["client_id"], name: "index_consents_on_client_id"
+    t.index ["recorded_by_id"], name: "index_consents_on_recorded_by_id"
+    t.index ["withdrawn_by_id"], name: "index_consents_on_withdrawn_by_id"
   end
 
   create_table "data_imports", force: :cascade do |t|
@@ -434,6 +452,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235000) do
     t.text "work_order_terms"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "pd_consent_text"
+    t.text "marketing_consent_text"
   end
 
   create_table "stock_movements", force: :cascade do |t|
@@ -602,6 +622,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_15_235000) do
   add_foreign_key "cash_operations", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "clients", "ad_sources", on_delete: :nullify
   add_foreign_key "clients", "users", column: "created_by_id", on_delete: :nullify
+  add_foreign_key "consents", "clients", on_delete: :cascade
+  add_foreign_key "consents", "users", column: "recorded_by_id", on_delete: :nullify
+  add_foreign_key "consents", "users", column: "withdrawn_by_id", on_delete: :nullify
   add_foreign_key "data_imports", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "employees", "users", on_delete: :nullify
   add_foreign_key "leads", "ad_sources", on_delete: :nullify

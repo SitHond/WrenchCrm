@@ -520,3 +520,12 @@ select, input, textarea { max-width: 100%; }
   .lead-booked, .lead-won { background: #14532d; color: #bbf7d0; }
 }
 .mapping { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0 1rem; }
+
+.consent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: .75rem; }
+.consent-box { border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem .9rem; display: flex; flex-direction: column; gap: .3rem; }
+.consent-box.ok-box { border-left: 3px solid var(--success-text); }
+.consent-box.warn-box { border-left: 3px solid var(--danger); }
+.consent-actions { display: flex; gap: .4rem; flex-wrap: wrap; margin-top: .3rem; }
+.consent-doc p { margin: .35rem 0; }
+.consent-text { margin: 1rem 0; text-align: justify; }
+.center { text-align: center; }

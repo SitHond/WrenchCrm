@@ -23,6 +23,7 @@ class ShopSettingsController < ApplicationController
   private
     def setting_params
       params.expect(shop_setting: [ :allow_negative_stock, :name, :legal_name, :inn, :kpp, :ogrn, :address, :phone, :email,
-                                    :website, :bank_name, :bik, :bank_account, :correspondent_account, :director, :work_order_terms ])
+                                    :website, :bank_name, :bik, :bank_account, :correspondent_account, :director, :work_order_terms,
+                                    :pd_consent_text, :marketing_consent_text ])
     end
 end

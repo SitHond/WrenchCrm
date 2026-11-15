@@ -24,6 +24,10 @@
   <% end %>
 </div>
 
+<% unless @work_order.client.personal_data_consent? %>
+  <p class="flash flash-alert"><%= t("consents.order_warning_html", link: link_to(t("consents.print_short"), print_client_consents_path(@work_order.client, kind: "personal_data"), target: "_blank"), client: link_to(@work_order.client.display_name, client_path(@work_order.client, anchor: "consents"))) %></p>
+<% end %>
+
 <% if @work_order.estimate? %>
   <p class="flash flash-notice"><%= t("work_orders.estimate_hint") %></p>
 <% end %>
