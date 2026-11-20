@@ -1,0 +1,8 @@
+<%= form_with model: @record, url: (@record.persisted? ? url_for(action: :update, id: @record) : url_for(action: :create)), class: "form narrow", multipart: true do |form| %>
+  <%= render "shared/errors", record: @record %>
+  <%= render "website/#{controller_name}/fields", form: form, record: @record %>
+  <div class="form-actions">
+    <%= form.submit t("save"), class: "btn btn-primary" %>
+    <%= link_to t("cancel"), url_for(action: :index), class: "btn" %>
+  </div>
+<% end %>

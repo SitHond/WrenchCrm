@@ -1,0 +1,50 @@
+<%= page_header t("website.title") do %>
+  <%= link_to t("website.open_site"), website_public_url, class: "btn", target: "_blank" %>
+<% end %>
+<%= render "website/tabs" %>
+
+<%= form_with model: @site, url: website_settings_path, method: :patch, class: "form", multipart: true do |form| %>
+  <%= render "shared/errors", record: @site %>
+  <fieldset>
+    <legend><%= t("website.sections.main") %></legend>
+    <div class="field checkbox"><%= form.check_box :enabled %><%= form.label :enabled %></div>
+    <div class="row">
+      <div class="field wide"><%= form.label :title %><%= form.text_field :title %></div>
+      <div class="field"><%= form.label :theme %><%= form.select :theme, SiteSetting::THEMES.map { |t| [ t("website.themes.#{t}"), t ] } %></div>
+    </div>
+    <div class="field"><%= form.label :tagline %><%= form.text_field :tagline %></div>
+    <div class="field"><%= form.label :about %><%= form.text_area :about, rows: 4 %></div>
+    <div class="field">
+      <%= form.label :logo %>
+      <% if @site.logo.attached? && @site.logo.blob.persisted? %>
+        <%= image_tag @site.logo, class: "preview", alt: "" %>
+        <label class="check"><%= check_box_tag :remove_logo, "1" %> <%= t("website.remove_image") %></label>
+      <% end %>
+      <%= form.file_field :logo, accept: "image/png,image/jpeg,image/webp,image/svg+xml" %>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend><%= t("website.sections.contacts") %></legend>
+    <p class="hint"><%= t("website.contacts_hint_html", link: link_to(t("shop_settings.title"), edit_shop_settings_path)) %></p>
+    <div class="field"><%= form.label :schedule %><%= form.text_area :schedule, rows: 3, placeholder: "Пн–Пт 9:00–20:00\nСб 10:00–18:00" %></div>
+    <div class="row">
+      <div class="field"><%= form.label :telegram %><%= form.text_field :telegram, placeholder: "@service" %></div>
+      <div class="field"><%= form.label :whatsapp %><%= form.text_field :whatsapp, placeholder: "+7 900 000-00-00" %></div>
+      <div class="field"><%= form.label :vk %><%= form.text_field :vk, placeholder: "club123" %></div>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend><%= t("website.sections.booking") %></legend>
+    <div class="field checkbox"><%= form.check_box :booking_enabled %><%= form.label :booking_enabled %></div>
+    <div class="field"><%= form.label :booking_success_text %><%= form.text_area :booking_success_text, rows: 2, placeholder: t("site.booking.success") %></div>
+    <p class="hint"><%= t("website.booking_hint") %></p>
+  </fieldset>
+  <fieldset>
+    <legend><%= t("website.sections.seo") %></legend>
+    <div class="field"><%= form.label :seo_title %><%= form.text_field :seo_title %></div>
+    <div class="field"><%= form.label :seo_description %><%= form.text_area :seo_description, rows: 2 %></div>
+    <div class="field small"><%= form.label :metrika_id %><%= form.text_field :metrika_id, inputmode: "numeric" %></div>
+    <p class="hint"><%= t("website.services_hint_html", link: link_to(t("nav.services"), services_path)) %></p>
+  </fieldset>
+  <div class="form-actions"><%= form.submit t("save"), class: "btn btn-primary" %></div>
+<% end %>

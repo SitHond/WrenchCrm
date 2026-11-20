@@ -53,6 +53,10 @@
             <%= nav_link t("nav.payroll"), payroll_index_path if can?(:manage_finance) %>
             <%= nav_link t("nav.reports"), reports_path if can?(:view_reports) %>
           <% end %>
+          <% if can?(:manage_site) %>
+            <div class="nav-section"><%= t("website.nav_section") %></div>
+            <%= nav_link t("website.title"), edit_website_settings_path, active_prefix: "/website" %>
+          <% end %>
           <% if can?(:admin) %>
             <div class="nav-section"><%= t("nav.admin") %></div>
             <%= nav_link t("nav.employees"), admin_employees_path %>

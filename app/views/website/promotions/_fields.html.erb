@@ -1,0 +1,4 @@
+<div class="field"><%= form.label :title %><%= form.text_field :title, required: true %></div>
+<div class="field"><%= form.label :text %><%= form.text_area :text, rows: 3 %></div>
+<%= render "website/image_field", form: form, record: record %>
+<%= render "website/period_fields", form: form %>

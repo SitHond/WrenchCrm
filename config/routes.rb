@@ -132,6 +132,11 @@ Rails.application.routes.draw do
     get "exports/full" => "exports#full", as: :full_export
     resources :audit_events, only: :index
 
+    namespace :website do
+      resource :settings, only: %i[ edit update ]
+      resources :banners, :promotions, :pages, :reviews, except: :show
+    end
+
     namespace :admin do
       resources :users, except: :show do
         delete :two_factor, on: :member, action: :reset_two_factor

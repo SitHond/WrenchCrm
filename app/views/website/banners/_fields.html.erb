@@ -1,0 +1,9 @@
+<div class="field"><%= form.label :title %><%= form.text_field :title, required: true %></div>
+<div class="field"><%= form.label :text %><%= form.text_area :text, rows: 2 %></div>
+<div class="row">
+  <div class="field"><%= form.label :button_text %><%= form.text_field :button_text %></div>
+  <div class="field"><%= form.label :button_url %><%= form.text_field :button_url, placeholder: t("website.button_url_placeholder") %></div>
+  <div class="field small"><%= form.label :position %><%= form.number_field :position %></div>
+</div>
+<%= render "website/image_field", form: form, record: record %>
+<%= render "website/period_fields", form: form %>

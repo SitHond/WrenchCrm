@@ -1,0 +1,6 @@
+<nav class="tabs">
+  <%= link_to t("website.tabs.settings"), edit_website_settings_path, class: [ "tab", ("active" if controller_name == "settings") ] %>
+  <% %w[banners promotions pages reviews].each do |name| %>
+    <%= link_to t("website.tabs.#{name}"), url_for(controller: "website/#{name}", action: :index), class: [ "tab", ("active" if controller_name == name) ] %>
+  <% end %>
+</nav>

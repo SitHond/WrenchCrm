@@ -1,0 +1,9 @@
+<div class="row">
+  <div class="field"><%= form.label :author %><%= form.text_field :author, required: true %></div>
+  <div class="field small"><%= form.label :rating %><%= form.select :rating, (1..5).to_a.reverse %></div>
+  <div class="field"><%= form.label :reviewed_on %><%= form.date_field :reviewed_on %></div>
+  <div class="field small"><%= form.label :position %><%= form.number_field :position %></div>
+</div>
+<div class="field"><%= form.label :text %><%= form.text_area :text, rows: 4, required: true %></div>
+<p class="hint"><%= t("website.review_hint") %></p>
+<div class="field checkbox"><%= form.check_box :published %><%= form.label :published %></div>

@@ -1,0 +1,9 @@
+<div class="field">
+  <%= form.label :image %>
+  <% if record.image.attached? && record.image.blob.persisted? %>
+    <%= image_tag record.image, class: "preview", alt: "" %>
+    <label class="check"><%= check_box_tag :remove_image, "1" %> <%= t("website.remove_image") %></label>
+  <% end %>
+  <%= form.file_field :image, accept: "image/png,image/jpeg,image/webp" %>
+  <span class="hint"><%= t("website.image_hint") %></span>
+</div>
