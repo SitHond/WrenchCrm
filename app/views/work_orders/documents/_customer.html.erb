@@ -4,5 +4,9 @@
   <tr><th><%= Vehicle.model_name.human %></th><td><%= @work_order.vehicle.title %><%= ", #{@work_order.vehicle.color}" if @work_order.vehicle.color.present? %></td></tr>
   <tr><th><%= Vehicle.human_attribute_name(:plate_number) %></th><td><%= @work_order.vehicle.plate_number %></td></tr>
   <tr><th><%= Vehicle.human_attribute_name(:vin) %></th><td><%= @work_order.vehicle.vin %></td></tr>
+  <% if @work_order.vehicle.engine_number.present? %><tr><th><%= Vehicle.human_attribute_name(:engine_number) %></th><td><%= @work_order.vehicle.engine_number %></td></tr><% end %>
+  <% if @work_order.vehicle.body_number.present? %><tr><th><%= Vehicle.human_attribute_name(:body_number) %></th><td><%= @work_order.vehicle.body_number %></td></tr><% end %>
+  <tr><th><%= WorkOrder.human_attribute_name(:created_at) %></th><td><%= l(@work_order.created_at, format: :long) %></td></tr>
+  <% if @work_order.promised_at %><tr><th><%= WorkOrder.human_attribute_name(:promised_at) %></th><td><%= l(@work_order.promised_at, format: :long) %></td></tr><% end %>
   <tr><th><%= WorkOrder.human_attribute_name(:mileage) %></th><td><%= t("vehicles.km", count: number_with_delimiter(@work_order.mileage)) if @work_order.mileage %></td></tr>
 </table>

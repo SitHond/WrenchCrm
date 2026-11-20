@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_16_000500) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -543,6 +543,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_16_000500) do
     t.integer "mileage"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "engine_number"
+    t.string "body_number"
     t.index ["client_id"], name: "index_vehicles_on_client_id"
     t.index ["plate_number"], name: "index_vehicles_on_plate_number"
     t.index ["vin"], name: "index_vehicles_on_vin", unique: true, where: "((vin IS NOT NULL) AND ((vin)::text <> ''::text))"
@@ -581,6 +583,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_16_000500) do
     t.datetime "updated_at", null: false
     t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
     t.boolean "client_supplied", default: false, null: false
+    t.decimal "client_value", precision: 12, scale: 2
     t.index ["part_id"], name: "index_work_order_parts_on_part_id"
     t.index ["work_order_id"], name: "index_work_order_parts_on_work_order_id"
   end
@@ -608,6 +611,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_16_000500) do
     t.integer "fuel_level"
     t.text "intake_condition"
     t.text "intake_items"
+    t.integer "replaced_parts", default: 0, null: false
     t.index ["advisor_id"], name: "index_work_orders_on_advisor_id"
     t.index ["client_id"], name: "index_work_orders_on_client_id"
     t.index ["complexity_level_id"], name: "index_work_orders_on_complexity_level_id"

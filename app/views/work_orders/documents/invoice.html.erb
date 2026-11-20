@@ -1,5 +1,6 @@
 <% content_for :title, t("documents.invoice.title", number: @work_order.number) %>
 <article class="print-doc">
+  <%= render "work_orders/documents/problems" %>
   <% if @shop.bank_details? %>
     <table class="bank-table">
       <tr><td colspan="2" rowspan="2"><%= @shop.bank_name %><br><span class="small muted"><%= t("documents.invoice.payee_bank") %></span></td><td><%= ShopSetting.human_attribute_name(:bik) %></td><td><%= @shop.bik %></td></tr>

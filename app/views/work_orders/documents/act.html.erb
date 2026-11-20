@@ -10,13 +10,16 @@
 
   <%= render "work_orders/documents/lines" %>
 
+  <% unless @work_order.replaced_parts_not_set? %>
+    <p><strong><%= WorkOrder.human_attribute_name(:replaced_parts) %>:</strong> <%= enum_label(WorkOrder, :replaced_parts, @work_order.replaced_parts) %></p>
+  <% end %>
   <p><%= t("documents.act.no_claims") %></p>
   <% if @work_order.recommendations.present? %>
     <h2><%= WorkOrder.human_attribute_name(:recommendations) %></h2>
     <p><%= @work_order.recommendations %></p>
   <% end %>
   <div class="signatures">
-    <div><%= t("documents.contractor") %> ____________________<br><span class="muted"><%= @shop.director %></span></div>
+    <div><%= t("documents.contractor") %> ____________________<br><span class="muted"><%= signer(@work_order.advisor) || @shop.director %></span></div>
     <div><%= t("documents.customer") %> ____________________<br><span class="muted"><%= @work_order.client.display_name %></span></div>
   </div>
 </article>

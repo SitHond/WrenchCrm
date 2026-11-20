@@ -52,6 +52,7 @@
       <%= detail_row WorkOrder.human_attribute_name(:mechanic), @work_order.mechanic&.name %>
       <%= detail_row WorkOrder.human_attribute_name(:advisor), @work_order.advisor&.name %>
       <%= detail_row WorkOrder.human_attribute_name(:complexity_level), @work_order.complexity_level&.name %>
+      <%= detail_row WorkOrder.human_attribute_name(:replaced_parts), (enum_label(WorkOrder, :replaced_parts, @work_order.replaced_parts) unless @work_order.replaced_parts_not_set?) %>
       <%= detail_row WorkOrder.human_attribute_name(:promised_at), (l(@work_order.promised_at, format: :short) if @work_order.promised_at) %>
       <%= detail_row WorkOrder.human_attribute_name(:completed_at), (l(@work_order.completed_at, format: :short) if @work_order.completed_at) %>
       <%= detail_row WorkOrder.human_attribute_name(:closed_at), (l(@work_order.closed_at, format: :short) if @work_order.closed_at) %>
@@ -111,7 +112,7 @@
       <%= form.text_field :name, placeholder: t("work_orders.or_custom_name"), aria: { label: WorkOrderPart.human_attribute_name(:name) } %>
       <%= form.number_field :quantity, value: 1, step: 0.001, min: 0.001, class: "qty", aria: { label: WorkOrderPart.human_attribute_name(:quantity) } %>
       <%= form.number_field :price, step: 0.01, min: 0, placeholder: WorkOrderPart.human_attribute_name(:price), class: "price", aria: { label: WorkOrderPart.human_attribute_name(:price) } %>
-      <label class="check"><%= form.check_box :client_supplied %> <%= WorkOrderPart.human_attribute_name(:client_supplied) %></label>
+      <label class="check" title="<%= t("work_orders.client_part_hint") %>"><%= form.check_box :client_supplied %> <%= WorkOrderPart.human_attribute_name(:client_supplied) %></label>
       <label class="check"><%= form.check_box :save_to_catalog %> <%= t("work_orders.save_to_catalog") %></label>
       <%= form.submit t("add"), class: "btn" %>
     <% end %>

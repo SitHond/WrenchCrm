@@ -21,6 +21,8 @@
       <%= detail_row Vehicle.human_attribute_name(:year), @vehicle.year %>
       <%= detail_row Vehicle.human_attribute_name(:color), @vehicle.color %>
       <%= detail_row Vehicle.human_attribute_name(:engine), @vehicle.engine %>
+      <%= detail_row Vehicle.human_attribute_name(:engine_number), (tag.span(@vehicle.engine_number, class: "mono") if @vehicle.engine_number) %>
+      <%= detail_row Vehicle.human_attribute_name(:body_number), (tag.span(@vehicle.body_number, class: "mono") if @vehicle.body_number) %>
       <%= detail_row Vehicle.human_attribute_name(:mileage), (t("vehicles.km", count: number_with_delimiter(@vehicle.mileage)) if @vehicle.mileage) %>
     </dl>
   </section>

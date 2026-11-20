@@ -1,0 +1,25 @@
+<% content_for :title, t("services.price_list") %>
+<article class="print-doc">
+  <header class="print-head">
+    <div>
+      <div class="print-shop"><%= @shop.display_name %></div>
+      <div class="muted small"><%= @shop.requisites_line %></div>
+    </div>
+    <div class="print-title">
+      <h1><%= t("services.price_list") %></h1>
+      <div><%= t("services.price_list_date", date: l(Date.current, format: :long)) %></div>
+    </div>
+  </header>
+  <% @services.sort_by { |category, _| category.to_s }.each do |category, services| %>
+    <h2><%= category || t("services.no_category") %></h2>
+    <table class="print-lines">
+      <thead><tr><th><%= Service.human_attribute_name(:name) %></th><th class="num"><%= Service.human_attribute_name(:norm_hours) %></th><th class="num"><%= Service.human_attribute_name(:price) %></th></tr></thead>
+      <tbody>
+        <% services.each do |service| %>
+          <tr><td><%= service.name %></td><td class="num"><%= number(service.norm_hours) %></td><td class="num"><%= money(service.price) %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <p class="small"><%= t("services.price_list_note") %></p>
+</article>

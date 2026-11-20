@@ -43,6 +43,7 @@
     <div class="field"><%= form.label :complaint %><%= form.text_area :complaint, rows: 3 %></div>
     <div class="field"><%= form.label :diagnosis %><%= form.text_area :diagnosis, rows: 3 %></div>
     <div class="field"><%= form.label :recommendations %><%= form.text_area :recommendations, rows: 3 %></div>
+    <div class="field"><%= form.label :replaced_parts %><%= form.select :replaced_parts, enum_options(WorkOrder, :replaced_parts) %></div>
   </fieldset>
 
   <% if work_order.new_record? %><p class="hint"><%= t("work_orders.discount_hint") %></p><% end %>

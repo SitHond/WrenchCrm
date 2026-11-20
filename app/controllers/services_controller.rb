@@ -1,12 +1,19 @@
 class ServicesController < ApplicationController
   before_action :set_service, only: %i[ edit update destroy ]
-  require_permission :manage_catalog, except: :index
+  require_permission :manage_catalog, except: %i[ index price_list ]
 
   def index
     scope = Service.search(params[:q]).includes(:category)
     scope = scope.where(category_id: params[:category_id]) if params[:category_id].present?
     scope = scope.active unless params[:status] == "all"
     @pagy, @services = pagy(scope.ordered, limit: 50)
+  end
+
+  # Printable price list for customers (consumer information under ПП № 290).
+  def price_list
+    @shop = ShopSetting.current
+    @services = Service.active.includes(:category).order(:name).group_by { |s| s.category&.name }
+    render layout: "print"
   end
 
   def new

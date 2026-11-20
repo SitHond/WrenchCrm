@@ -57,7 +57,9 @@ Rails.application.routes.draw do
   resources :tasks, only: %i[ index create edit update destroy ] do
     patch :toggle, on: :member
   end
-  resources :services, except: :show
+  resources :services, except: :show do
+    get :price_list, on: :collection
+  end
   resources :parts do
     member do
       patch :receive

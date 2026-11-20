@@ -29,6 +29,13 @@ module ApplicationHelper
     safe_join([ tag.dt(label), tag.dd(value) ])
   end
 
+  # "Мастер-приёмщик Марина Орлова" for signature lines.
+  def signer(employee)
+    return unless employee
+
+    [ enum_label(Employee, :position, employee.position), employee.name ].compact.join(" ")
+  end
+
   def phone_link(phone)
     link_to(phone, "tel:#{phone.gsub(/[^\d+]/, "")}") if phone.present?
   end

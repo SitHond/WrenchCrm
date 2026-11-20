@@ -8,7 +8,13 @@ class WorkOrderPart < ApplicationRecord
   validate :enough_stock, on: :create
 
   before_validation :copy_from_part, on: :create
-  before_validation { self.price = 0 if client_supplied? }
+  # A customer's own part costs nothing in the order; what they paid for it goes to the intake form.
+  before_validation do
+    if client_supplied?
+      self.client_value = price if client_value.blank? && price.to_d.positive?
+      self.price = 0
+    end
+  end
   before_create :create_catalog_part, if: -> { save_to_catalog.to_s == "1" && part.nil? && !client_supplied? }
   after_create { stock_part&.adjust_stock!(-quantity, kind: :work_order, source: work_order) }
   after_update { stock_part&.adjust_stock!(quantity_before_last_save - quantity, kind: :work_order, source: work_order) if saved_change_to_quantity? }

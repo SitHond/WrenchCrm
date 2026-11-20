@@ -19,6 +19,7 @@ class WorkOrder < ApplicationRecord
     "cancelled" => []
   }.freeze
 
+  enum :replaced_parts, { not_set: 0, returned: 1, disposed: 2 }, prefix: :replaced_parts
   enum :status, { estimate: 6, accepted: 0, in_progress: 1, waiting_parts: 2, ready: 3, closed: 4, cancelled: 5 }
 
   belongs_to :client
@@ -64,6 +65,20 @@ class WorkOrder < ApplicationRecord
     SQL
     number.present? && number.length <= 18 ? scope.or(joins(:vehicle, :client).where(id: number.to_i)) : scope
   }
+
+  # What ПП № 290 expects on the contract and acts but is missing here.
+  def document_problems
+    shop = ShopSetting.current
+    problems = []
+    problems << :shop_name if shop.legal_name.blank? && shop.name.blank?
+    problems << :shop_inn if shop.inn.blank?
+    problems << :shop_ogrn if shop.ogrn.blank?
+    problems << :shop_address if shop.address.blank?
+    problems << :client_phone if client.phone.blank?
+    problems << :promised_at if promised_at.blank? && !closed?
+    problems << :advisor if advisor.blank?
+    problems
+  end
 
   def number
     id.to_s.rjust(6, "0")

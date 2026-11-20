@@ -1,0 +1,36 @@
+en:
+  documents:
+    problems:
+      title: "This document is missing required details:"
+      shop_name: "contractor name (Settings → requisites)"
+      shop_inn: "contractor tax ID"
+      shop_ogrn: "contractor registration number"
+      shop_address: "contractor address"
+      client_phone: "client phone"
+      promised_at: "completion date (“Promised by”)"
+      advisor: "service advisor who took the order"
+    acceptance:
+      client_parts: "Parts and materials supplied by the customer"
+      no_client_parts: "None supplied."
+  work_orders:
+    client_part_hint: "Customer's part: no price and no stock change. Enter what the customer paid in the price field to list it on the intake form."
+  services:
+    price_list: "Price list"
+    price_list_date: "valid from %{date}"
+    price_list_note: "Prices are for labor without parts and materials. The final price is set in the work order."
+    no_category: "Other services"
+  activerecord:
+    attributes:
+      vehicle:
+        engine_number: "Engine number"
+        body_number: "Body number"
+      work_order:
+        replaced_parts: "Replaced parts"
+      work_order_part:
+        client_value: "Value stated by customer"
+    enums:
+      work_order:
+        replaced_parts:
+          not_set: "Not set"
+          returned: "Returned to the customer"
+          disposed: "Left for disposal at the customer's request"

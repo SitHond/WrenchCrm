@@ -40,6 +40,10 @@
       <div class="field"><%= form.label :engine %><%= form.text_field :engine, list: "vehicle-engines", autocomplete: "off", placeholder: t("vehicles.engine_placeholder") %></div>
       <div class="field"><%= form.label :mileage %><%= form.number_field :mileage, min: 0 %></div>
     </div>
+    <div class="row">
+      <div class="field"><%= form.label :engine_number %><%= form.text_field :engine_number, class: "upper mono", autocomplete: "off" %></div>
+      <div class="field"><%= form.label :body_number %><%= form.text_field :body_number, class: "upper mono", autocomplete: "off" %></div>
+    </div>
   </fieldset>
 
   <datalist id="vehicle-makes">

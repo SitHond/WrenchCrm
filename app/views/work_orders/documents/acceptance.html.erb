@@ -14,9 +14,24 @@
   <h2><%= WorkOrder.human_attribute_name(:intake_items) %></h2>
   <div class="fill-box"><%= @work_order.intake_items.present? ? simple_format(@work_order.intake_items) : tag.br * 2 %></div>
 
+  <% client_parts = @work_order.part_lines.select(&:client_supplied?) %>
+  <h2><%= t("documents.acceptance.client_parts") %></h2>
+  <% if client_parts.any? %>
+    <table class="print-lines">
+      <thead><tr><th>#</th><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= WorkOrderPart.human_attribute_name(:quantity) %></th><th class="num"><%= WorkOrderPart.human_attribute_name(:client_value) %></th></tr></thead>
+      <tbody>
+        <% client_parts.each_with_index do |line, index| %>
+          <tr><td><%= index + 1 %></td><td><%= line.name %></td><td class="num"><%= number(line.quantity) %></td><td class="num"><%= line.client_value ? money(line.client_value) : "—" %></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p><%= t("documents.acceptance.no_client_parts") %></p>
+  <% end %>
+
   <p class="small"><%= t("documents.acceptance.note") %></p>
   <div class="signatures">
     <div><%= t("documents.acceptance.handed_over") %> ____________________<br><span class="muted"><%= @work_order.client.display_name %></span></div>
-    <div><%= t("documents.acceptance.accepted") %> ____________________<% if @work_order.advisor %><br><span class="muted"><%= @work_order.advisor.name %></span><% end %></div>
+    <div><%= t("documents.acceptance.accepted") %> ____________________<% if @work_order.advisor %><br><span class="muted"><%= signer(@work_order.advisor) %></span><% end %></div>
   </div>
 </article>

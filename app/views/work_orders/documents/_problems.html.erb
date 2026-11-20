@@ -1,0 +1,8 @@
+<% problems = @work_order.document_problems %>
+<% if problems.any? %>
+  <div class="no-print print-warning">
+    <strong><%= t("documents.problems.title") %></strong>
+    <ul><% problems.each do |problem| %><li><%= t("documents.problems.#{problem}") %></li><% end %></ul>
+    <span class="small"><%= link_to t("shop_settings.title"), edit_shop_settings_path %> · <%= link_to t("edit"), edit_work_order_path(@work_order) %></span>
+  </div>
+<% end %>

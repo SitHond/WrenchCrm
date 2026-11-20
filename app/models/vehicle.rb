@@ -12,6 +12,7 @@ class Vehicle < ApplicationRecord
   normalizes :plate_number, with: ->(plate) { PlateNumber.normalize(plate) }
   normalizes :make, with: ->(make) { VehicleCatalog.canonical_make(make) }
   normalizes :model, :color, :engine, with: ->(value) { value.strip.presence }
+  normalizes :engine_number, :body_number, with: ->(value) { value.strip.upcase.presence }
 
   validates :make, :model, presence: true
   validates :vin, length: { is: 17 }, format: { with: /\A[A-HJ-NPR-Z0-9]+\z/ }, uniqueness: true, allow_nil: true

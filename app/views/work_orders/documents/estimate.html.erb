@@ -16,7 +16,7 @@
 
   <p class="small"><%= t("documents.estimate.note", days: 7, date: l(Date.current + 7, format: :long)) %></p>
   <div class="signatures">
-    <div><%= t("work_orders.signature_shop") %> ____________________<% if @work_order.advisor %><br><span class="muted"><%= @work_order.advisor.name %></span><% end %></div>
+    <div><%= t("work_orders.signature_shop") %> ____________________<% if @work_order.advisor %><br><span class="muted"><%= signer(@work_order.advisor) %></span><% end %></div>
     <div><%= t("documents.estimate.agreed") %> ____________________</div>
   </div>
 </article>
