@@ -78,6 +78,8 @@ class WorkOrdersController < ApplicationController
   def status
     @work_order.change_status!(params.expect(:status))
     redirect_to @work_order, notice: t("work_orders.status_changed", status: helpers.enum_label(WorkOrder, :status, @work_order.status))
+  rescue WorkOrder::PendingApproval
+    redirect_to @work_order, alert: t("work_orders.pending_approval_block")
   rescue WorkOrder::StockShortage => e
     redirect_to @work_order, alert: t("work_orders.stock_shortage", parts: e.lines.map(&:name).join(", "))
   rescue ArgumentError

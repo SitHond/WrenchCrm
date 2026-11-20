@@ -11,6 +11,7 @@ class WorkOrderImprovementsTest < ActiveSupport::TestCase
     line.performers.create!(employee: oleg, share: 50)
     assert_not line.performers.new(employee: Employee.create!(name: "Третий"), share: 10).valid?, "shares above 100% in total"
 
+    approve_all(@order)
     @order.change_status!(:ready)
     @order.change_status!(:closed)
     assert_equal 250, Payroll.new(employees(:ivan), Date.current).labor_pay

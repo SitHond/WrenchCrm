@@ -13,9 +13,27 @@
       </thead>
       <tbody>
         <% lines.each do |line| %>
-          <tr>
+          <tr class="<%= "pending-row" unless line.approved? %>">
             <td>
               <%= line.name %>
+              <% unless line.approved? %>
+                <span class="badge pending-badge"><%= t("work_orders.pending_approval") %></span>
+                <% if can?(:manage_orders) %>
+                  <details class="dropdown approve-dropdown">
+                    <summary class="link-button"><%= t("work_orders.approve") %> ▾</summary>
+                    <div class="dropdown-menu wide">
+                      <%= form_with url: polymorphic_path([ :approve, @work_order, line ]), method: :patch, class: "inline-form compact pad" do |form| %>
+                        <%= form.select :approval_method, line.class.approval_methods.keys.map { |m| [ t("work_orders.approval_methods.#{m}"), m ] }, {}, aria: { label: t("work_orders.approval_method") } %>
+                        <%= form.text_field :approval_note, placeholder: t("work_orders.approval_note"), aria: { label: t("work_orders.approval_note") } %>
+                        <%= form.submit t("work_orders.approve"), class: "btn btn-primary" %>
+                      <% end %>
+                    </div>
+                  </details>
+                <% end %>
+              <% end %>
+              <% if line.approved? && line.approval_method %>
+                <span class="muted small" title="<%= line.approval_note %>"><%= t("work_orders.approved_line", method: t("work_orders.approval_methods.#{line.approval_method}"), date: l(line.approved_at, format: :short), user: line.approved_by&.name || "—") %></span>
+              <% end %>
               <% if kind == :part && line.client_supplied? %><span class="badge"><%= WorkOrderPart.human_attribute_name(:client_supplied) %><%= ", #{money(line.client_value)}" if line.client_value %></span><% end %>
             </td>
             <% if kind == :labor %>

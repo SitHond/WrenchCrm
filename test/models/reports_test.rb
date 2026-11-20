@@ -16,6 +16,7 @@ class ReportsTest < ActiveSupport::TestCase
   test "parts margin from closed orders and sales" do
     order = work_orders(:open_order)
     order.part_lines.create!(part: parts(:filter), quantity: 1, price: 1000)
+    approve_all(order)
     order.change_status!(:ready)
     order.change_status!(:closed)
     Sale.create!(payment_method: :cash, lines_attributes: [ { part_id: parts(:oil).id, quantity: 1 } ])
@@ -29,6 +30,7 @@ class ReportsTest < ActiveSupport::TestCase
   test "labor by employee" do
     order = work_orders(:open_order)
     order.labor_lines.create!(name: "Замена", price: 2000, employee: employees(:ivan))
+    approve_all(order)
     order.change_status!(:ready)
     order.change_status!(:closed)
     rows = Report::Labor.new(@range).by_employee

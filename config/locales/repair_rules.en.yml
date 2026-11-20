@@ -13,6 +13,22 @@ en:
       client_parts: "Parts and materials supplied by the customer"
       no_client_parts: "None supplied."
   work_orders:
+    pending_approval: "awaiting approval"
+    approve: "Approved"
+    approved: "Line approved with the customer."
+    approval_method: "Approval method"
+    approval_method_needed: "Choose how it was approved."
+    approval_note: "Note: who said what"
+    approved_line: "approved %{method}, %{date}, %{user}"
+    approval_methods:
+      in_person: "in person"
+      phone: "by phone"
+      message: "by message"
+      signature: "by signature"
+    pending_banner: "Extra labor and parts await the customer's approval: %{count} worth %{amount}. They cannot be done without consent and stay out of totals and documents until approved."
+    pending_approval_block: "Some lines are not approved by the customer. Approve or remove them before marking the order ready or handed over."
+    totals:
+      pending: "Awaiting approval"
     client_part_hint: "Customer's part: no price and no stock change. Enter what the customer paid in the price field to list it on the intake form."
   services:
     price_list: "Price list"

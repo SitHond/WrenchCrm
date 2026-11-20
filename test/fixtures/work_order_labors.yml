@@ -3,3 +3,4 @@ diag:
   name: Диагностика
   quantity: 1
   price: 1500
+  approved_at: <%= 1.day.ago.to_fs(:db) %>

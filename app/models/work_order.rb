@@ -8,6 +8,8 @@ class WorkOrder < ApplicationRecord
     end
   end
 
+  class PendingApproval < StandardError; end
+
   OPEN_STATUSES = %w[accepted in_progress waiting_parts ready].freeze
   TRANSITIONS = {
     "estimate" => %w[accepted cancelled],
@@ -100,6 +102,8 @@ class WorkOrder < ApplicationRecord
     new_status = new_status.to_s
     raise ArgumentError, "invalid transition #{status} -> #{new_status}" unless next_statuses.include?(new_status)
 
+    raise PendingApproval if new_status.in?(%w[ready closed]) && pending_lines.any?
+
     transaction do
       approve_estimate! if estimate? && new_status == "accepted"
       part_lines.each(&:return_to_stock!) if new_status == "cancelled" && !estimate?
@@ -111,11 +115,19 @@ class WorkOrder < ApplicationRecord
   end
 
   def labor_total
-    labor_lines.sum(&:total)
+    labor_lines.select(&:approved?).sum(&:total)
+  end
+
+  def pending_lines
+    labor_lines.reject(&:approved?) + part_lines.reject(&:approved?)
+  end
+
+  def pending_total
+    pending_lines.sum(&:total)
   end
 
   def parts_total
-    part_lines.sum(&:total)
+    part_lines.select(&:approved?).sum(&:total)
   end
 
   def subtotal

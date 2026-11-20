@@ -30,9 +30,12 @@ Rails.application.routes.draw do
       patch :status
     end
     resources :work_order_labors, only: %i[ create update destroy ] do
+      patch :approve, on: :member
       resources :performers, controller: "work_order_labor_performers", only: %i[ create destroy ]
     end
-    resources :work_order_parts, only: %i[ create update destroy ]
+    resources :work_order_parts, only: %i[ create update destroy ] do
+      patch :approve, on: :member
+    end
     resources :payments, only: %i[ create destroy ]
     resources :notes, only: :create
   end

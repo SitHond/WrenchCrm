@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_180000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -569,6 +569,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_180000) do
     t.decimal "price", precision: 12, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "approved_at"
+    t.integer "approval_method"
+    t.bigint "approved_by_id"
+    t.string "approval_note"
+    t.index ["approved_by_id"], name: "index_work_order_labors_on_approved_by_id"
     t.index ["service_id"], name: "index_work_order_labors_on_service_id"
     t.index ["work_order_id"], name: "index_work_order_labors_on_work_order_id"
   end
@@ -584,6 +589,11 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_180000) do
     t.decimal "cost", precision: 12, scale: 2, default: "0.0", null: false
     t.boolean "client_supplied", default: false, null: false
     t.decimal "client_value", precision: 12, scale: 2
+    t.datetime "approved_at"
+    t.integer "approval_method"
+    t.bigint "approved_by_id"
+    t.string "approval_note"
+    t.index ["approved_by_id"], name: "index_work_order_parts_on_approved_by_id"
     t.index ["part_id"], name: "index_work_order_parts_on_part_id"
     t.index ["work_order_id"], name: "index_work_order_parts_on_work_order_id"
   end
@@ -685,8 +695,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_180000) do
   add_foreign_key "work_order_labor_performers", "employees", on_delete: :cascade
   add_foreign_key "work_order_labor_performers", "work_order_labors", on_delete: :cascade
   add_foreign_key "work_order_labors", "services", on_delete: :nullify
+  add_foreign_key "work_order_labors", "users", column: "approved_by_id", on_delete: :nullify
   add_foreign_key "work_order_labors", "work_orders", on_delete: :cascade
   add_foreign_key "work_order_parts", "parts", on_delete: :nullify
+  add_foreign_key "work_order_parts", "users", column: "approved_by_id", on_delete: :nullify
   add_foreign_key "work_order_parts", "work_orders", on_delete: :cascade
   add_foreign_key "work_orders", "clients"
   add_foreign_key "work_orders", "complexity_levels", on_delete: :nullify

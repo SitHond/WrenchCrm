@@ -4,3 +4,4 @@ oil_line:
   name: Масло 5W-30
   quantity: 1
   price: 3800
+  approved_at: <%= 1.day.ago.to_fs(:db) %>

@@ -11,6 +11,9 @@ module ActiveSupport
     # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
     fixtures :all
 
-    # Add more helper methods to be used by all tests here...
+    # Customer approval for lines added after work started (ПП № 290).
+    def approve_all(order)
+      (order.labor_lines.reload + order.part_lines.reload).each { |line| line.approve!(method: :in_person) unless line.approved? }
+    end
   end
 end

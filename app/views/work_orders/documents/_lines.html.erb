@@ -4,7 +4,7 @@
     <tr><th>№</th><th><%= WorkOrderLabor.human_attribute_name(:name) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:quantity) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:price) %></th><th class="num"><%= WorkOrderLabor.human_attribute_name(:total) %></th></tr>
   </thead>
   <tbody>
-    <% [ [ :labor, @work_order.labor_lines.order(:created_at) ], [ :parts, @work_order.part_lines.order(:created_at) ] ].each do |section, lines| %>
+    <% [ [ :labor, @work_order.labor_lines.approved.order(:created_at) ], [ :parts, @work_order.part_lines.approved.order(:created_at) ] ].each do |section, lines| %>
       <% next if lines.empty? %>
       <tr class="section"><td colspan="5"><%= t("work_orders.sections.#{section}") %></td></tr>
       <% lines.each do |line| %>

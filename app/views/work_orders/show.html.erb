@@ -24,6 +24,10 @@
   <% end %>
 </div>
 
+<% if @work_order.pending_lines.any? %>
+  <p class="flash flash-alert"><%= t("work_orders.pending_banner", count: @work_order.pending_lines.size, amount: money(@work_order.pending_total)) %></p>
+<% end %>
+
 <% unless @work_order.client.personal_data_consent? %>
   <p class="flash flash-alert"><%= t("consents.order_warning_html", link: link_to(t("consents.print_short"), print_client_consents_path(@work_order.client, kind: "personal_data"), target: "_blank"), client: link_to(@work_order.client.display_name, client_path(@work_order.client, anchor: "consents"))) %></p>
 <% end %>

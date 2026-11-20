@@ -16,6 +16,16 @@ module OrderLinesController
     save_and_redirect(line) { line.update(line_params) }
   end
 
+  def approve
+    line = lines.find(params[:id])
+    method = params[:approval_method].presence_in(line.class.approval_methods.keys)
+    return redirect_to(@work_order, alert: t("work_orders.approval_method_needed")) unless method
+
+    line.approve!(method: method, note: params[:approval_note])
+    audit(:update, @work_order, approved: line.name, method: method)
+    redirect_to work_order_path(@work_order, anchor: line.class.model_name.element), notice: t("work_orders.approved")
+  end
+
   def destroy
     line = lines.find(params[:id])
     if @work_order.editable?

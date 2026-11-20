@@ -10,6 +10,7 @@ class ServiceReminderTest < ActiveSupport::TestCase
     old = @vehicle.service_reminders.create!(service: services(:oil_change), title: "Старое", due_on: Date.current)
     order = work_orders(:open_order)
     order.labor_lines.create!(service: services(:oil_change))
+    approve_all(order)
     order.change_status!(:ready)
     order.change_status!(:closed)
     reminder = @vehicle.service_reminders.active.sole
