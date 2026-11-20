@@ -37,10 +37,17 @@ en:
     no_category: "Other services"
   activerecord:
     attributes:
+      service:
+        warranty_months: "Warranty, months"
+        warranty_km: "Warranty, km"
+      part:
+        warranty_months: "Warranty, months"
+        warranty_km: "Warranty, km"
       vehicle:
         engine_number: "Engine number"
         body_number: "Body number"
       work_order:
+        warranty_of_id: "Гарантийное обращение по наряду"
         replaced_parts: "Replaced parts"
       work_order_part:
         client_value: "Value stated by customer"
@@ -50,3 +57,20 @@ en:
           not_set: "Not set"
           returned: "Returned to the customer"
           disposed: "Left for disposal at the customer's request"
+  warranty:
+    months:
+      one: "%{count} month"
+      other: "%{count} months"
+    km: "%{km} km"
+    short: "warranty %{text}"
+    column: "Warranty"
+    active_title: "Active warranties"
+    until: "until %{date}"
+    until_km: "until %{km} km"
+    new_claim: "Warranty claim"
+    not_a_claim: "— not a warranty claim —"
+    claim_badge: "Warranty claim"
+    claim_of: "for order #%{number}"
+    claim_link: "warranty: #%{number}"
+    act_claim: "Work done under warranty for work order #%{number} dated %{date}."
+    act_note: "Warranty periods for labor and parts are listed in the table and run from the day the vehicle is handed over. Parts supplied by the customer are not covered."

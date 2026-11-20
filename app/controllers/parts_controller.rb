@@ -103,6 +103,6 @@ class PartsController < ApplicationController
     end
 
     def part_params
-      params.expect(part: [ :name, :sku, :oem, :brand, :location, :unit, :cost, :price, :quantity, :min_quantity, :active, :auto_price, :category_id ])
+      params.expect(part: [ :name, :sku, :oem, :brand, :location, :unit, :cost, :price, :quantity, :min_quantity, :active, :auto_price, :category_id, :warranty_months, :warranty_km ])
     end
 end

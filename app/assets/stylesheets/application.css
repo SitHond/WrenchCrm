@@ -546,3 +546,5 @@ select, input, textarea { max-width: 100%; }
 .pending-total { color: #b45309; }
 .approve-dropdown { margin-left: .25rem; }
 @media (prefers-color-scheme: dark) { .pending-badge { background: #78350f; color: #fde68a; } }
+.warranty-badge { background: #e0f2fe; color: #075985; }
+@media (prefers-color-scheme: dark) { .warranty-badge { background: #0c4a6e; color: #bae6fd; } }

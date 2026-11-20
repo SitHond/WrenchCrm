@@ -12,6 +12,7 @@ class VehiclesController < ApplicationController
     @work_orders = @vehicle.work_orders.includes(:mechanic, :labor_lines, :part_lines)
     @appointments = @vehicle.appointments.upcoming.includes(:bay)
     @reminders = @vehicle.service_reminders.active.order(:due_on)
+    @warranties = @vehicle.active_warranties
     @notes = @vehicle.notes.visible_to(current_user).recent_first.includes(:author)
   end
 

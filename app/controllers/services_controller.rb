@@ -51,6 +51,6 @@ class ServicesController < ApplicationController
     end
 
     def service_params
-      params.expect(service: [ :name, :code, :norm_hours, :price, :active, :category_id, :reminder_months, :reminder_km, prices_attributes: [ [ :id, :complexity_level_id, :price, :_destroy ] ] ])
+      params.expect(service: [ :name, :code, :norm_hours, :price, :active, :category_id, :reminder_months, :reminder_km, :warranty_months, :warranty_km, prices_attributes: [ [ :id, :complexity_level_id, :price, :_destroy ] ] ])
     end
 end

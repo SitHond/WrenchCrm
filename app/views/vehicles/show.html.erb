@@ -38,6 +38,25 @@
     </section>
   <% end %>
 
+  <% if @warranties.any? %>
+    <section class="card">
+      <h2><%= t("warranty.active_title") %></h2>
+      <ul class="list">
+        <% @warranties.each do |line| %>
+          <li>
+            <%= line.name %>
+            <span class="muted small"><%= link_to "№ #{line.work_order.number}", line.work_order %> · <%= warranty_text(line) %>
+              <% if line.warranty_until %> · <%= t("warranty.until", date: l(line.warranty_until)) %><% end %>
+              <% if line.warranty_until_km %> · <%= t("warranty.until_km", km: number_with_delimiter(line.warranty_until_km)) %><% end %></span>
+          </li>
+        <% end %>
+      </ul>
+      <% if can?(:manage_orders) %>
+        <%= link_to t("warranty.new_claim"), new_work_order_path(vehicle_id: @vehicle.id, warranty_of_id: @warranties.first.work_order_id), class: "btn" %>
+      <% end %>
+    </section>
+  <% end %>
+
   <section class="card">
     <h2><%= t("reminders.vehicle_title") %></h2>
     <% if @reminders.any? %>

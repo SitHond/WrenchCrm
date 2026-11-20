@@ -12,6 +12,10 @@
     <div class="field"><%= form.label :reminder_km %><%= form.number_field :reminder_km, min: 100, step: 500 %></div>
   </div>
   <p class="hint"><%= t("services.reminder_hint") %></p>
+  <div class="row">
+    <div class="field"><%= form.label :warranty_months %><%= form.number_field :warranty_months, min: 0, step: 1 %></div>
+    <div class="field"><%= form.label :warranty_km %><%= form.number_field :warranty_km, min: 0, step: 500 %></div>
+  </div>
   <% levels = ComplexityLevel.ordered %>
   <% if levels.any? %>
     <fieldset>

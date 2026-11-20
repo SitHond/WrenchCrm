@@ -37,10 +37,17 @@ ru:
     no_category: "Прочие работы"
   activerecord:
     attributes:
+      service:
+        warranty_months: "Гарантия, мес."
+        warranty_km: "Гарантия, км"
+      part:
+        warranty_months: "Гарантия, мес."
+        warranty_km: "Гарантия, км"
       vehicle:
         engine_number: "Номер двигателя"
         body_number: "Номер кузова"
       work_order:
+        warranty_of_id: "Гарантийное обращение по наряду"
         replaced_parts: "Заменённые детали"
       work_order_part:
         client_value: "Стоимость со слов заказчика"
@@ -50,3 +57,22 @@ ru:
           not_set: "Не указано"
           returned: "Возвращены заказчику"
           disposed: "Оставлены исполнителю для утилизации по желанию заказчика"
+  warranty:
+    months:
+      one: "%{count} мес."
+      few: "%{count} мес."
+      many: "%{count} мес."
+      other: "%{count} мес."
+    km: "%{km} км"
+    short: "гарантия %{text}"
+    column: "Гарантия"
+    active_title: "Действующие гарантии"
+    until: "до %{date}"
+    until_km: "до %{km} км"
+    new_claim: "Гарантийное обращение"
+    not_a_claim: "— не гарантийное —"
+    claim_badge: "Гарантийное обращение"
+    claim_of: "по наряду № %{number}"
+    claim_link: "гарантия: № %{number}"
+    act_claim: "Работы выполнены по гарантии на заказ-наряд № %{number} от %{date}."
+    act_note: "Гарантийные сроки на работы и запчасти указаны в таблице и исчисляются со дня выдачи автомобиля. Гарантия не распространяется на запчасти и материалы, предоставленные заказчиком."

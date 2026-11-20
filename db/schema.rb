@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_182000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -279,6 +279,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
     t.string "oem"
     t.boolean "auto_price", default: false, null: false
     t.bigint "category_id"
+    t.integer "warranty_months"
+    t.integer "warranty_km"
     t.index ["category_id"], name: "index_parts_on_category_id"
     t.index ["name"], name: "index_parts_on_name"
     t.index ["oem"], name: "index_parts_on_oem"
@@ -423,6 +425,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
     t.bigint "category_id"
     t.integer "reminder_months"
     t.integer "reminder_km"
+    t.integer "warranty_months"
+    t.integer "warranty_km"
     t.index ["category_id"], name: "index_services_on_category_id"
     t.index ["name"], name: "index_services_on_name"
   end
@@ -573,6 +577,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
     t.integer "approval_method"
     t.bigint "approved_by_id"
     t.string "approval_note"
+    t.integer "warranty_months"
+    t.integer "warranty_km"
     t.index ["approved_by_id"], name: "index_work_order_labors_on_approved_by_id"
     t.index ["service_id"], name: "index_work_order_labors_on_service_id"
     t.index ["work_order_id"], name: "index_work_order_labors_on_work_order_id"
@@ -593,6 +599,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
     t.integer "approval_method"
     t.bigint "approved_by_id"
     t.string "approval_note"
+    t.integer "warranty_months"
+    t.integer "warranty_km"
     t.index ["approved_by_id"], name: "index_work_order_parts_on_approved_by_id"
     t.index ["part_id"], name: "index_work_order_parts_on_part_id"
     t.index ["work_order_id"], name: "index_work_order_parts_on_work_order_id"
@@ -622,6 +630,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
     t.text "intake_condition"
     t.text "intake_items"
     t.integer "replaced_parts", default: 0, null: false
+    t.bigint "warranty_of_id"
     t.index ["advisor_id"], name: "index_work_orders_on_advisor_id"
     t.index ["client_id"], name: "index_work_orders_on_client_id"
     t.index ["complexity_level_id"], name: "index_work_orders_on_complexity_level_id"
@@ -629,6 +638,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
     t.index ["mechanic_id"], name: "index_work_orders_on_mechanic_id"
     t.index ["status"], name: "index_work_orders_on_status"
     t.index ["vehicle_id"], name: "index_work_orders_on_vehicle_id"
+    t.index ["warranty_of_id"], name: "index_work_orders_on_warranty_of_id"
   end
 
   add_foreign_key "appointments", "bays", on_delete: :nullify
@@ -706,4 +716,5 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_181000) do
   add_foreign_key "work_orders", "employees", column: "mechanic_id", on_delete: :nullify
   add_foreign_key "work_orders", "users", column: "created_by_id", on_delete: :nullify
   add_foreign_key "work_orders", "vehicles"
+  add_foreign_key "work_orders", "work_orders", column: "warranty_of_id", on_delete: :nullify
 end

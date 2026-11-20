@@ -37,6 +37,12 @@ class Vehicle < ApplicationRecord
     [ title, plate_number ].compact_blank.join(", ")
   end
 
+  # Lines of handed-over orders still under warranty.
+  def active_warranties
+    orders = work_orders.closed.includes(:labor_lines, :part_lines)
+    orders.flat_map { |order| (order.labor_lines + order.part_lines).select(&:under_warranty?) }
+  end
+
   DEFAULT_KM_PER_DAY = 15_000 / 365.0
 
   # [date, mileage] readings from work orders, oldest first.

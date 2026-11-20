@@ -13,6 +13,8 @@
   <% unless @work_order.replaced_parts_not_set? %>
     <p><strong><%= WorkOrder.human_attribute_name(:replaced_parts) %>:</strong> <%= enum_label(WorkOrder, :replaced_parts, @work_order.replaced_parts) %></p>
   <% end %>
+  <% if @work_order.warranty_of %><p><%= t("warranty.act_claim", number: @work_order.warranty_of.number, date: l((@work_order.warranty_of.closed_at || @work_order.warranty_of.created_at).to_date)) %></p><% end %>
+  <p class="small"><%= t("warranty.act_note") %></p>
   <p><%= t("documents.act.no_claims") %></p>
   <% if @work_order.recommendations.present? %>
     <h2><%= WorkOrder.human_attribute_name(:recommendations) %></h2>

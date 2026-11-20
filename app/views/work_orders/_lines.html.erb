@@ -34,6 +34,7 @@
               <% if line.approved? && line.approval_method %>
                 <span class="muted small" title="<%= line.approval_note %>"><%= t("work_orders.approved_line", method: t("work_orders.approval_methods.#{line.approval_method}"), date: l(line.approved_at, format: :short), user: line.approved_by&.name || "—") %></span>
               <% end %>
+              <% if line.warranty? %><span class="muted small"><%= t("warranty.short", text: warranty_text(line)) %></span><% end %>
               <% if kind == :part && line.client_supplied? %><span class="badge"><%= WorkOrderPart.human_attribute_name(:client_supplied) %><%= ", #{money(line.client_value)}" if line.client_value %></span><% end %>
             </td>
             <% if kind == :labor %>

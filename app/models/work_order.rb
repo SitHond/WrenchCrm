@@ -29,6 +29,8 @@ class WorkOrder < ApplicationRecord
   belongs_to :mechanic, class_name: "Employee", optional: true
   belongs_to :advisor, class_name: "Employee", optional: true
   belongs_to :complexity_level, optional: true
+  belongs_to :warranty_of, class_name: "WorkOrder", optional: true
+  has_many :warranty_claims, class_name: "WorkOrder", foreign_key: :warranty_of_id, dependent: :nullify, inverse_of: :warranty_of
   belongs_to :created_by, class_name: "User", optional: true
   has_many :labor_lines, class_name: "WorkOrderLabor", dependent: :destroy
   has_many :part_lines, class_name: "WorkOrderPart", dependent: :destroy
@@ -42,6 +44,7 @@ class WorkOrder < ApplicationRecord
   validates :fuel_level, numericality: { in: 0..100, only_integer: true }, allow_nil: true
   validates :mileage, numericality: { greater_than_or_equal_to: 0, only_integer: true }, allow_nil: true
   validate :vehicle_belongs_to_client
+  validate :warranty_of_same_vehicle
 
   before_validation :inherit_client_defaults, on: :create
   before_create { self.created_by ||= Current.user }
@@ -181,6 +184,10 @@ class WorkOrder < ApplicationRecord
         self.parts_discount_percent = client.parts_discount
       end
       self.mileage ||= vehicle&.mileage
+    end
+
+    def warranty_of_same_vehicle
+      errors.add(:warranty_of, :invalid) if warranty_of && (warranty_of.vehicle_id != vehicle_id || warranty_of == self)
     end
 
     def vehicle_belongs_to_client

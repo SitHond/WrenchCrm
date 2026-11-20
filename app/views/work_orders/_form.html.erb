@@ -43,6 +43,10 @@
     <div class="field"><%= form.label :complaint %><%= form.text_area :complaint, rows: 3 %></div>
     <div class="field"><%= form.label :diagnosis %><%= form.text_area :diagnosis, rows: 3 %></div>
     <div class="field"><%= form.label :recommendations %><%= form.text_area :recommendations, rows: 3 %></div>
+    <% previous = work_order.vehicle ? work_order.vehicle.work_orders.closed.where.not(id: work_order.id).reorder(closed_at: :desc) : WorkOrder.none %>
+    <% if previous.any? %>
+      <div class="field"><%= form.label :warranty_of_id %><%= form.collection_select :warranty_of_id, previous, :id, ->(o) { "№ #{o.number} · #{l((o.closed_at || o.created_at).to_date)}" }, include_blank: t("warranty.not_a_claim") %></div>
+    <% end %>
     <div class="field"><%= form.label :replaced_parts %><%= form.select :replaced_parts, enum_options(WorkOrder, :replaced_parts) %></div>
   </fieldset>
 

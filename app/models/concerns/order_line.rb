@@ -28,6 +28,26 @@ module OrderLine
 
   def approved? = approved_at.present?
 
+  def warranty? = warranty_months.present? || warranty_km.present?
+
+  def warranty_until
+    work_order.closed_at&.to_date&.advance(months: warranty_months) if warranty_months
+  end
+
+  def warranty_until_km
+    work_order.mileage + warranty_km if warranty_km && work_order.mileage
+  end
+
+  # Under warranty while neither the date nor the mileage limit has passed.
+  def under_warranty?(on: Date.current)
+    return false unless warranty? && work_order.closed?
+
+    date_ok = warranty_until.nil? || warranty_until >= on
+    km_limit = warranty_until_km
+    km_ok = km_limit.nil? || (work_order.vehicle.estimated_mileage || 0) <= km_limit
+    date_ok && km_ok
+  end
+
   def approve!(method:, note: nil)
     update_columns(approved_at: Time.current, approval_method: self.class.approval_methods.fetch(method.to_s),
                    approved_by_id: Current.user&.id, approval_note: note.presence, updated_at: Time.current)

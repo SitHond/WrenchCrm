@@ -15,6 +15,8 @@
 
 <div class="order-status">
   <%= status_badge(@work_order) %>
+  <% if @work_order.warranty_of %><span class="badge warranty-badge"><%= t("warranty.claim_badge") %></span> <%= link_to t("warranty.claim_of", number: @work_order.warranty_of.number), @work_order.warranty_of %><% end %>
+  <% @work_order.warranty_claims.each do |claim| %><%= link_to t("warranty.claim_link", number: claim.number), claim, class: "badge warranty-badge" %><% end %>
   <% if can?(:manage_orders) %>
     <% @work_order.next_statuses.each do |status| %>
       <%= button_to t("work_orders.transition.#{status}"), status_work_order_path(@work_order, status: status), method: :patch,

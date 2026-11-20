@@ -25,6 +25,8 @@ class WorkOrderLabor < ApplicationRecord
       return unless service
 
       self.name = service.name if name.blank?
+      self.warranty_months ||= service.warranty_months
+      self.warranty_km ||= service.warranty_km
       self.price = service.price_for(work_order&.complexity_level) if price.blank? || price.zero?
     end
 

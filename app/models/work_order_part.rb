@@ -53,6 +53,8 @@ class WorkOrderPart < ApplicationRecord
 
       self.name = part.label if name.blank?
       self.cost = part.cost
+      self.warranty_months ||= part.warranty_months
+      self.warranty_km ||= part.warranty_km
       self.price = part.price if price.blank? || price.zero?
     end
 end

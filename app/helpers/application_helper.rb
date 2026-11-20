@@ -36,6 +36,13 @@ module ApplicationHelper
     [ enum_label(Employee, :position, employee.position), employee.name ].compact.join(" ")
   end
 
+  def warranty_text(line)
+    return unless line.warranty?
+
+    [ (t("warranty.months", count: line.warranty_months) if line.warranty_months),
+      (t("warranty.km", km: number_with_delimiter(line.warranty_km)) if line.warranty_km) ].compact.join(" / ")
+  end
+
   def phone_link(phone)
     link_to(phone, "tel:#{phone.gsub(/[^\d+]/, "")}") if phone.present?
   end

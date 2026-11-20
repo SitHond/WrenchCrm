@@ -51,7 +51,7 @@ class WorkOrdersController < ApplicationController
   def new
     vehicle = Vehicle.find_by(id: params[:vehicle_id])
     @work_order = WorkOrder.new(vehicle: vehicle, client: vehicle&.client, mileage: vehicle&.mileage,
-                                status: params[:estimate] ? :estimate : :accepted)
+                                status: params[:estimate] ? :estimate : :accepted, warranty_of_id: params[:warranty_of_id])
   end
 
   def create
@@ -101,7 +101,7 @@ class WorkOrdersController < ApplicationController
 
     def work_order_params
       permitted = params.expect(work_order: [ :vehicle_id, :mechanic_id, :advisor_id, :mileage, :complaint, :diagnosis,
-                                              :recommendations, :fuel_level, :intake_condition, :intake_items, :replaced_parts, :labor_discount_percent, :parts_discount_percent,
+                                              :recommendations, :fuel_level, :intake_condition, :intake_items, :replaced_parts, :warranty_of_id, :labor_discount_percent, :parts_discount_percent,
                                               :discount_amount, :complexity_level_id, :promised_at ])
       permitted[:client_id] = Vehicle.find_by(id: permitted[:vehicle_id])&.client_id if permitted.key?(:vehicle_id)
       permitted
