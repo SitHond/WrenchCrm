@@ -1,0 +1,80 @@
+<% if @banners.any? %>
+  <section class="site-hero">
+    <div class="site-slides">
+      <% @banners.each do |banner| %>
+        <article class="site-slide" <% if banner.image.attached? %>style="background-image: url('<%= url_for(banner.image) %>')"<% end %>>
+          <div class="site-wrap site-slide-text">
+            <h2><%= banner.title %></h2>
+            <% if banner.text.present? %><p><%= banner.text %></p><% end %>
+            <% if banner.button_text.present? %><%= link_to banner.button_text, banner.button_url.presence || site_new_booking_path, class: "site-btn site-btn-lg" %><% end %>
+          </div>
+        </article>
+      <% end %>
+    </div>
+  </section>
+<% else %>
+  <section class="site-hero site-hero-plain">
+    <div class="site-wrap site-slide-text">
+      <h1><%= site.display_title %></h1>
+      <% if site.tagline.present? %><p><%= site.tagline %></p><% end %>
+      <% if site.booking_enabled? %><%= link_to t("site.booking.cta"), site_new_booking_path, class: "site-btn site-btn-lg" %><% end %>
+    </div>
+  </section>
+<% end %>
+
+<% if site.about.present? %>
+  <section class="site-section site-wrap"><h2><%= t("site.about") %></h2><div class="site-prose"><%= simple_format(site.about) %></div></section>
+<% end %>
+
+<% if @promotions.any? %>
+  <section class="site-section site-wrap">
+    <h2><%= t("site.promotions") %></h2>
+    <div class="site-cards">
+      <% @promotions.each do |promotion| %>
+        <article class="site-card">
+          <% if promotion.image.attached? %><%= image_tag promotion.image, alt: promotion.title, class: "site-card-img" %><% end %>
+          <h3><%= promotion.title %></h3>
+          <% if promotion.text.present? %><p><%= promotion.text %></p><% end %>
+          <% if promotion.ends_on %><p class="site-muted small"><%= t("site.until", date: l(promotion.ends_on, format: :long)) %></p><% end %>
+        </article>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<% if @services.any? %>
+  <section class="site-section site-wrap">
+    <h2><%= t("site.nav.services") %></h2>
+    <div class="site-cards">
+      <% @services.each do |service| %>
+        <article class="site-card">
+          <h3><%= service.name %></h3>
+          <% if service.site_description.present? %><p><%= service.site_description %></p><% end %>
+          <p class="site-price"><%= t("site.price_from", price: number_to_currency(service.price, unit: "₽", format: "%n %u", precision: 0)) %></p>
+        </article>
+      <% end %>
+    </div>
+    <p><%= link_to t("site.all_services"), site_services_path %></p>
+  </section>
+<% end %>
+
+<% if @reviews.any? %>
+  <section class="site-section site-wrap">
+    <h2><%= t("site.reviews") %></h2>
+    <div class="site-cards">
+      <% @reviews.each do |review| %>
+        <article class="site-card">
+          <div class="site-stars" aria-label="<%= review.rating %>/5"><%= "★" * review.rating %><span class="site-muted"><%= "★" * (5 - review.rating) %></span></div>
+          <p><%= review.text %></p>
+          <p class="site-muted small"><%= review.author %><%= ", #{l(review.reviewed_on)}" if review.reviewed_on %></p>
+        </article>
+      <% end %>
+    </div>
+  </section>
+<% end %>
+
+<% if site.booking_enabled? %>
+  <section class="site-section site-cta">
+    <div class="site-wrap"><h2><%= t("site.booking.title") %></h2><p><%= t("site.booking.lead") %></p><%= link_to t("site.booking.cta"), site_new_booking_path, class: "site-btn site-btn-lg" %></div>
+  </section>
+<% end %>

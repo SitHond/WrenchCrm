@@ -1,0 +1,18 @@
+<% content_for :title, t("site.nav.services") %>
+<section class="site-section site-wrap">
+  <h1><%= t("site.services_title") %></h1>
+  <% if @groups.any? %>
+    <% @groups.sort_by { |category, _| category.to_s }.each do |category, services| %>
+      <h2><%= category || t("services.no_category") %></h2>
+      <table class="site-prices">
+        <% services.each do |service| %>
+          <tr><td><strong><%= service.name %></strong><% if service.site_description.present? %><br><span class="site-muted"><%= service.site_description %></span><% end %></td>
+              <td class="site-price"><%= t("site.price_from", price: number_to_currency(service.price, unit: "₽", format: "%n %u", precision: 0)) %></td></tr>
+        <% end %>
+      </table>
+    <% end %>
+    <p class="site-muted small"><%= t("services.price_list_note") %></p>
+  <% else %>
+    <p><%= t("site.no_services") %></p>
+  <% end %>
+</section>

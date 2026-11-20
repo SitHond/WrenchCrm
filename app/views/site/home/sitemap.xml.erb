@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <% [ site_root_url, site_services_url, site_contacts_url, (site_new_booking_url if site.booking_enabled?), site_privacy_url ].compact.each do |url| %>
+    <url><loc><%= url %></loc></url>
+  <% end %>
+  <% @pages.each do |page| %><url><loc><%= site_page_url(page.slug) %></loc><lastmod><%= page.updated_at.to_date.iso8601 %></lastmod></url><% end %>
+</urlset>

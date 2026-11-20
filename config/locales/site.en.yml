@@ -1,0 +1,54 @@
+en:
+  site:
+    nav:
+      services: "Services & prices"
+      contacts: "Contacts"
+    about: "About us"
+    promotions: "Offers"
+    reviews: "Reviews"
+    until: "until %{date}"
+    price_from: "from %{price}"
+    all_services: "All services and prices →"
+    services_title: "Services and prices"
+    no_services: "The service list is coming soon. Call us for a quote."
+    address: "Address"
+    phone: "Phone"
+    schedule: "Opening hours"
+    map: "Map"
+    not_found: "Page not found"
+    to_home: "Home"
+    disabled: "The website is temporarily unavailable. Call us:"
+    booking:
+      cta: "Book"
+      title: "Book a service"
+      lead: "Leave a request and we'll call back to find a time."
+      name: "Name"
+      phone: "Phone"
+      vehicle: "Vehicle"
+      request: "What needs doing"
+      preferred_time: "Preferred date and time"
+      preferred_placeholder: "E.g. Saturday morning"
+      preferred: "Preferred time: %{time}"
+      consent_html: "I consent to personal data processing under the %{link}"
+      policy: "Privacy policy"
+      submit: "Send request"
+      success: "Thank you! We'll call you back during business hours."
+      rate_limited: "Too many requests. Try later or call us."
+  activemodel:
+    models:
+      booking: "Request"
+    attributes:
+      booking:
+        name: "Name"
+        phone: "Phone"
+        vehicle: "Vehicle"
+        request: "Request"
+        preferred_time: "Preferred time"
+        consent: "Consent to personal data processing"
+  activerecord:
+    attributes:
+      service:
+        show_on_site: "Show on website"
+        site_description: "Website description"
+      user:
+        manage_site: "Manage website"

@@ -36,6 +36,8 @@ services:
       RAILS_ASSUME_SSL: ${RAILS_ASSUME_SSL:-false}
       RAILS_FORCE_SSL: ${RAILS_FORCE_SSL:-false}
       SEED_DEMO: ${SEED_DEMO:-}
+    volumes:
+      - storage:/rails/storage
     ports:
       - "${APP_PORT:-3000}:8080"
     healthcheck:
@@ -47,3 +49,4 @@ services:
 
 volumes:
   pgdata:
+  storage:

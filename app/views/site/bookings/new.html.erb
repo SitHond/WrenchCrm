@@ -1,0 +1,23 @@
+<% content_for :title, t("site.booking.title") %>
+<section class="site-section site-wrap site-narrow">
+  <h1><%= t("site.booking.title") %></h1>
+  <% if params[:sent] %>
+    <div class="site-notice"><%= simple_format(site.booking_success_text.presence || t("site.booking.success")) %></div>
+  <% else %>
+    <% if flash[:alert] %><div class="site-error"><%= flash[:alert] %></div><% end %>
+    <% if @booking.errors.any? %>
+      <div class="site-error"><ul><% @booking.errors.full_messages.each do |m| %><li><%= m %></li><% end %></ul></div>
+    <% end %>
+    <%= form_with model: @booking, url: site_booking_path, scope: :booking, class: "site-form" do |form| %>
+      <label><%= t("site.booking.name") %> *<%= form.text_field :name, required: true, maxlength: 100, autocomplete: "name" %></label>
+      <label><%= t("site.booking.phone") %> *<%= form.telephone_field :phone, required: true, maxlength: 20, autocomplete: "tel" %></label>
+      <label><%= t("site.booking.vehicle") %><%= form.text_field :vehicle, maxlength: 120, placeholder: "Kia Rio 2018" %></label>
+      <label><%= t("site.booking.request") %><%= form.text_area :request, rows: 4, maxlength: 2000 %></label>
+      <label><%= t("site.booking.preferred_time") %><%= form.text_field :preferred_time, maxlength: 120, placeholder: t("site.booking.preferred_placeholder") %></label>
+      <div class="site-honeypot" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+      <label class="site-consent"><%= form.check_box :consent, required: true %>
+        <span><%= t("site.booking.consent_html", link: link_to(t("site.booking.policy"), site_privacy_path, target: "_blank")) %></span></label>
+      <%= form.submit t("site.booking.submit"), class: "site-btn site-btn-lg" %>
+    <% end %>
+  <% end %>
+</section>

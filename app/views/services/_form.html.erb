@@ -32,6 +32,8 @@
       <p class="hint"><%= t("services.prices_by_level_hint") %></p>
     </fieldset>
   <% end %>
+  <div class="field checkbox"><%= form.check_box :show_on_site %><%= form.label :show_on_site %></div>
+  <div class="field"><%= form.label :site_description %><%= form.text_area :site_description, rows: 2 %></div>
   <div class="field checkbox"><%= form.check_box :active %><%= form.label :active %></div>
   <div class="form-actions">
     <%= form.submit class: "btn btn-primary" %>

@@ -1,0 +1,17 @@
+<% content_for :title, t("site.nav.contacts") %>
+<section class="site-section site-wrap site-contacts">
+  <div>
+    <h1><%= t("site.nav.contacts") %></h1>
+    <% if shop.address.present? %><p><strong><%= t("site.address") %></strong><br><%= shop.address %></p><% end %>
+    <% if shop.phone.present? %><p><strong><%= t("site.phone") %></strong><br><a href="tel:<%= shop.phone.gsub(/[^\d+]/, "") %>"><%= shop.phone %></a></p><% end %>
+    <% if shop.email.present? %><p><strong>Email</strong><br><%= mail_to shop.email %></p><% end %>
+    <% messengers = { "Telegram" => site.telegram.presence && "https://t.me/#{site.telegram.delete_prefix("@")}",
+                      "WhatsApp" => site.whatsapp.presence && "https://wa.me/#{site.whatsapp.gsub(/\D/, "")}",
+                      "ВКонтакте" => site.vk.presence && (site.vk.start_with?("http") ? site.vk : "https://vk.com/#{site.vk}") }.compact %>
+    <% if messengers.any? %><p><% messengers.each do |name, url| %><%= link_to name, url, rel: "noopener", target: "_blank", class: "site-chip" %> <% end %></p><% end %>
+    <% if site.schedule.present? %><p><strong><%= t("site.schedule") %></strong></p><%= simple_format(site.schedule) %><% end %>
+  </div>
+  <% if shop.address.present? %>
+    <iframe class="site-map" title="<%= t("site.map") %>" loading="lazy" src="https://yandex.ru/map-widget/v1/?text=<%= ERB::Util.url_encode(shop.address) %>&z=16"></iframe>
+  <% end %>
+</section>

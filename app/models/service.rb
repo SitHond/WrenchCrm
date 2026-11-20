@@ -12,6 +12,7 @@ class Service < ApplicationRecord
   validates :norm_hours, numericality: { greater_than: 0 }, allow_nil: true
 
   scope :active, -> { where(active: true) }
+  scope :on_site, -> { active.where(show_on_site: true) }
   scope :ordered, -> { order(:name) }
   scope :search, ->(query) { query.blank? ? all : where("services.name ILIKE :q OR services.code ILIKE :q", q: like_pattern(query)) }
 

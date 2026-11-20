@@ -1,0 +1,11 @@
+<% content_for :title, t("privacy_policy.title") %>
+<% operator = shop.legal_name.presence || shop.display_name %>
+<section class="site-section site-wrap site-prose">
+  <h1><%= t("privacy_policy.title") %></h1>
+  <% if shop.privacy_policy_text.present? %>
+    <%= simple_format(shop.privacy_policy_text) %>
+  <% else %>
+    <%= simple_format(t("privacy_policy.default_text", operator: operator, address: shop.address.presence || "—",
+          contacts: [ shop.phone, shop.email ].compact_blank.join(", ").presence || "—", updated: l(shop.updated_at.to_date, format: :long))) %>
+  <% end %>
+</section>

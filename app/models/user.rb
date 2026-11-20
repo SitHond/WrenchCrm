@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  PERMISSIONS = %i[manage_clients manage_orders manage_catalog manage_payments manage_finance view_reports delete_records].freeze
+  PERMISSIONS = %i[manage_clients manage_orders manage_catalog manage_payments manage_finance view_reports manage_site delete_records].freeze
   LOCALES = %w[ru en].freeze
 
   include TwoFactor

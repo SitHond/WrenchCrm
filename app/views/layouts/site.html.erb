@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <% title = [ content_for(:title), site.seo_title.presence || site.display_title ].compact.join(" — ") %>
+    <title><%= title %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="<%= content_for(:description).presence || site.seo_description.presence || site.tagline %>">
+    <meta property="og:title" content="<%= title %>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<%= request.original_url %>">
+    <% if site.logo.attached? %><meta property="og:image" content="<%= url_for(site.logo) %>"><% end %>
+    <%= csrf_meta_tags %>
+    <link rel="icon" href="<%= site.logo.attached? ? url_for(site.logo) : "/icon.svg" %>">
+    <%= stylesheet_link_tag :app %>
+    <script type="application/ld+json"><%= raw({ "@context" => "https://schema.org", "@type" => "AutoRepair", "name" => site.display_title,
+          "telephone" => shop.phone, "email" => shop.email, "address" => shop.address, "url" => site_root_url,
+          "openingHours" => site.schedule.to_s.lines.map(&:strip).compact_blank }.compact.to_json) %></script>
+    <% if site.metrika_id.present? %>
+      <script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(<%= site.metrika_id.to_i %>,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});</script>
+    <% end %>
+  </head>
+  <body class="site site-theme-<%= site.theme %>">
+    <header class="site-header">
+      <div class="site-wrap site-header-row">
+        <%= link_to site_root_path, class: "site-brand" do %>
+          <% if site.logo.attached? %><%= image_tag site.logo, alt: site.display_title, class: "site-logo" %><% end %>
+          <span><%= site.display_title %></span>
+        <% end %>
+        <nav class="site-nav">
+          <%= link_to t("site.nav.services"), site_services_path %>
+          <% SitePage.menu.each do |page| %><%= link_to page.title, site_page_path(page.slug) %><% end %>
+          <%= link_to t("site.nav.contacts"), site_contacts_path %>
+          <% if shop.phone.present? %><a class="site-phone" href="tel:<%= shop.phone.gsub(/[^\d+]/, "") %>"><%= shop.phone %></a><% end %>
+          <% if site.booking_enabled? %><%= link_to t("site.booking.cta"), site_new_booking_path, class: "site-btn" %><% end %>
+        </nav>
+      </div>
+    </header>
+    <main><%= yield %></main>
+    <footer class="site-footer">
+      <div class="site-wrap site-footer-row">
+        <div>
+          <strong><%= shop.legal_name.presence || site.display_title %></strong><br>
+          <%= shop.address %><br>
+          <% if shop.inn.present? %>ИНН <%= shop.inn %><%= ", ОГРН #{shop.ogrn}" if shop.ogrn.present? %><% end %>
+        </div>
+        <div><%= simple_format(site.schedule) if site.schedule.present? %></div>
+        <div>
+          <%= link_to t("privacy_policy.title"), site_privacy_path %>
+          <p class="site-muted small">© <%= Date.current.year %> <%= site.display_title %></p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

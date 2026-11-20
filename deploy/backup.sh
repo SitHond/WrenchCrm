@@ -20,7 +20,13 @@ $COMPOSE exec -T db pg_dump -U wrench_crm -Fc wrench_crm_production |
   BACKUP_PASSPHRASE="$passphrase" openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:BACKUP_PASSPHRASE -out "$file"
 chmod 600 "$file"
 
+# Uploaded files (logo, banners) next to the database dump.
+files="backups/wrenchcrm-files-$(date +%Y-%m-%d-%H%M).tar.gz.enc"
+$COMPOSE exec -T web tar -C /rails/storage -czf - . 2>/dev/null |
+  BACKUP_PASSPHRASE="$passphrase" openssl enc -aes-256-cbc -pbkdf2 -iter 200000 -salt -pass env:BACKUP_PASSPHRASE -out "$files" || true
+chmod 600 "$files" 2>/dev/null || true
+
 size=$(wc -c < "$file")
 [ "$size" -gt 1024 ] || { echo "Backup looks empty: $file" >&2; exit 1; }
-find backups -name 'wrenchcrm-*.dump.enc' -mtime +"$keep_days" -delete
+find backups -name 'wrenchcrm-*.enc' -mtime +"$keep_days" -delete
 echo "$(date '+%F %T') saved $file ($size bytes)"

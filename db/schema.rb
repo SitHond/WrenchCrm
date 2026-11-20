@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_183000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_184000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "ad_sources", force: :cascade do |t|
     t.string "name", null: false
@@ -215,6 +243,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_183000) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "personal_data_consent_at"
+    t.string "personal_data_consent_ip"
     t.index ["ad_source_id"], name: "index_leads_on_ad_source_id"
     t.index ["appointment_id"], name: "index_leads_on_appointment_id"
     t.index ["assignee_id"], name: "index_leads_on_assignee_id"
@@ -429,6 +459,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_183000) do
     t.integer "reminder_km"
     t.integer "warranty_months"
     t.integer "warranty_km"
+    t.boolean "show_on_site", default: false, null: false
+    t.text "site_description"
     t.index ["category_id"], name: "index_services_on_category_id"
     t.index ["name"], name: "index_services_on_name"
   end
@@ -469,6 +501,71 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_183000) do
     t.integer "vat_rate"
     t.boolean "vat_included", default: true, null: false
     t.string "chief_accountant"
+  end
+
+  create_table "site_banners", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "text"
+    t.string "button_text"
+    t.string "button_url"
+    t.integer "position", default: 0, null: false
+    t.boolean "active", default: true, null: false
+    t.date "starts_on"
+    t.date "ends_on"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "site_pages", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.text "body"
+    t.boolean "published", default: true, null: false
+    t.boolean "show_in_menu", default: true, null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_site_pages_on_slug", unique: true
+  end
+
+  create_table "site_promotions", force: :cascade do |t|
+    t.string "title", null: false
+    t.text "text"
+    t.boolean "active", default: true, null: false
+    t.date "starts_on"
+    t.date "ends_on"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "site_reviews", force: :cascade do |t|
+    t.string "author", null: false
+    t.text "text", null: false
+    t.integer "rating", default: 5, null: false
+    t.date "reviewed_on"
+    t.boolean "published", default: true, null: false
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "site_settings", force: :cascade do |t|
+    t.boolean "enabled", default: true, null: false
+    t.string "title"
+    t.string "tagline"
+    t.text "about"
+    t.text "schedule"
+    t.string "telegram"
+    t.string "whatsapp"
+    t.string "vk"
+    t.string "theme", default: "orange", null: false
+    t.boolean "booking_enabled", default: true, null: false
+    t.text "booking_success_text"
+    t.string "seo_title"
+    t.string "seo_description"
+    t.string "metrika_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "stock_movements", force: :cascade do |t|
@@ -537,6 +634,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_183000) do
     t.datetime "otp_enabled_at"
     t.integer "otp_last_timestep"
     t.jsonb "otp_backup_codes", default: [], null: false
+    t.boolean "manage_site", default: false, null: false
     t.index ["email_address"], name: "index_users_on_email_address", unique: true
   end
 
@@ -648,6 +746,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_183000) do
     t.index ["warranty_of_id"], name: "index_work_orders_on_warranty_of_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "appointments", "bays", on_delete: :nullify
   add_foreign_key "appointments", "clients"
   add_foreign_key "appointments", "employees", column: "mechanic_id", on_delete: :nullify

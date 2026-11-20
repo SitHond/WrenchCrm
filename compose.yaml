@@ -35,8 +35,11 @@ services:
       TIME_ZONE: ${TIME_ZONE:-Europe/Moscow}
       WORKDAY_START: ${WORKDAY_START:-9}
       WORKDAY_END: ${WORKDAY_END:-20}
+    volumes:
+      - storage:/rails/storage
     ports:
       - "${APP_PORT:-3000}:8080"
 
 volumes:
   pgdata:
+  storage:

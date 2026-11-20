@@ -1,0 +1,54 @@
+ru:
+  site:
+    nav:
+      services: "Услуги и цены"
+      contacts: "Контакты"
+    about: "О нас"
+    promotions: "Акции"
+    reviews: "Отзывы"
+    until: "до %{date}"
+    price_from: "от %{price}"
+    all_services: "Все услуги и цены →"
+    services_title: "Услуги и цены"
+    no_services: "Список услуг скоро появится. Позвоните нам — подскажем цену."
+    address: "Адрес"
+    phone: "Телефон"
+    schedule: "Часы работы"
+    map: "Карта проезда"
+    not_found: "Страница не найдена"
+    to_home: "На главную"
+    disabled: "Сайт временно недоступен. Позвоните нам:"
+    booking:
+      cta: "Записаться"
+      title: "Запись на обслуживание"
+      lead: "Оставьте заявку — перезвоним и подберём удобное время."
+      name: "Имя"
+      phone: "Телефон"
+      vehicle: "Автомобиль"
+      request: "Что нужно сделать"
+      preferred_time: "Удобная дата и время"
+      preferred_placeholder: "Например: в субботу утром"
+      preferred: "Удобное время: %{time}"
+      consent_html: "Даю согласие на обработку персональных данных в соответствии с %{link}"
+      policy: "Политикой обработки персональных данных"
+      submit: "Отправить заявку"
+      success: "Спасибо! Заявка принята. Мы перезвоним в ближайшее рабочее время."
+      rate_limited: "Слишком много заявок подряд. Попробуйте позже или позвоните нам."
+  activemodel:
+    models:
+      booking: "Заявка"
+    attributes:
+      booking:
+        name: "Имя"
+        phone: "Телефон"
+        vehicle: "Автомобиль"
+        request: "Что нужно сделать"
+        preferred_time: "Удобное время"
+        consent: "Согласие на обработку персональных данных"
+  activerecord:
+    attributes:
+      service:
+        show_on_site: "Показывать на сайте"
+        site_description: "Описание для сайта"
+      user:
+        manage_site: "Управление сайтом"
