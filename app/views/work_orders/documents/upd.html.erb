@@ -1,0 +1,94 @@
+<% client = @work_order.client %>
+<% lines = @work_order.vat_lines %>
+<% status = @work_order.vat? ? 1 : 2 %>
+<% date = (@work_order.closed_at || Time.current).to_date %>
+<% seller = @shop.legal_name.presence || @shop.display_name %>
+<% content_for :title, t("upd.title", number: @work_order.number) %>
+<article class="print-doc upd">
+  <%= render "work_orders/documents/problems" %>
+  <table class="upd-head">
+    <tr>
+      <td class="upd-side" rowspan="2"><%= t("upd.name") %><br><span class="small"><%= t("upd.status") %> <strong class="upd-status"><%= status %></strong></span><br><span class="tiny"><%= t("upd.status_hint") %></span></td>
+      <td>
+        <div><strong><%= t("upd.invoice", number: @work_order.number, date: l(date, format: :long)) %></strong> <span class="tiny">(1)</span></div>
+        <div><%= t("upd.correction") %> <span class="tiny">(1а)</span></div>
+        <table class="upd-parties">
+          <tr><th><%= t("upd.seller") %></th><td><%= seller %></td><td class="tiny">(2)</td></tr>
+          <tr><th><%= t("upd.address") %></th><td><%= @shop.address %></td><td class="tiny">(2а)</td></tr>
+          <tr><th><%= t("upd.seller_inn") %></th><td><%= [ @shop.inn, @shop.kpp ].compact_blank.join(" / ") %></td><td class="tiny">(2б)</td></tr>
+          <tr><th><%= t("upd.shipper") %></th><td>—</td><td class="tiny">(3)</td></tr>
+          <tr><th><%= t("upd.consignee") %></th><td>—</td><td class="tiny">(4)</td></tr>
+          <tr><th><%= t("upd.payment_doc") %></th><td><%= @work_order.payments.map { |p| t("upd.payment_ref", date: l(p.paid_at.to_date)) }.join(", ").presence || "—" %></td><td class="tiny">(5)</td></tr>
+          <tr><th><%= t("upd.shipping_doc") %></th><td><%= t("upd.shipping_ref", number: @work_order.number, date: l(date)) %></td><td class="tiny">(5а)</td></tr>
+          <tr><th><%= t("upd.buyer") %></th><td><%= client.display_name %></td><td class="tiny">(6)</td></tr>
+          <tr><th><%= t("upd.address") %></th><td><%= client.address %></td><td class="tiny">(6а)</td></tr>
+          <tr><th><%= t("upd.buyer_inn") %></th><td><%= client.inn %></td><td class="tiny">(6б)</td></tr>
+          <tr><th><%= t("upd.currency") %></th><td><%= t("upd.rub") %></td><td class="tiny">(7)</td></tr>
+          <tr><th><%= t("upd.contract_id") %></th><td>—</td><td class="tiny">(8)</td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+
+  <table class="print-lines upd-lines">
+    <thead>
+      <tr>
+        <th>№</th><th><%= t("upd.cols.name") %></th><th><%= t("upd.cols.unit_code") %></th><th><%= t("upd.cols.unit") %></th>
+        <th class="num"><%= t("upd.cols.quantity") %></th><th class="num"><%= t("upd.cols.price") %></th><th class="num"><%= t("upd.cols.amount") %></th>
+        <th><%= t("upd.cols.excise") %></th><th><%= t("upd.cols.rate") %></th><th class="num"><%= t("upd.cols.vat") %></th><th class="num"><%= t("upd.cols.total") %></th>
+        <th><%= t("upd.cols.country") %></th>
+      </tr>
+      <tr class="tiny"><td>1</td><td>1а</td><td>2</td><td>2а</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+    </thead>
+    <tbody>
+      <% lines.each_with_index do |line, index| %>
+        <tr>
+          <td><%= index + 1 %></td>
+          <td><%= line.name %></td>
+          <td><%= line.unit_code[0] %></td>
+          <td><%= line.unit_code[1] %></td>
+          <td class="num"><%= number(line.quantity) %></td>
+          <td class="num"><%= number_with_precision(line.price_without_vat, precision: 2) %></td>
+          <td class="num"><%= number_with_precision(line.amount_without_vat, precision: 2) %></td>
+          <td><%= t("upd.no_excise") %></td>
+          <td><%= @work_order.vat? ? "#{@work_order.vat_rate}%" : t("upd.no_vat") %></td>
+          <td class="num"><%= @work_order.vat? ? number_with_precision(line.vat, precision: 2) : t("upd.no_vat") %></td>
+          <td class="num"><%= number_with_precision(line.amount, precision: 2) %></td>
+          <td>—</td>
+        </tr>
+      <% end %>
+      <tr class="upd-total">
+        <td colspan="6"><strong><%= t("upd.total_due") %></strong></td>
+        <td class="num"><strong><%= number_with_precision(lines.sum(&:amount_without_vat), precision: 2) %></strong></td>
+        <td colspan="2">X</td>
+        <td class="num"><strong><%= @work_order.vat? ? number_with_precision(@work_order.vat_amount, precision: 2) : t("upd.no_vat") %></strong></td>
+        <td class="num"><strong><%= number_with_precision(lines.sum(&:amount), precision: 2) %></strong></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+  <p class="small"><%= t("upd.amount_words", words: AmountInWords.rubles(lines.sum(&:amount))) %></p>
+
+  <table class="upd-signs">
+    <tr>
+      <td><%= t("upd.director") %> ____________ <%= @shop.director %></td>
+      <td><%= t("upd.accountant") %> ____________ <%= @shop.chief_accountant %></td>
+    </tr>
+  </table>
+
+  <table class="upd-transfer">
+    <tr><th colspan="2"><%= t("upd.basis") %>: <%= t("work_orders.title", number: @work_order.number) %></th></tr>
+    <tr>
+      <td>
+        <div><%= t("upd.handed_over", date: l(date)) %></div>
+        <div><%= t("upd.handed_by") %> <%= signer(@work_order.advisor) || @shop.director %> ____________</div>
+        <div class="small"><%= seller %>, <%= t("upd.inn") %> <%= @shop.inn %></div>
+      </td>
+      <td>
+        <div><%= t("upd.received", date: "«____» ____________ 20___ г.") %></div>
+        <div><%= t("upd.received_by") %> ______________________ ____________</div>
+        <div class="small"><%= client.display_name %><%= ", #{t("upd.inn")} #{client.inn}" if client.inn.present? %></div>
+      </td>
+    </tr>
+  </table>
+</article>

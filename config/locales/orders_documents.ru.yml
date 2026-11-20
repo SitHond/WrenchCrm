@@ -19,6 +19,7 @@ ru:
       acceptance: "Акт приёма автомобиля"
       act: "Акт выполненных работ"
       invoice: "Счёт на оплату"
+      upd: "УПД"
     customer: "Заказчик"
     contractor: "Исполнитель"
     total_words:

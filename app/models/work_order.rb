@@ -1,4 +1,6 @@
 class WorkOrder < ApplicationRecord
+  include VatDocument
+
   class StockShortage < StandardError
     attr_reader :lines
 
@@ -149,8 +151,19 @@ class WorkOrder < ApplicationRecord
     labor_discount + parts_discount + discount_amount
   end
 
+  # What the customer pays: priced lines after discounts, plus VAT when it is charged on top.
   def total
-    [ subtotal - total_discount, 0 ].max
+    amount = [ subtotal - total_discount, 0 ].max
+    vat? && !vat_included ? amount + vat_amount : amount
+  end
+
+  def priced_lines
+    labor = labor_lines.select(&:approved?).sort_by { |l| [ l.created_at || Time.current, l.id.to_i ] }
+    parts = part_lines.select(&:approved?).sort_by { |l| [ l.created_at || Time.current, l.id.to_i ] }
+    amounts = labor.map { |l| l.total * (1 - labor_discount_percent / 100) } + parts.map { |l| l.total * (1 - parts_discount_percent / 100) }
+    amounts = spread(amounts.map { |a| a.round(2) }, [ discount_amount, amounts.sum ].min)
+    lines = labor.map { |l| [ :labor, l.name, "service", l.quantity ] } + parts.map { |l| [ :part, l.name, l.part&.unit || "pcs", l.quantity ] }
+    lines.zip(amounts).map { |(kind, name, unit, quantity), amount| [ kind, name, unit, quantity, amount ] }
   end
 
   def discount_percent=(value)

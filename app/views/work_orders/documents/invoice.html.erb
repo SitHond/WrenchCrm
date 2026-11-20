@@ -20,9 +20,10 @@
   </table>
 
   <%= render "work_orders/documents/lines" %>
-  <p class="small"><%= t("documents.invoice.vat") %></p>
+  <p><%= @work_order.vat? ? t("vat.invoice_line", label: @work_order.vat_label, amount: money(@work_order.vat_amount)) : t("documents.invoice.vat") %></p>
 
   <div class="signatures">
     <div><%= ShopSetting.human_attribute_name(:director) %> ____________________ <%= @shop.director %></div>
+    <% if @shop.chief_accountant.present? %><div><%= ShopSetting.human_attribute_name(:chief_accountant) %> ____________________ <%= @shop.chief_accountant %></div><% end %>
   </div>
 </article>

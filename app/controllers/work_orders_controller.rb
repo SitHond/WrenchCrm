@@ -39,7 +39,7 @@ class WorkOrdersController < ApplicationController
     @notes = @work_order.notes.visible_to(current_user).recent_first.includes(:author)
   end
 
-  DOCUMENTS = %w[estimate work_order acceptance act invoice].freeze
+  DOCUMENTS = %w[estimate work_order acceptance act invoice upd].freeze
 
   def print
     @shop = ShopSetting.current

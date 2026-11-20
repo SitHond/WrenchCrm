@@ -35,6 +35,16 @@
     </div>
   </fieldset>
 
+  <fieldset id="vat">
+    <legend><%= t("vat.title") %></legend>
+    <div class="row">
+      <div class="field"><%= form.label :vat_rate %><%= form.select :vat_rate, [ [ t("vat.none"), "" ] ] + VatDocument::RATES.map { |r| [ "#{r} %", r ] } %></div>
+      <div class="field checkbox"><%= form.check_box :vat_included %><%= form.label :vat_included %></div>
+    </div>
+    <div class="field"><%= form.label :chief_accountant %><%= form.text_field :chief_accountant %></div>
+    <p class="hint"><%= t("vat.settings_hint") %></p>
+  </fieldset>
+
   <fieldset>
     <legend><%= t("shop_settings.sections.documents") %></legend>
     <div class="field"><%= form.label :work_order_terms %><%= form.text_area :work_order_terms, rows: 4, placeholder: t("shop_settings.terms_placeholder") %></div>

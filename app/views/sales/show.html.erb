@@ -35,7 +35,9 @@
     <% if @sale.discount_percent.positive? %>
       <dt><%= t("work_orders.totals.discount", percent: number(@sale.discount_percent)) %></dt><dd>−<%= money(@sale.discount_amount) %></dd>
     <% end %>
+    <% if @sale.vat? && !@sale.vat_included %><dt><%= @sale.vat_label %></dt><dd>+<%= money(@sale.vat_amount) %></dd><% end %>
     <dt class="grand"><%= t("total") %></dt><dd class="grand"><%= money(@sale.total) %></dd>
+    <dt><%= @sale.vat_label %></dt><dd><%= money(@sale.vat_amount) if @sale.vat? && @sale.vat_included %></dd>
   </dl>
   <% if @sale.comment.present? %><p class="muted"><%= @sale.comment %></p><% end %>
 </section>

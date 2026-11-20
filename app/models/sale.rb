@@ -1,6 +1,7 @@
 # Counter sale of parts without a work order. Stock and cash move on creation.
 class Sale < ApplicationRecord
   include CashLedgerEntry
+  include VatDocument
 
   enum :payment_method, { cash: 0, card: 1, transfer: 2 }
 
@@ -37,7 +38,13 @@ class Sale < ApplicationRecord
   end
 
   def total
-    subtotal - discount_amount
+    amount = subtotal - discount_amount
+    vat? && !vat_included ? amount + vat_amount : amount
+  end
+
+  def priced_lines
+    amounts = lines.map { |l| (l.total * (1 - discount_percent / 100)).round(2) }
+    lines.zip(amounts).map { |l, amount| [ :part, l.name, l.part&.unit || "pcs", l.quantity, amount ] }
   end
 
   private

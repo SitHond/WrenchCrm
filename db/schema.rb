@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_11_20_182000) do
+ActiveRecord::Schema[8.1].define(version: 2026_11_20_183000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -377,6 +377,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_182000) do
     t.bigint "created_by_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "vat_rate"
+    t.boolean "vat_included", default: true, null: false
     t.index ["cash_account_id"], name: "index_sales_on_cash_account_id"
     t.index ["client_id"], name: "index_sales_on_client_id"
     t.index ["created_by_id"], name: "index_sales_on_created_by_id"
@@ -464,6 +466,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_182000) do
     t.integer "pd_retention_years"
     t.boolean "require_two_factor", default: false, null: false
     t.text "privacy_policy_text"
+    t.integer "vat_rate"
+    t.boolean "vat_included", default: true, null: false
+    t.string "chief_accountant"
   end
 
   create_table "stock_movements", force: :cascade do |t|
@@ -631,6 +636,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_11_20_182000) do
     t.text "intake_items"
     t.integer "replaced_parts", default: 0, null: false
     t.bigint "warranty_of_id"
+    t.integer "vat_rate"
+    t.boolean "vat_included", default: true, null: false
     t.index ["advisor_id"], name: "index_work_orders_on_advisor_id"
     t.index ["client_id"], name: "index_work_orders_on_client_id"
     t.index ["complexity_level_id"], name: "index_work_orders_on_complexity_level_id"

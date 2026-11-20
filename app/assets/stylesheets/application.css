@@ -548,3 +548,14 @@ select, input, textarea { max-width: 100%; }
 @media (prefers-color-scheme: dark) { .pending-badge { background: #78350f; color: #fde68a; } }
 .warranty-badge { background: #e0f2fe; color: #075985; }
 @media (prefers-color-scheme: dark) { .warranty-badge { background: #0c4a6e; color: #bae6fd; } }
+.upd { font-size: 11px; max-width: 1100px; }
+.upd table { width: 100%; border-collapse: collapse; }
+.upd-head > tbody > tr > td { vertical-align: top; padding: .3rem; }
+.upd-side { width: 130px; border-right: 2px solid #000; text-align: center; }
+.upd-status { font-size: 1.3rem; border: 1px solid #000; padding: 0 .4rem; }
+.upd-parties th { text-align: left; font-weight: normal; width: 38%; padding: 1px 4px 1px 0; }
+.upd-parties td { border-bottom: 1px solid #000; padding: 1px 4px; }
+.upd-lines th, .upd-lines td { font-size: 10px; padding: 2px 4px; }
+.upd-signs td, .upd-transfer td, .upd-transfer th { padding: .5rem .3rem; vertical-align: top; text-align: left; }
+.upd-transfer td { border-top: 1px solid #000; width: 50%; }
+.tiny { font-size: 9px; color: #555; }

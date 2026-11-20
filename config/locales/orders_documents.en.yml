@@ -19,6 +19,7 @@ en:
       acceptance: "Vehicle intake form"
       act: "Certificate of completion"
       invoice: "Invoice"
+      upd: "Universal transfer document"
     customer: "Customer"
     contractor: "Contractor"
     total_words:

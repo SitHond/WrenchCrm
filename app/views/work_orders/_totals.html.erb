@@ -13,7 +13,15 @@
   <% if !local_assigns[:print] && work_order.pending_lines.any? %>
     <dt class="pending-total"><%= t("work_orders.totals.pending") %></dt><dd class="pending-total"><%= money(work_order.pending_total) %></dd>
   <% end %>
+  <% if work_order.vat? && !work_order.vat_included %>
+    <dt><%= work_order.vat_label %></dt><dd>+<%= money(work_order.vat_amount) %></dd>
+  <% end %>
   <dt class="grand"><%= t("work_orders.totals.total") %></dt><dd class="grand"><%= money(work_order.total) %></dd>
+  <% if work_order.vat? && work_order.vat_included %>
+    <dt><%= work_order.vat_label %></dt><dd><%= money(work_order.vat_amount) %></dd>
+  <% elsif !work_order.vat? && local_assigns[:print] %>
+    <dt><%= work_order.vat_label %></dt><dd></dd>
+  <% end %>
   <% unless local_assigns[:print] %>
     <dt><%= t("work_orders.totals.paid") %></dt><dd><%= money(work_order.paid_total) %></dd>
     <dt><%= t("work_orders.totals.balance") %></dt><dd class="<%= work_order.balance.positive? ? "danger" : "ok" %>"><%= money(work_order.balance) %></dd>
