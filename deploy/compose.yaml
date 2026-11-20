@@ -36,10 +36,12 @@ services:
       RAILS_ASSUME_SSL: ${RAILS_ASSUME_SSL:-false}
       RAILS_FORCE_SSL: ${RAILS_FORCE_SSL:-false}
       SEED_DEMO: ${SEED_DEMO:-}
+      CRM_HOST: ${CRM_HOST:-}
+      SITE_HOST: ${SITE_HOST:-}
     volumes:
       - storage:/rails/storage
     ports:
-      - "${APP_PORT:-3000}:8080"
+      - "${APP_BIND:-0.0.0.0}:${APP_PORT:-3000}:8080"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "http://localhost:8080/up"]
       interval: 30s
@@ -47,6 +49,27 @@ services:
       retries: 3
       start_period: 60s
 
+  # With a domain: COMPOSE_PROFILES=domain in .env starts Caddy on ports 80 and 443 with Let's Encrypt certificates.
+  caddy:
+    image: docker.io/library/caddy:2-alpine
+    profiles: ["domain"]
+    restart: unless-stopped
+    depends_on:
+      - web
+    environment:
+      CRM_HOST: ${CRM_HOST:-}
+      SITE_HOST: ${SITE_HOST:-}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
 volumes:
   pgdata:
   storage:
+  caddy_data:
+  caddy_config:

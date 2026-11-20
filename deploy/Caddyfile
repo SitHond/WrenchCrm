@@ -1,0 +1,15 @@
+# WrenchCRM behind Caddy: automatic HTTPS from Let's Encrypt for the CRM and the website.
+# Hosts come from .env (CRM_HOST, SITE_HOST); used when COMPOSE_PROFILES=domain.
+{
+	email {$ACME_EMAIL}
+}
+
+{$CRM_HOST} {
+	encode zstd gzip
+	reverse_proxy web:8080
+}
+
+{$SITE_HOST}, www.{$SITE_HOST} {
+	encode zstd gzip
+	reverse_proxy web:8080
+}
